@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     const getData = async () =>{
-      const response = await fetch("/api/v1/WeatherForecast");
+      const response = await fetch("/api/v1/users");
       const data = await response.json();
       console.log(data)
     }
