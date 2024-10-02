@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Route("users")]
+[Route("api/v1/users")]
 public class UserController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
