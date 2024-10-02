@@ -1,50 +1,48 @@
-import React, {useRef, useState} from 'react';
+import {useSpring, animated} from "@react-spring/web";
+import {useDrag} from "@use-gesture/react";
+import { forwardRef } from "react";
 
-const SwipeCard = () => {
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [currentX, setCurrentX] = useState(0);
-    const cardRef = useRef(null);
 
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setStartX(e.pageX);
-    };
 
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
-        setCurrentX(e.pageX);
-        const distance = currentX - startX;
-        if (cardRef.current) {
-            cardRef.current.style.transform = `translateX(${distance}px)`;
-        }
-    };
 
-    const handleMouseUp = () => {
-        if (isDragging) {
-            setIsDragging(false);
-            const distance = currentX - startX;
-            if (Math.abs(distance) > 100) {
-                console.log(distance > 0 ? 'Accepted' : 'Rejected')
-            } else {
-                if (cardRef.current) {
-                    cardRef.current.style.transform = '';
-                }
-            }
-        }
-    };
 
+const SwipeCard = forwardRef(({children, classname, deckWidth}, ref) => {
+    const [{ x, rotate }, set] = useSpring(() => ({ x: 0, rotate: 0 }));
+  
+
+    const bind = useDrag((state) => {
+        const offsetX = state.offset[0];
+        const halfCardWidth = (ref.current?.offsetWidth || 0) / 2; 
+
+        // Calculate boundaries
+        const minX = -deckWidth + halfCardWidth; 
+        const maxX = halfCardWidth; 
+
+        // Clamp the x value to keep the card within boundaries
+        const clampedX = Math.min(Math.max(offsetX, minX), maxX);
+
+        const rotation = (offsetX / halfCardWidth) * 45;
+
+        // Update the spring position
+        set({ x: clampedX, rotate: rotation });
+    });
+  
     return (
-        <div
-            className="w-72 h-96 bg-blue-300 rounded-lg shadow-lg transition-transform duration-300 relative cursor-grab active:cursor-grabbing"
-            ref={cardRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp} // To handle mouse leaving the card
-        >
-        </div>
+      <animated.div
+        {...bind()} // bind the gesture to the div
+        className={classname}
+        ref={ref}
+        style={{
+          touchAction: 'none', 
+            x,
+            rotate: rotate.to((r) => `rotate(${r}deg`),
+        }}
+      >
+         {children}
+      </animated.div>
     );
-};
+  });
 
-export default SwipeCard;
+  SwipeCard.displayName = 'SwipeCard';
+  
+  export default SwipeCard;

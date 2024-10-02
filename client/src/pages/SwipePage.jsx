@@ -1,12 +1,18 @@
 import React from 'react';
-import SwipeCard from "../components/SwipeCard.jsx";
+import SwipeDeck from "../components/SwipeDeck.jsx";
+import Test from "../components/Test.jsx";
 
-const SwipePage = () => {
+const App = () => {
+    const handleSwipe = (direction) => {
+        console.log('Swiped:', direction);
+    };
+
     return (
-        <div>
-            <SwipeCard></SwipeCard>
+        <div className="flex items-center justify-center min-h-screen">
+            <Test></Test>
+            <SwipeDeck/>
         </div>
     );
 };
 
-export default SwipePage;
+export default App;
