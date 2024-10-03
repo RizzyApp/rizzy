@@ -1,14 +1,19 @@
 import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Register from "../components/Register";
 
 function HomePage() {
+  const navigate = useNavigate();
   const [isFormVisible, setIsFormVisible] = useState(false);
   console.log(isFormVisible);
 
   const toggleRegVisibility = () => {
     setIsFormVisible((prevState) => !prevState);
+  };
+
+  const handleNavigate = () => { //ONLY DURING DEVELOPMENT!!!
+    
   };
 
   return (
@@ -28,6 +33,12 @@ function HomePage() {
                 className="createaccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-pink-500 border-white"
               >
                 Create account
+              </button>
+              <button
+                onClick={() => navigate("/swipe-page")}
+                className="absolute bottom-0 right-0"
+              >
+                Test SwipePage
               </button>
             </>
           )}
