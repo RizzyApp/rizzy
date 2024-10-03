@@ -4,56 +4,23 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import ThemeToggle from "./components/LightDarkToggle";
+import HomePage from "./components/HomePage.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
 
   /* useEffect(() => {
-    const getData = async () => {
-      const response = await fetch("/api/v1/WeatherForecast");
+    const getData = async () =>{
+      const response = await fetch("/api/v1/users");
       const data = await response.json();
       console.log(data);
     };
     getData();
-    }, []); */
+  }, []);  */
 
   return (
     <>
-      {/* <ThemeToggle />
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
-      <div className="p-4 min-h-screen w-full bg-gradient-to-b from-purple-400 to-pink-400 flex flex-col items-center">
-        <h1 className="text-3xl font-bold">Welcome to Rizzy</h1>
-        <nav className="space-x-4">
-          <Link to="/swipe-page" className="text-blue-500 underline">
-            Swipe Page
-          </Link>
-          <Link to="/contact-us" className="text-blue-500 underline">
-            Contact Us
-          </Link>
-          <Link to="/register" className="text-blue-500 underline">
-            Register
-          </Link>
-        </nav>
-      </div>
+      <HomePage />
     </>
   );
 }
