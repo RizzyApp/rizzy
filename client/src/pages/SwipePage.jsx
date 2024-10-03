@@ -6,8 +6,10 @@ const App = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <SwipeDeck />
+    <div>
+      <div className="flex items-center justify-center min-h-screen">
+        <SwipeDeck />
+      </div>
       <button
         onClick={() => navigate("/")}
         className="absolute bottom-0 right-0"

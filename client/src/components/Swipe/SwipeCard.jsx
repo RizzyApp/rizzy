@@ -1,20 +1,22 @@
-import { useSpring, animated, to } from "@react-spring/web";
+import { useSpring, animated } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 import { forwardRef } from "react";
 
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 45;
+const FLY_RANGE = 300;
 
 const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
-  const [{ x, rotateZ, scale }, api] = useSpring(() => ({
+  const [{ x, rotateZ, scale, opacity }, api] = useSpring(() => ({
     x: 0,
     rotateZ: 0,
     scale: 1,
+    opacity: 1,
   }));
 
   const reset = () => {
     //for debugging purposes
-    api.set({ x: 0, rotateZ: 0, scale: 1 });
+    api.set({ x: 0, rotateZ: 0, scale: 1, opacity: 1 });
   };
 
   const bind = useDrag(
@@ -41,16 +43,17 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
       if (!active && trigger) {
         api.start(() => {
           console.log("start reached!");
-          const x = (200 + window.innerWidth) * xDir;
+          const x = FLY_RANGE * xDir;
 
           return {
             x,
-            rotateZ: 90,
+            opacity: 0,
           };
         });
       } else {
-        api.start({
+        api({
           x: active ? clampedX : 0,
+          immediate: true,
           rotateZ: active ? clampedRot : 0,
           scale: active ? 1.1 : 1,
         });
@@ -69,11 +72,14 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
           x,
           rotateZ,
           scale,
+          opacity,
         }}
       >
         {children}
       </animated.div>
-      <button onClick={reset}>Reset</button>
+      <button onClick={reset} className="fixed top-3/4">
+        Reset
+      </button>
     </>
   );
 });
