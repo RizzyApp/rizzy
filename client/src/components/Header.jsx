@@ -1,31 +1,50 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
+  const location = useLocation();
+
+  const handleClick = (path) => {
+    if (location.pathname !== path) {
+      window.location.href = path;
+    }
+  };
+
   return (
-    <header className="bg-gradient-to-r from-pink-500 to-purple-600 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="font-poppins text-white text-3xl font-bold">Rizzy</div>
-
-        <nav className="flex-1 flex justify-center space-x-4">
-          <Link to="/register" className="text-white">
-            About
-          </Link>
-          <Link to="/products" className="text-white">
-            Products
-          </Link>
-          <Link to="/contact-us" className="text-white">
-            Contact Us
-          </Link>
-        </nav>
-
-        <div>
-          <Link to="/login" className="text-white">
-            Log In
-          </Link>
-        </div>
+    <div className="bg-topbarpink w-full flex justify-between items-center text-white drop-shadow-topbar p-4">
+      <div className="flex items-center space-x-4">
+        <Link
+          to="/"
+          className="text-[36px] text-white hover:text-white font-poppins font-semibold mb-0.5 ml-1"
+        >
+          Rizzy
+        </Link>
+        <button
+          onClick={() => handleClick("/about")}
+          className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
+        >
+          About
+        </button>
+        <button
+          onClick={() => handleClick("/products")}
+          className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
+        >
+          Products
+        </button>
+        <button
+          onClick={() => handleClick("/contact-us")}
+          className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
+        >
+          Contact Us
+        </button>
       </div>
-    </header>
+      <button
+        onClick={() => handleClick("/login")}
+        className="bg-transparent hover:bg-pink-500 px-3 py-2 rounded"
+      >
+        Log In
+      </button>
+    </div>
   );
 };
 

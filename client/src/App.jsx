@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import ThemeToggle from "./components/LightDarkToggle";
-import HomePage from "./components/HomePage.jsx";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const [count, setCount] = useState(0);

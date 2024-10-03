@@ -4,8 +4,10 @@ import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import SwipePage from "./pages/SwipePage.jsx";
-import RegisterPage from "./components/RegisterPage.jsx";
-import ContactUsPage from "./components/ContactUsPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import ContactUsPage from "./pages/ContactUsPage.jsx";
+import ProductsPage from "./pages/ProductsPage.jsx";
+import Login from "./components/Login.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +23,16 @@ const router = createBrowserRouter([
     element: <ContactUsPage />,
   },
   {
-    path: "/register",
-    element: <RegisterPage />,
+    path: "/about",
+    element: <AboutPage />,
+  },
+  {
+    path: "/products",
+    element: <ProductsPage />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 
