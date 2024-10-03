@@ -1,14 +1,8 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const location = useLocation();
-
-  const handleClick = (path) => {
-    if (location.pathname !== path) {
-      window.location.href = path;
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="bg-topbarpink w-full flex justify-between items-center text-white drop-shadow-topbar p-4">
@@ -20,26 +14,26 @@ const Header = () => {
           Rizzy
         </Link>
         <button
-          onClick={() => handleClick("/about")}
+          onClick={() => navigate("/about")}
           className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
         >
           About
         </button>
         <button
-          onClick={() => handleClick("/products")}
+          onClick={() => navigate("/products")}
           className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
         >
           Products
         </button>
         <button
-          onClick={() => handleClick("/contact-us")}
+          onClick={() => navigate("/contact-us")}
           className="bg-transparent text-white hover:bg-pink-500 px-3 py-2 rounded"
         >
           Contact Us
         </button>
       </div>
       <button
-        onClick={() => handleClick("/login")}
+        onClick={() => navigate("/login")}
         className="bg-transparent hover:bg-pink-500 px-3 py-2 rounded"
       >
         Log In
