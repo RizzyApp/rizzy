@@ -1,48 +1,49 @@
-import {useSpring, animated} from "@react-spring/web";
-import {useDrag} from "@use-gesture/react";
+import { useSpring, animated } from "@react-spring/web";
+import { useDrag } from "@use-gesture/react";
 import { forwardRef } from "react";
 
 
 
+const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
+  const [{ x, rotateZ }, api] = useSpring(() => ({ x: 0, rotateZ: 0 }));
 
 
-const SwipeCard = forwardRef(({children, classname, deckWidth}, ref) => {
-    const [{ x, rotate }, set] = useSpring(() => ({ x: 0, rotate: 0 }));
-  
+  const bind = useDrag(({active, movement: [mx], cancel, distance}) => {
+    const halfCardWidth = (ref.current?.offsetWidth || 0) / 2;
+    const boundary = deckWidth - halfCardWidth
+    const maxRotation = 45;
 
-    const bind = useDrag((state) => {
-        const offsetX = state.offset[0];
-        const halfCardWidth = (ref.current?.offsetWidth || 0) / 2; 
+    let rotation = (mx / boundary) * maxRotation;
+    console.log(distance)
 
-        // Calculate boundaries
-        const minX = -deckWidth + halfCardWidth; 
-        const maxX = halfCardWidth; 
+    const clampedX = Math.min(Math.max(mx, -boundary), boundary);
+    const clampedRot = Math.min(Math.max(rotation, -maxRotation), maxRotation);
 
-        // Clamp the x value to keep the card within boundaries
-        const clampedX = Math.min(Math.max(offsetX, minX), maxX);
+    if(Math.abs(mx) >= boundary){
+      console.log(mx);
+      console.log(boundary);
+        }
 
-        const rotation = (offsetX / halfCardWidth) * 45;
-
-        // Update the spring position
-        set({ x: clampedX, rotate: rotation });
-    });
-  
-    return (
-      <animated.div
-        {...bind()} // bind the gesture to the div
-        className={classname}
-        ref={ref}
-        style={{
-          touchAction: 'none', 
-            x,
-            rotate: rotate.to((r) => `rotate(${r}deg`),
-        }}
-      >
-         {children}
-      </animated.div>
-    );
+    // Update the spring position
+    api({ x: active ? clampedX : 0, immediate: active, rotateZ: active? clampedRot : 0 });
   });
 
-  SwipeCard.displayName = 'SwipeCard';
-  
-  export default SwipeCard;
+  return (
+    <animated.div
+      {...bind()}
+      className={classname}
+      ref={ref}
+      style={{
+        touchAction: "none",
+        x,
+        rotateZ,
+      }}
+    >
+      {children}
+    </animated.div>
+  );
+});
+
+SwipeCard.displayName = "SwipeCard";
+
+export default SwipeCard;

@@ -33,7 +33,7 @@ const SwipeDeck = ({className}) => {
     <div className={className}>
       <SwipeCard classname={"w-60 h-[400px] bg-white border rounded-lg flex items-center justify-center cursor-grab overflow-hidden"}
       ref={cardRef}
-      deckWidth = {cardWidth}>
+      deckWidth = {cardWidth * 1.5}>
         <img
           src={db[0].url}
           alt="Placeholder"
