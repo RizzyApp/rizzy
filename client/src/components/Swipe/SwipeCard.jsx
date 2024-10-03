@@ -1,4 +1,4 @@
-import { useSpring, animated } from "@react-spring/web";
+import { useSpring, animated, to } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 import { forwardRef } from "react";
 
@@ -6,15 +6,27 @@ const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 45;
 
 const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
-  const [{ x, rotateZ }, api] = useSpring(() => ({ x: 0, rotateZ: 0 }));
+  const [{ x, rotateZ, scale }, api] = useSpring(() => ({
+    x: 0,
+    rotateZ: 0,
+    scale: 1,
+  }));
 
   const reset = () => {
-    api.set({x: 0, rotateZ: 0})
-  }
+    //for debugging purposes
+    api.set({ x: 0, rotateZ: 0, scale: 1 });
+  };
 
   const bind = useDrag(
     ({ active, movement: [mx], velocity: [vx], direction: [xDir] }) => {
       const halfCardWidth = (ref.current?.offsetWidth || 0) / 2;
+
+      if (halfCardWidth < 0) {
+        throw new Error(
+          "The cardwidth is smaller than zero, the card won't work as expected!"
+        );
+      }
+
       const boundary = deckWidth - halfCardWidth;
 
       let rotation = (mx / boundary) * MAX_ROTATION;
@@ -27,7 +39,7 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
       const trigger = vx > VELOCITY_THRESHOLD;
 
       if (!active && trigger) {
-        api.start((i) => {
+        api.start(() => {
           console.log("start reached!");
           const x = (200 + window.innerWidth) * xDir;
 
@@ -37,10 +49,10 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
           };
         });
       } else {
-        api({
+        api.start({
           x: active ? clampedX : 0,
-          immediate: active,
           rotateZ: active ? clampedRot : 0,
+          scale: active ? 1.1 : 1,
         });
       }
     }
@@ -56,6 +68,7 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
           touchAction: "none",
           x,
           rotateZ,
+          scale,
         }}
       >
         {children}
