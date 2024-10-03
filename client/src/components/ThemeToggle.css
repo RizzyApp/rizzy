@@ -1,0 +1,47 @@
+body[data-theme="light"] {
+  background-color: white;
+  color: black;
+}
+
+body[data-theme="dark"] {
+  background-color: black;
+  color: white;
+}
+
+.theme-toggle {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  margin: 20px;
+}
+
+.theme-toggle input {
+  display: none; /* Hide the checkbox */
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background-color: grey;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+  position: relative;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: rgb(184, 5, 5);
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+input:checked + .slider {
+  background-color: blue; /* Change color when toggled */
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px); /* Move the slider to the right when checked */
+}

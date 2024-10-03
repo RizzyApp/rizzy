@@ -2,8 +2,13 @@
 export default {
   content: ["./src/**/*.jsx"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+        pacifico: ['"Pacifico"', "cursive"],
+      },
+    },
   },
+  variants: {},
   plugins: [],
-}
-
+};
