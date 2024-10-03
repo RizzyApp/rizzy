@@ -12,9 +12,6 @@ function HomePage() {
     setIsFormVisible((prevState) => !prevState);
   };
 
-  const handleNavigate = () => { //ONLY DURING DEVELOPMENT!!!
-    
-  };
 
   return (
     <>
