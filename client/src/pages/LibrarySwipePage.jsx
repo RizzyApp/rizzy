@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactLibrarySwipeCard from "../components/ReactLibrarySwipeCard.jsx";
+import ReactLibrarySwipeCard from "../components/Swipe/ReactLibrarySwipeCard.jsx";
 
 const LibrarySwipePage = () => {
     return (
