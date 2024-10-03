@@ -1,26 +1,25 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import HomePage from "./components/HomePage.jsx";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./App.css";
+import HomePage from "./pages/HomePage";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
- /* useEffect(() => {
+  /* useEffect(() => {
     const getData = async () =>{
       const response = await fetch("/api/v1/users");
       const data = await response.json();
-      console.log(data)
-    }
+      console.log(data);
+    };
     getData();
   }, []);  */
 
   return (
     <>
-      <HomePage/>
+      <HomePage />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
