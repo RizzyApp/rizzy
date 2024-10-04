@@ -1,12 +1,23 @@
-import React from 'react';
-import SwipeCard from "../components/SwipeCard.jsx";
+import React from "react";
+import SwipeDeck from "../components/Swipe/SwipeDeck.jsx";
+import { useNavigate } from "react-router-dom";
 
-const SwipePage = () => {
-    return (
-        <div>
-            <SwipeCard></SwipeCard>
-        </div>
-    );
+const App = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div>
+      <div className="flex items-center justify-center min-h-screen">
+        <SwipeDeck />
+      </div>
+      <button
+        onClick={() => navigate("/")}
+        className="absolute bottom-0 right-0"
+      >
+        Back to HomePage
+      </button>
+    </div>
+  );
 };
 
-export default SwipePage;
+export default App;
