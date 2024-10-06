@@ -1,4 +1,4 @@
-import { useSpring, animated } from "@react-spring/web";
+import { useSpring, animated, config, to } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 import { forwardRef } from "react";
 
@@ -20,7 +20,8 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
   };
 
   const bind = useDrag(
-    ({ active, movement: [mx], velocity: [vx], direction: [xDir] }) => {
+    ({ event, active, movement: [mx], velocity: [vx], direction: [xDir] }) => {
+      event.preventDefault();
       const halfCardWidth = (ref.current?.offsetWidth || 0) / 2;
 
       if (halfCardWidth < 0) {
@@ -38,12 +39,17 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
         Math.max(rotation, -MAX_ROTATION),
         MAX_ROTATION
       );
-      const trigger = vx > VELOCITY_THRESHOLD;
+      const trigger = vx > VELOCITY_THRESHOLD || Math.abs(mx) >= boundary;
 
       if (!active && trigger) {
+        let actualDir = xDir;
+        if (Math.abs(mx) >= boundary) {
+          actualDir = mx > 0 ? 1 : -1;
+        }
+
         api.start(() => {
           console.log("start reached!");
-          const x = FLY_RANGE * xDir;
+          const x = FLY_RANGE * actualDir;
 
           return {
             x,
@@ -51,12 +57,21 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
           };
         });
       } else {
-        api({
-          x: active ? clampedX : 0,
-          immediate: true,
-          rotateZ: active ? clampedRot : 0,
-          scale: active ? 1.1 : 1,
-        });
+        if (active) {
+          api.start({
+            x: clampedX,
+            rotateZ: clampedRot,
+            immediate: true,
+            scale: 1.1,
+          });
+        } else {
+          api.start({
+            x: 0,
+            rotateZ: 0,
+            scale: 1,
+            config: config.slow,
+          });
+        }
       }
     }
   );
@@ -71,8 +86,8 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
           touchAction: "none",
           x,
           rotateZ,
-          scale,
           opacity,
+          scale,
         }}
       >
         {children}
