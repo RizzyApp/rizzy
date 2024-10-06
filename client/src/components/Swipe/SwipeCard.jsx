@@ -3,12 +3,16 @@ import { useDrag } from "@use-gesture/react";
 import { forwardRef, useState } from "react";
 
 //TODO: Put the debugging stuff into a conditional so it will only run if the environment is in development!!!
+//TODO: Reduced motion mode
 
 const VELOCITY_THRESHOLD = 0.1;
-const MAX_ROTATION = 45;
+const MAX_ROTATION = 20;
 const FLY_RANGE = 300;
 
-const calculateTrigger = (vx, mx, boundary) => {
+const calculateTrigger = (vx, mx, dir, boundary) => {
+  if ((mx < 0 && dir === 1) || (mx > 0 && dir === -1)) {
+    return false;
+  }
   return vx > VELOCITY_THRESHOLD || Math.abs(mx) >= boundary;
 };
 
@@ -22,14 +26,14 @@ const calculateMovementAndBoundary = (mx, halfCardWidth, deckWidth) => {
 
 const handleAnimation = (api, trigger, active, xDir, mx, boundary) => {
   if (!active && trigger) {
-    let actualDir = xDir;
+    let dir = xDir;
     if (Math.abs(mx) >= boundary) {
-      actualDir = mx > 0 ? 1 : -1;
+      dir = mx > 0 ? 1 : -1;
     }
 
     api.start(() => {
       //fly out animation
-      const x = FLY_RANGE * actualDir;
+      const x = FLY_RANGE * dir;
       return { x, opacity: 0 };
     });
   } else {
@@ -38,8 +42,8 @@ const handleAnimation = (api, trigger, active, xDir, mx, boundary) => {
       api.start({
         x: mx,
         rotateZ: (mx / boundary) * MAX_ROTATION,
-        immediate: true,
         scale: 1.1,
+        config: { friction: 50, tension: 800 },
       });
     } else {
       // fallback animation
@@ -65,6 +69,7 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
     mx: 0,
     rotation: 0,
     velocity: 0,
+    trigger: false,
   });
 
   const reset = () => {
@@ -89,13 +94,13 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
         deckWidth
       );
 
-      const trigger = calculateTrigger(vx, mx, boundary);
+      const trigger = calculateTrigger(vx, mx, xDir, boundary);
 
-      // Update debug information live while dragging
       setDebugInfo({
         mx: clampedX,
         rotation: (clampedX / boundary) * MAX_ROTATION,
         velocity: vx,
+        trigger: trigger,
       });
 
       handleAnimation(api, trigger, active, xDir, clampedX, boundary);
@@ -123,6 +128,9 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
         <p>Movement X (mx): {debugInfo.mx.toFixed(2)}</p>
         <p>Rotation (deg): {debugInfo.rotation.toFixed(2)}</p>
         <p>Velocity: {debugInfo.velocity.toFixed(2)}</p>
+        <p className={debugInfo.trigger ? "text-green-500" : "text-red-500"}>
+          Trigger: {debugInfo.trigger ? "true" : "false"}
+        </p>
       </div>
       <button onClick={reset} className="fixed top-3/4">
         Reset
