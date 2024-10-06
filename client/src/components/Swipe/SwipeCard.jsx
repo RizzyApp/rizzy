@@ -6,6 +6,48 @@ const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 45;
 const FLY_RANGE = 300;
 
+const calculateTrigger = (vx, mx, boundary) => {
+  return vx > VELOCITY_THRESHOLD || Math.abs(mx) >= boundary;
+};
+
+const calculateMovementAndBoundary = (mx, halfCardWidth, deckWidth) => {
+  const boundary = deckWidth - halfCardWidth;
+
+  const clampedX = Math.min(Math.max(mx, -boundary), boundary);
+
+  return { clampedX, boundary };
+};
+
+const handleAnimation = (api, trigger, active, xDir, mx, boundary) => {
+  if (!active && trigger) {
+    let actualDir = xDir;
+    if (Math.abs(mx) >= boundary) {
+      actualDir = mx > 0 ? 1 : -1;
+    }
+
+    api.start(() => {
+      const x = FLY_RANGE * actualDir;
+      return { x, opacity: 0 };
+    });
+  } else {
+    if (active) {
+      api.start({
+        x: mx,
+        rotateZ: (mx / boundary) * MAX_ROTATION,
+        immediate: true,
+        scale: 1.1,
+      });
+    } else {
+      api.start({
+        x: 0,
+        rotateZ: 0,
+        scale: 1,
+        config: config.slow,
+      });
+    }
+  }
+};
+
 const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
   const [{ x, rotateZ, scale, opacity }, api] = useSpring(() => ({
     x: 0,
@@ -26,53 +68,19 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
 
       if (halfCardWidth < 0) {
         throw new Error(
-          "The cardwidth is smaller than zero, the card won't work as expected!"
+          "The card width is smaller than zero, the card won't work as expected!"
         );
       }
 
-      const boundary = deckWidth - halfCardWidth;
-
-      let rotation = (mx / boundary) * MAX_ROTATION;
-
-      const clampedX = Math.min(Math.max(mx, -boundary), boundary);
-      const clampedRot = Math.min(
-        Math.max(rotation, -MAX_ROTATION),
-        MAX_ROTATION
+      const { clampedX, boundary } = calculateMovementAndBoundary(
+        mx,
+        halfCardWidth,
+        deckWidth
       );
-      const trigger = vx > VELOCITY_THRESHOLD || Math.abs(mx) >= boundary;
 
-      if (!active && trigger) {
-        let actualDir = xDir;
-        if (Math.abs(mx) >= boundary) {
-          actualDir = mx > 0 ? 1 : -1;
-        }
+      const trigger = calculateTrigger(vx, mx, boundary);
 
-        api.start(() => {
-          console.log("start reached!");
-          const x = FLY_RANGE * actualDir;
-
-          return {
-            x,
-            opacity: 0,
-          };
-        });
-      } else {
-        if (active) {
-          api.start({
-            x: clampedX,
-            rotateZ: clampedRot,
-            immediate: true,
-            scale: 1.1,
-          });
-        } else {
-          api.start({
-            x: 0,
-            rotateZ: 0,
-            scale: 1,
-            config: config.slow,
-          });
-        }
-      }
+      handleAnimation(api, trigger, active, xDir, clampedX, boundary);
     }
   );
 
