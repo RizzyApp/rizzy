@@ -1,6 +1,8 @@
 import { useSpring, animated, config, to } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
+
+//TODO: Put the debugging stuff into a conditional so it will only run if the environment is in development!!!
 
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 45;
@@ -26,11 +28,13 @@ const handleAnimation = (api, trigger, active, xDir, mx, boundary) => {
     }
 
     api.start(() => {
+      //fly out animation
       const x = FLY_RANGE * actualDir;
       return { x, opacity: 0 };
     });
   } else {
     if (active) {
+      //grabbing animation
       api.start({
         x: mx,
         rotateZ: (mx / boundary) * MAX_ROTATION,
@@ -38,6 +42,7 @@ const handleAnimation = (api, trigger, active, xDir, mx, boundary) => {
         scale: 1.1,
       });
     } else {
+      // fallback animation
       api.start({
         x: 0,
         rotateZ: 0,
@@ -55,6 +60,12 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
     scale: 1,
     opacity: 1,
   }));
+
+  const [debugInfo, setDebugInfo] = useState({
+    mx: 0,
+    rotation: 0,
+    velocity: 0,
+  });
 
   const reset = () => {
     //for debugging purposes
@@ -80,6 +91,13 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
 
       const trigger = calculateTrigger(vx, mx, boundary);
 
+      // Update debug information live while dragging
+      setDebugInfo({
+        mx: clampedX,
+        rotation: (clampedX / boundary) * MAX_ROTATION,
+        velocity: vx,
+      });
+
       handleAnimation(api, trigger, active, xDir, clampedX, boundary);
     }
   );
@@ -100,6 +118,12 @@ const SwipeCard = forwardRef(({ children, classname, deckWidth }, ref) => {
       >
         {children}
       </animated.div>
+      {/* Debugging information rendered on the screen */}
+      <div className="fixed top-0 left-0 p-4 bg-white text-black z-50">
+        <p>Movement X (mx): {debugInfo.mx.toFixed(2)}</p>
+        <p>Rotation (deg): {debugInfo.rotation.toFixed(2)}</p>
+        <p>Velocity: {debugInfo.velocity.toFixed(2)}</p>
+      </div>
       <button onClick={reset} className="fixed top-3/4">
         Reset
       </button>
