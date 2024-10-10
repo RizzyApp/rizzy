@@ -1,6 +1,7 @@
 import React from "react";
 import SwipeDeck from "../components/Swipe/SwipeDeck.jsx";
 import { useNavigate } from "react-router-dom";
+import CardLoader from "../components/Swipe/CardLoader.jsx";
 
 const App = () => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ const App = () => {
   return (
     <div>
       <div className="flex items-center justify-center min-h-screen">
-        <SwipeDeck />
+        <CardLoader></CardLoader>
       </div>
       <button
         onClick={() => navigate("/")}
