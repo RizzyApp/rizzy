@@ -15,20 +15,23 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
 
   //only the active card will be animated
   //activeIndex currently is always 0, because the top card is always the first card in the deck!
+  const renderCards = () =>
+    cards.map((card, index) => (
+      <SwipeCard
+        key={index}
+        deckWidth={deckWidth}
+        bind={index === activeIndex ? bind : () => {}}
+        isActive={index === activeIndex}
+        animatedStyles={index === activeIndex ? animatedStyles : {}}
+        zIndex={cards.length - index}
+      >
+        {card.content}
+      </SwipeCard>
+    ));
+
   return (
     <div className="relative">
-      {cards.map((card, index) => (
-        <SwipeCard
-          key={index}
-          deckWidth={deckWidth}
-          bind={index === activeIndex ? bind : () => {}}
-          isActive={index === activeIndex}
-          animatedStyles={index === activeIndex ? animatedStyles : {}}
-          zIndex={cards.length - index}
-        >
-          {card.content}
-        </SwipeCard>
-      ))}
+      {renderCards()}
       {isDevelopment && <DebugInfo debugInfo={debugInfo} reset={reset} />}
     </div>
   );
