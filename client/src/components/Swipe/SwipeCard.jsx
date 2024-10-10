@@ -1,6 +1,7 @@
 import { animated } from "@react-spring/web";
 
-//TODO: Fix that ZIndex, I don't like magic numbers
+//hopefully we won't have more than 100 cards in the deck lol
+const MAXIMUM_Z_INDEX = 100;
 
 const SwipeCard = ({ children, bind, animatedStyles, isActive, zIndex }) => {
   return (
@@ -12,7 +13,7 @@ const SwipeCard = ({ children, bind, animatedStyles, isActive, zIndex }) => {
           position: "absolute",
           top: 0,
           left: 0,
-          zIndex: isActive ? 10 : zIndex, //that zIndex might cause trouble
+          zIndex: isActive ? MAXIMUM_Z_INDEX : zIndex,
           ...animatedStyles,
         }}
       >
