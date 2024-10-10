@@ -7,7 +7,7 @@ const MAX_ROTATION = 20;
 const FLY_RANGE = 300;
 
 const calculateTrigger = (vx, mx, dir, boundary) => {
-  if ((mx < 0 && dir === 1) || (mx > 0 && dir === -1)) {
+  if ((mx < 0 && dir !== -1) || (mx > 0 && dir !== 1)) {
     return false;
   }
   return vx > VELOCITY_THRESHOLD || Math.abs(mx) >= boundary;
@@ -44,8 +44,7 @@ const useAnimation = (deckWidth, onSwipeOut) => {
       direction: [xDir],
     }) => {
       event.preventDefault();
-      const halfCardWidth = deckWidth / 2; // Simplified for demonstration
-
+      const halfCardWidth = deckWidth / 2; // Simplified
       if (halfCardWidth < 0) {
         throw new Error("The card width is smaller than zero!");
       }
@@ -97,7 +96,7 @@ const useAnimation = (deckWidth, onSwipeOut) => {
     bind,
     debugInfo,
     reset,
-    animatedStyles, // Pass the combined styles
+    animatedStyles,
   };
 };
 
