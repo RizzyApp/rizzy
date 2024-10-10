@@ -43,7 +43,7 @@ function CardLoader() {
 
   return (
     <div>
-      <SwipeDeck cards={cards} deckWidth={400}></SwipeDeck>
+      <SwipeDeck initialCards={cards} deckWidth={400}></SwipeDeck>
     </div>
   );
 }

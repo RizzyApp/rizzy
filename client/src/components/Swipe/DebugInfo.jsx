@@ -7,6 +7,7 @@ function DebugInfo({ debugInfo, reset }) {
       <p>Rotation (deg): {debugInfo.rotation.toFixed(2)}</p>
       <p>Velocity: {debugInfo.velocity.toFixed(2)}</p>
       <p>Direction: {debugInfo.direction === 1 ? "right" : "left"}</p>
+      <p>CardIndex: {debugInfo.index}</p>
       <p className={debugInfo.trigger ? "text-green-500" : "text-red-500"}>
         Trigger: {debugInfo.trigger ? "true" : "false"}
       </p>
