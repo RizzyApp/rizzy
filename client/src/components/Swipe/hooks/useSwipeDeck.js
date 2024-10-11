@@ -2,10 +2,11 @@
 import { useEffect, useRef, useState } from "react";
 import useAnimation from "./useAnimation";
 
+const IS_DEVELOPMENT = import.meta.env.DEV;
+
 const useSwipeDeck = (initialCards, deckWidth) => {
   const [cards, setCards] = useState(initialCards);
   const [activeIndex, setActiveIndex] = useState(0);
-  const isDevelopment = import.meta.env.DEV;
 
 
   const onSwipeOut = () => {
@@ -34,7 +35,7 @@ const useSwipeDeck = (initialCards, deckWidth) => {
     reset: handleReset,
     animatedStyles,
     activeIndex,
-    isDevelopment,
+    isDevelopment: IS_DEVELOPMENT,
     cards
   };
 };
