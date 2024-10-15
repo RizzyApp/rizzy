@@ -6,40 +6,32 @@ const db = [
   {
     name: "Mr.Bean",
     url: "./image/bean-1.jpg",
+    bio: "This is a very cool bio",
   },
   {
     name: "Mr.Bean",
     url: "./image/bean-2.jpg",
+    bio: "This is a not so cool bio",
   },
   {
     name: "Mr.Bean",
     url: "./image/bean-3.jpg",
+    bio: "This is an okay bio",
   },
   {
     name: "Mr.Bean",
     url: "./image/bean-4.jpg",
+    bio: "This is a very bad bio",
   },
 ];
 
 function CardLoader() {
-  const cards = [
-    {
-      id: 0,
-      content: <CardContent src={db[0].url}></CardContent>,
-    },
-    {
-      id: 1,
-      content: <CardContent src={db[1].url}></CardContent>,
-    },
-    {
-      id: 2,
-      content: <CardContent src={db[2].url}></CardContent>,
-    },
-    {
-      id: 3,
-      content: <CardContent src={db[3].url}></CardContent>,
-    },
-  ];
+  const cards = db.map((data, i) => {
+    return {
+      id: i,
+      content: <CardContent src={data.url} name={data.name} bio={data.bio} />,
+    };
+  });
 
   return (
     <div>

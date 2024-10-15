@@ -5,7 +5,6 @@ import { useDrag } from "@use-gesture/react";
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 20;
 const FLY_RANGE = 300;
-
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 //Not sure which one would annoy the user most
@@ -45,7 +44,7 @@ const calculateMovementAndBoundary = (mx, halfCardWidth, deckWidth) => {
   return { clampedX, boundary };
 };
 
-const useAnimation = (deckWidth, onSwipeOut) => {
+const useSwipeAnimation = (deckWidth, onSwipeOut) => {
   const [debugInfo, setDebugInfo] = useState({
     clampedX: 0,
     currentMx: 0,
@@ -156,4 +155,4 @@ const useAnimation = (deckWidth, onSwipeOut) => {
   };
 };
 
-export default useAnimation;
+export default useSwipeAnimation;
