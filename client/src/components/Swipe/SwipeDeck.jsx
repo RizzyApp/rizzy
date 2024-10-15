@@ -1,50 +1,38 @@
-import { useEffect, useState, useRef } from "react";
+import useSwipeDeck from "./hooks/useSwipeDeck";
 import SwipeCard from "./SwipeCard";
-const db = [
-  {
-    name: "Mr.Bean",
-    url: "./image/bean-1.jpg",
-  },
-  {
-    name: "Mr.Bean",
-    url: "./image/bean-2.jpg",
-  },
-  {
-    name: "Mr.Bean",
-    url: "./image/bean-3.jpg",
-  },
-  {
-    name: "Mr.Bean",
-    url: "./image/bean-4.jpg",
-  },
-];
+import DebugInfo from "./DebugInfo";
 
-const SwipeDeck = ({ className }) => {
-  const cardRef = useRef(null); // Ref to get SwipeCard size
-  const [cardWidth, setCardWidth] = useState(0); // State to store card width
+const SwipeDeck = ({ initialCards, deckWidth }) => {
+  const {
+    bind,
+    debugInfo,
+    reset,
+    animatedStyles,
+    activeIndex,
+    isDevelopment,
+    cards,
+  } = useSwipeDeck(initialCards, deckWidth);
 
-  useEffect(() => {
-    if (cardRef.current) {
-      setCardWidth(cardRef.current.offsetWidth); //Boundary will be the width of the card
-    }
-  }, [cardRef]);
+  //only the active card will be animated
+  //activeIndex currently is always 0, because the top card is always the first card in the deck!
+  const renderCards = () =>
+    cards.map((card, index) => (
+      <SwipeCard
+        key={index}
+        deckWidth={deckWidth}
+        bind={index === activeIndex ? bind : () => {}}
+        isActive={index === activeIndex}
+        animatedStyles={index === activeIndex ? animatedStyles : {}}
+        zIndex={cards.length - index}
+      >
+        {card.content}
+      </SwipeCard>
+    ));
 
   return (
     <div className="relative">
-      <SwipeCard
-        classname={
-          "relative z-[2] w-60 h-[400px] bg-white border rounded-lg flex items-center justify-center cursor-grab overflow-hidden"
-        }
-        ref={cardRef}
-        deckWidth={cardWidth * 1.5}
-      >
-        <img
-          src={db[0].url}
-          alt="Placeholder"
-          className="w-36 h-full object-cover pointer-events-none"
-        />
-      </SwipeCard>
-      <div className="absolute top-0 w-60 h-[400px] bg-blue-200 rounded-lg flex items-center justify-center"></div>
+      {renderCards()}
+      {isDevelopment && <DebugInfo debugInfo={debugInfo} reset={reset} />}
     </div>
   );
 };
