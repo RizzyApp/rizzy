@@ -1,17 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.jsx"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        topbarpink: "#BE467C",
+        topbar: "rgba(var(--topbar))",
+        buttonHover: "rgba(var(--buttonHover))",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         pacifico: ["Pacifico", "cursive"],
       },
       backgroundImage: {
-        "custom-gradient": "linear-gradient(180deg, #ED4170, #904B89 72%)",
+        "custom-gradient": "var(--custom-gradient)",
       },
       dropShadow: {
         slogan: "8px -8px 5px rgba(0, 0, 0, 0.6)",

@@ -10,7 +10,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="bg-transparent rounded-lg shadow-2xl self-center m-10 p-6 max-w-md w-full">
+    <div className="bg-transparent rounded-lg shadow-2xl self-center m-10 text-white p-6 max-w-md w-full">
       <h1 className="text-3xl font-semibold drop-shadow-topbar text-center mb-4 rounded text-red">
         Register
       </h1>
@@ -25,7 +25,7 @@ const RegisterPage = () => {
           <input
             type="text"
             id="username"
-            className="border bg-white border-gray-300 p-2 w-full rounded-lg"
+            className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
             placeholder="Enter your username"
           />
         </div>
@@ -39,7 +39,7 @@ const RegisterPage = () => {
           <input
             type="email"
             id="email"
-            className="border bg-white border-gray-300 p-2 w-full rounded-lg"
+            className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
             placeholder="Enter your email"
           />
         </div>
@@ -53,12 +53,12 @@ const RegisterPage = () => {
           <input
             type="password"
             id="password"
-            className="border bg-white border-gray-300 p-2 w-full rounded-lg"
+            className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
             placeholder="Enter your password"
           />
         </div>
         <div className="flex justify-center mt-4">
-          <button className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-pink-500 border-white">
+          <button className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white">
             Register
           </button>
         </div>
