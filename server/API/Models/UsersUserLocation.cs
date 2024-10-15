@@ -1,6 +1,6 @@
 ﻿namespace API.Models;
 
-public class UsersUserLocations
+public class UsersUserLocation
 {
     public int Id { get; set; }
     public int UserId { get; set; }

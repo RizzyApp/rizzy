@@ -15,5 +15,5 @@ public class User
     public ICollection<Photo> Photos { get; set; }
     public ICollection<UserLoginDetail> UserLoginDetails { get; set; }
     public ICollection<UserMatchInfo> UserMatchInfos { get; set; }
-    public ICollection<UsersUserLocations> UsersUserLocations { get; set; }
+    public ICollection<UsersUserLocation> UsersUserLocations { get; set; }
 }
