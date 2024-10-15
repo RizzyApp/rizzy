@@ -16,8 +16,6 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     const theme = isDarkMode ? "dark" : "light";
-    console.log("Applying theme: ", theme);
-
     document.body.setAttribute("class", theme);
     localStorage.setItem("theme", theme);
   }, [isDarkMode]);
@@ -25,7 +23,8 @@ const ThemeToggle = () => {
   return (
     <label className="theme-toggle">
       <input type="checkbox" onChange={toggleTheme} checked={isDarkMode} />
-      <span className="slider"></span>
+      <div className="sun"></div>
+      <div className="moon"></div>
     </label>
   );
 };
