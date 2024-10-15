@@ -1,12 +1,12 @@
-body[data-theme="light"] {
+/* body[data-theme="light"] {
   background-color: white;
   color: black;
-}
+} */
 
-body[data-theme="dark"] {
+/* body[data-theme="dark"] {
   background-color: black;
   color: white;
-}
+} */
 
 .theme-toggle {
   display: inline-block;
@@ -43,5 +43,5 @@ input:checked + .slider {
 }
 
 input:checked + .slider::before {
-  transform: translateX(20px); /* Move the slider to the right when checked */
+  transform: translateY(20px); /* Move the slider to the right when checked */
 }

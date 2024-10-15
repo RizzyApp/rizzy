@@ -8,12 +8,12 @@ const App = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center bg-custom-gradient justify-center min-h-screen">
         <CardLoader></CardLoader>
       </div>
       <button
         onClick={() => navigate("/")}
-        className="absolute bottom-0 right-0"
+        className="absolute bottom-0 right-0 text-white"
       >
         Back to HomePage
       </button>

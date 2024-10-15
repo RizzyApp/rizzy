@@ -5,7 +5,7 @@ const ContactUsPage = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center font-poppins bg-custom-gradient h-screen">
+      <div className="flex flex-col items-center font-poppins bg-custom-gradient text-white h-screen">
         <div className="p-4 w-full max-w-md mt-20">
           <form className="space-y-6">
             <div>
@@ -30,7 +30,7 @@ const ContactUsPage = () => {
               />
             </div>
             <div className="flex justify-end">
-              <button className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-pink-500 border-white">
+              <button className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white">
                 Submit
               </button>
             </div>

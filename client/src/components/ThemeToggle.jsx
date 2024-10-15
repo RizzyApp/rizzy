@@ -16,7 +16,9 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     const theme = isDarkMode ? "dark" : "light";
-    document.body.setAttribute("data-theme", theme);
+    console.log("Applying theme: ", theme);
+
+    document.body.setAttribute("class", theme);
     localStorage.setItem("theme", theme);
   }, [isDarkMode]);
 
