@@ -72,7 +72,7 @@ namespace API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(4090)
+                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1626)
                         });
                 });
 
@@ -190,7 +190,7 @@ namespace API.Migrations
                             Id = 1,
                             Bio = "Developer",
                             BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3900),
+                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1413),
                             FirstName = "Pista",
                             Gender = 1,
                             LastName = "Erős",
@@ -201,7 +201,7 @@ namespace API.Migrations
                             Id = 2,
                             Bio = "Designer",
                             BirthDate = new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3960),
+                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1460),
                             FirstName = "Anna",
                             Gender = 2,
                             LastName = "Gyenge",
