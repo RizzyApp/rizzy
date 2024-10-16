@@ -13,7 +13,6 @@ public class AppDbContext : DbContext
     public DbSet<Photo> Photos { get; set; }
     public DbSet<UserLoginDetail> UserLoginDetails { get; set; }
     public DbSet<UserMatchInfo> UserMatchInfos { get; set; }
-    //public UsersUserLocation UsersUserLocations { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
@@ -21,51 +20,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.BlockedUsers)
-        //    .WithOne(b => b.User)
-        //    .HasForeignKey(b => b.UserId);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.Messages)
-        //    .WithOne(m => m.User)
-        //    .HasForeignKey(m => m.UserId);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.Photos)
-        //    .WithOne(p => p.User)
-        //    .HasForeignKey(p => p.UserId);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.UserLoginDetails)
-        //    .WithOne(ul => ul.User)
-        //    .HasForeignKey(ul => ul.UserId);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.UserMatchInfos)
-        //    .WithOne(umi => umi.User)
-        //    .HasForeignKey(umi => umi.UserId);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.UsersUserLocations)
-        //    .WithOne(ul => ul.User)
-        //    .HasForeignKey(ul => ul.UserId);
-
-        //modelBuilder.Entity<Message>()
-        //    .HasOne(m => m.MatchInfo)
-        //    .WithMany(mi => mi.Messages)
-        //    .HasForeignKey(m => m.MatchInfoId);
-
-        //modelBuilder.Entity<UserMatchInfo>()
-        //    .HasOne(umi => umi.MatchInfo)
-        //    .WithMany(mi => mi.UserMatchInfos)
-        //    .HasForeignKey(umi => umi.MatchInfoId);
-
-        //modelBuilder.Entity<UsersUserLocation>()
-        //    .HasOne(ul => ul.Locations)
-        //    .WithMany(l => l.UsersUserLocations)
-        //    .HasForeignKey(ul => ul.LocationsId);
-
         modelBuilder.Entity<BlockedUser>()
             .HasOne(bu => bu.User)
             .WithMany(u => u.BlockedUsers)
