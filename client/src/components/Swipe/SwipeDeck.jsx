@@ -8,10 +8,11 @@ const FIRST_INDEX = 0;
 const MAXIMUM_Z_INDEX = 100;
 
 const SwipeDeck = ({ initialCards, deckWidth }) => {
-  const { bind, debugInfo, reset, animatedStyles, isDevelopment, cards } =
-    useSwipeDeck(initialCards, deckWidth);
-
   const animatedDivRef = useRef(null);
+  const imageRef = useRef(null);
+
+  const { bind, debugInfo, reset, animatedStyles, y, isDevelopment, cards } =
+    useSwipeDeck(initialCards, deckWidth, imageRef);
 
   useEffect(() => {
     console.log("Component rendered or re-rendered");
@@ -31,7 +32,12 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
           ...(index === FIRST_INDEX ? animatedStyles : {}),
         }}
       >
-        <CardContent data={card} animatedDivRef={animatedDivRef} />
+        <CardContent
+          data={card}
+          y={y}
+          active={index === FIRST_INDEX}
+          ref={index === FIRST_INDEX ? imageRef : null}
+        />
       </animated.div>
     ));
 

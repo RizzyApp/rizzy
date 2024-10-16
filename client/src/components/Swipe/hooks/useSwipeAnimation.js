@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useSpring } from "@react-spring/web";
-import { useDrag } from "@use-gesture/react";
+import { useDrag, useGesture } from "@use-gesture/react";
 
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 20;
@@ -44,7 +44,7 @@ const calculateMovementAndBoundary = (mx, halfCardWidth, deckWidth) => {
   return { clampedX, boundary };
 };
 
-const useSwipeAnimation = (deckWidth, onSwipeOut) => {
+const useSwipeAnimation = (deckWidth, onSwipeOut, imageRef) => {
   const [debugInfo, setDebugInfo] = useState({
     clampedX: 0,
     currentMx: 0,
@@ -56,12 +56,14 @@ const useSwipeAnimation = (deckWidth, onSwipeOut) => {
     trigger: false,
   });
 
-  const [{ x, rotateZ, scale, opacity }, api] = useSpring(() => ({
+  const [{ x, rotateZ, scale, opacity }, dragApi] = useSpring(() => ({
     x: 0,
     rotateZ: 0,
     scale: 1,
     opacity: 1,
   }));
+
+  const [{ y }, scrollApi] = useSpring(() => ({ y: 0 }));
 
   const prevMxRef = useRef(0);
   const reversedDirectionRef = useRef(false);
@@ -78,68 +80,77 @@ const useSwipeAnimation = (deckWidth, onSwipeOut) => {
     }
   }
 
-  const bind = useDrag(
-    ({
-      event,
-      active,
-      movement: [mx],
-      velocity: [vx],
-      direction: [xDir],
-    }) => {
-      event.preventDefault();
-      const halfCardWidth = deckWidth / 2; // Simplified
-      if (halfCardWidth < 0) {
-        throw new Error("The card width is smaller than zero!");
-      }
+  const bind = useGesture(
+    {
+      onDrag: ({
+        event,
+        active,
+        movement: [mx],
+        velocity: [vx],
+        direction: [xDir],
+      }) => {
+        event.preventDefault();
+        const halfCardWidth = deckWidth / 2; // Simplified
+        if (halfCardWidth < 0) {
+          throw new Error("The card width is smaller than zero!");
+        }
 
-      const { clampedX, boundary } = calculateMovementAndBoundary(mx, halfCardWidth, deckWidth);
+        const { clampedX, boundary } = calculateMovementAndBoundary(mx, halfCardWidth, deckWidth);
 
+        updateDirectionReversedRef(mx);
 
-      updateDirectionReversedRef(mx);
+        const trigger = shouldTriggerFlyOut(vx, mx, xDir, boundary, reversedDirectionRef.current);
 
-      const trigger = shouldTriggerFlyOut(vx, mx, xDir, boundary, reversedDirectionRef.current);
+        if (IS_DEVELOPMENT) {
+          setDebugInfo({
+            clampedX: clampedX,
+            currentMx: mx,
+            previousMx: prevMxRef.current,
+            rotation: (clampedX / boundary) * MAX_ROTATION,
+            velocity: vx,
+            direction: xDir,
+            isDirectionReversed: reversedDirectionRef.current,
+            trigger: trigger,
+          });
+        }
 
-
-      if (IS_DEVELOPMENT) {
-        setDebugInfo({
-          clampedX: clampedX,
-          currentMx: mx,
-          previousMx: prevMxRef.current,
-          rotation: (clampedX / boundary) * MAX_ROTATION,
-          velocity: vx,
-          direction: xDir,
-          isDirectionReversed: reversedDirectionRef.current,
-          trigger: trigger,
-        });
-      }
-
-      // Handle dragging animation
-      if (active) {
-        api.start({
-          x: clampedX,
-          rotateZ: (clampedX / boundary) * MAX_ROTATION,
-          scale: 1.1,
-          opacity: 1,
-          config: { friction: 50, tension: 800 },
-        });
-      } else if (!active && trigger) {
-        // Trigger fallout animation
-        api.start({
-          x: FLY_RANGE * (mx > 0 ? 1 : -1),
-          rotateZ: (clampedX / boundary) * MAX_ROTATION,
-          opacity: 0,
-          onRest: onSwipeOut, // Callback when the fallout animation finishes
-        });
-      } else {
-        // Reset animation if not swiping out
-        api.start({ x: 0, rotateZ: 0, scale: 1, opacity: 1, config: { friction: 50, tension: 800 } });
-      }
-    }
+        // Handle dragging animation
+        if (active) {
+          dragApi.start({
+            x: clampedX,
+            rotateZ: (clampedX / boundary) * MAX_ROTATION,
+            scale: 1.1,
+            opacity: 1,
+            config: { friction: 50, tension: 800 },
+          });
+        } else if (!active && trigger) {
+          // Trigger fallout animation
+          dragApi.start({
+            x: FLY_RANGE * (mx > 0 ? 1 : -1),
+            rotateZ: (clampedX / boundary) * MAX_ROTATION,
+            opacity: 0,
+            onRest: onSwipeOut, // Callback when the fallout animation finishes
+          });
+        } else {
+          // Reset animation if not swiping out
+          dragApi.start({ x: 0, rotateZ: 0, scale: 1, opacity: 1, config: { friction: 50, tension: 800 } });
+        }
+      },
+      onWheel: ({ movement: [, my], memo = y.get() }) => {
+        console.log(memo);
+        const scrollHeight = imageRef.current.scrollHeight;
+        const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
+        scrollApi.start({ y: nextY });
+        return memo;
+      },
+    },
+    { drag: { preventScroll: true } } // Optional configuration for drag gesture
   );
+
 
   const reset = () => {
     // For debugging purposes
-    api.set({ x: 0, rotateZ: 0, scale: 1, opacity: 1 });
+    dragApi.set({ x: 0, rotateZ: 0, scale: 1, opacity: 1 });
     prevMxRef.current = 0;
     reversedDirectionRef.current = false;
   };
@@ -152,6 +163,7 @@ const useSwipeAnimation = (deckWidth, onSwipeOut) => {
     debugInfo,
     reset,
     animatedStyles,
+    y
   };
 };
 

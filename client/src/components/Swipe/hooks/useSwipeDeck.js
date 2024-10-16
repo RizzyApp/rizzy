@@ -4,7 +4,7 @@ import useSwipeAnimation from "./useSwipeAnimation";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
-const useSwipeDeck = (initialCards, deckWidth) => {
+const useSwipeDeck = (initialCards, deckWidth, imageRef) => {
   const [cards, setCards] = useState(initialCards);
 
 
@@ -14,7 +14,7 @@ const useSwipeDeck = (initialCards, deckWidth) => {
   };
 
 
-  const { bind, debugInfo, reset, animatedStyles } = useSwipeAnimation(deckWidth, onSwipeOut);
+  const { bind, debugInfo, reset, animatedStyles, y } = useSwipeAnimation(deckWidth, onSwipeOut, imageRef);
 
   useEffect(() => {
     reset();
@@ -31,6 +31,7 @@ const useSwipeDeck = (initialCards, deckWidth) => {
     debugInfo,
     reset: handleReset,
     animatedStyles,
+    y,
     isDevelopment: IS_DEVELOPMENT,
     cards
   };
