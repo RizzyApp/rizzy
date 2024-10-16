@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<UserLoginDetail> UserLoginDetails { get; set; }
     public DbSet<UserMatchInfo> UserMatchInfos { get; set; }
 
-    public AppDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
