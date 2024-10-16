@@ -1,5 +1,5 @@
 import React from "react";
-import CardContent from "./CardContent";
+import CardContent from "./CardContent/CardContent";
 import SwipeDeck from "./SwipeDeck";
 
 const db = [
@@ -33,11 +33,7 @@ function CardLoader() {
     };
   });
 
-  return (
-    <div>
-      <SwipeDeck initialCards={cards} deckWidth={400}></SwipeDeck>
-    </div>
-  );
+  return <SwipeDeck initialCards={cards} deckWidth={400}></SwipeDeck>;
 }
 
 export default CardLoader;

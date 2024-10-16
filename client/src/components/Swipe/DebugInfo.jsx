@@ -2,7 +2,7 @@ import React from "react";
 
 function DebugInfo({ debugInfo, reset }) {
   return (
-    <div className="fixed top-0 left-0 p-4 bg-white text-black z-50 select-none">
+    <div className="fixed top-20 left-0 p-4 bg-white text-black z-50 select-none">
       <p>Clamped Movment X (mx): {debugInfo.clampedX.toFixed(2)}</p>
       <p>Cursor Movment X (mx): {debugInfo.currentMx.toFixed(2)}</p>
       <p>Rotation (deg): {debugInfo.rotation.toFixed(2)}</p>

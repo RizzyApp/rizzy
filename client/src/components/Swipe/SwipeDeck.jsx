@@ -1,31 +1,38 @@
+import { useEffect } from "react";
 import useSwipeDeck from "./hooks/useSwipeDeck";
-import SwipeCard from "./SwipeCard";
+import { animated } from "@react-spring/web";
 import DebugInfo from "./DebugInfo";
 
 const FIRST_INDEX = 0;
+const MAXIMUM_Z_INDEX = 100;
 
 const SwipeDeck = ({ initialCards, deckWidth }) => {
   const { bind, debugInfo, reset, animatedStyles, isDevelopment, cards } =
     useSwipeDeck(initialCards, deckWidth);
 
-  //only the active card will be animated
-  //activeIndex currently is always 0, because the top card is always the first card in the deck!
+  useEffect(() => {
+    console.log("Component rendered or re-rendered");
+  });
+
   const renderCards = () =>
     cards.map((card, index) => (
-      <SwipeCard
+      <animated.div
         key={index}
-        deckWidth={deckWidth}
-        bind={index === FIRST_INDEX ? bind : () => {}}
-        isActive={index === FIRST_INDEX}
-        animatedStyles={index === FIRST_INDEX ? animatedStyles : {}}
-        zIndex={cards.length - index}
+        {...(index === FIRST_INDEX ? bind() : {})}
+        style={{
+          touchAction: "none",
+          position: "absolute",
+          zIndex:
+            index === FIRST_INDEX ? MAXIMUM_Z_INDEX : cards.length - index,
+          ...(index === FIRST_INDEX ? animatedStyles : {}),
+        }}
       >
         {card.content}
-      </SwipeCard>
+      </animated.div>
     ));
 
   return (
-    <div className="relative">
+    <div className="relative h-full flex flex-col items-center justify-center">
       {renderCards()}
       {isDevelopment && <DebugInfo debugInfo={debugInfo} reset={reset} />}
     </div>
