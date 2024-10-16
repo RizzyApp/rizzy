@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import useSwipeDeck from "./hooks/useSwipeDeck";
+import { useEffect, useRef } from "react";
 import { animated } from "@react-spring/web";
+import useSwipeDeck from "./hooks/useSwipeDeck";
 import DebugInfo from "./DebugInfo";
+import CardContent from "./CardContent/CardContent";
 
 const FIRST_INDEX = 0;
 const MAXIMUM_Z_INDEX = 100;
@@ -10,6 +11,8 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
   const { bind, debugInfo, reset, animatedStyles, isDevelopment, cards } =
     useSwipeDeck(initialCards, deckWidth);
 
+  const animatedDivRef = useRef(null);
+
   useEffect(() => {
     console.log("Component rendered or re-rendered");
   });
@@ -17,6 +20,7 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
   const renderCards = () =>
     cards.map((card, index) => (
       <animated.div
+        ref={index === FIRST_INDEX ? animatedDivRef : null}
         key={index}
         {...(index === FIRST_INDEX ? bind() : {})}
         style={{
@@ -27,7 +31,7 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
           ...(index === FIRST_INDEX ? animatedStyles : {}),
         }}
       >
-        {card.content}
+        <CardContent data={card} animatedDivRef={animatedDivRef} />
       </animated.div>
     ));
 

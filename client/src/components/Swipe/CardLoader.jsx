@@ -1,39 +1,34 @@
-import React from "react";
-import CardContent from "./CardContent/CardContent";
 import SwipeDeck from "./SwipeDeck";
 
 const db = [
   {
+    id: 1,
     name: "Mr.Bean",
-    url: "./image/bean-1.jpg",
+    src: "./image/bean-1.jpg",
     bio: "This is a very cool bio",
   },
   {
+    id: 2,
     name: "Mr.Bean",
-    url: "./image/bean-2.jpg",
+    src: "./image/bean-2.jpg",
     bio: "This is a not so cool bio",
   },
   {
+    id: 3,
     name: "Mr.Bean",
-    url: "./image/bean-3.jpg",
+    src: "./image/bean-3.jpg",
     bio: "This is an okay bio",
   },
   {
+    id: 4,
     name: "Mr.Bean",
-    url: "./image/bean-4.jpg",
+    src: "./image/bean-4.jpg",
     bio: "This is a very bad bio",
   },
 ];
 
 function CardLoader() {
-  const cards = db.map((data, i) => {
-    return {
-      id: i,
-      content: <CardContent src={data.url} name={data.name} bio={data.bio} />,
-    };
-  });
-
-  return <SwipeDeck initialCards={cards} deckWidth={400}></SwipeDeck>;
+  return <SwipeDeck initialCards={db} deckWidth={400}></SwipeDeck>;
 }
 
 export default CardLoader;

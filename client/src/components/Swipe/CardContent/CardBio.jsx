@@ -1,5 +1,3 @@
-import React from "react";
-
 function CardBio({ name, bio }) {
   return (
     <div className="h-[120px] p-4 bg-white text-center">
