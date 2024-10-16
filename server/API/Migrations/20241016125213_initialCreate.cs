@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -209,12 +209,49 @@ namespace API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "MatchInfos",
+                columns: new[] { "Id", "CreatedAt" },
+                values: new object[] { 1, new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(4090) });
+
+            migrationBuilder.InsertData(
+                table: "UserLocations",
+                columns: new[] { "Id", "Latitude", "Longitude" },
+                values: new object[,]
+                {
+                    { 1, 47.497913m, 19.040236m },
+                    { 2, 47.497913m, 19.040236m }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Bio", "BirthDate", "CreatedAt", "FirstName", "Gender", "LastActivityDate", "LastName", "MiddleName", "Verified" },
                 values: new object[,]
                 {
-                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5943), "Pista", 1, null, "Erős", null, true },
-                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5996), "Anna", 2, null, "Gyenge", null, false }
+                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3900), "Pista", 1, null, "Erős", null, true },
+                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3960), "Anna", 2, null, "Gyenge", null, false }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BlockedUsers",
+                columns: new[] { "Id", "BlockedUserId", "UserId" },
+                values: new object[] { 1, 2, 1 });
+
+            migrationBuilder.InsertData(
+                table: "Photos",
+                columns: new[] { "Id", "Url", "UserId" },
+                values: new object[,]
+                {
+                    { 1, "https://shorturl.at/MXkRc", 1 },
+                    { 2, "https://shorturl.at/MXkRc", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserMatchInfos",
+                columns: new[] { "Id", "MatchInfoId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 1, 2 }
                 });
 
             migrationBuilder.CreateIndex(
