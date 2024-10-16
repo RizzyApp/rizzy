@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -211,7 +211,7 @@ namespace API.Migrations
             migrationBuilder.InsertData(
                 table: "MatchInfos",
                 columns: new[] { "Id", "CreatedAt" },
-                values: new object[] { 1, new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(4090) });
+                values: new object[] { 1, new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1626) });
 
             migrationBuilder.InsertData(
                 table: "UserLocations",
@@ -227,8 +227,8 @@ namespace API.Migrations
                 columns: new[] { "Id", "Bio", "BirthDate", "CreatedAt", "FirstName", "Gender", "LastActivityDate", "LastName", "MiddleName", "Verified" },
                 values: new object[,]
                 {
-                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3900), "Pista", 1, null, "Erős", null, true },
-                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3960), "Anna", 2, null, "Gyenge", null, false }
+                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1413), "Pista", 1, null, "Erős", null, true },
+                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1460), "Anna", 2, null, "Gyenge", null, false }
                 });
 
             migrationBuilder.InsertData(
