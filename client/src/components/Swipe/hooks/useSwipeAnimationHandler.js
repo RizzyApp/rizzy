@@ -4,7 +4,7 @@ import { useGesture } from "@use-gesture/react";
 
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 20;
-const FLY_RANGE = 300;
+const FLY_RANGE = 500;
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 //Not sure which one would annoy the user most
@@ -136,13 +136,31 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
           dragApi.start({ x: 0, rotateZ: 0, scale: 1, opacity: 1, config: { friction: 50, tension: 800 } });
         }
       },
-      onWheel: ({ movement: [, my], memo = y.get() }) => {
-        console.log(memo);
-        const scrollHeight = cardImageRef.current.scrollHeight;
-        const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
-        scrollApi.start({ y: nextY });
-        return memo;
+      // onWheel: ({ movement: [, my], memo = y.get() }) => {
+      //   console.log(memo);
+      //   const scrollHeight = cardImageRef.current.scrollHeight;
+      //   const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
+      //   scrollApi.start({ y: nextY, config: config.slow });
+      //   return memo;
+      // },
+
+
+      onWheelEnd: ({ direction: [_, yDir] }) => {
+        const scrollHeight = cardImageRef.current.clientHeight;
+        if (yDir === -1) {
+          scrollApi.start({ y: -scrollHeight, config: { friction: 60 } },
+          );
+        } else if (yDir === 1) {
+          scrollApi.start({ y: 0, config: { friction: 60 } });
+        }
       },
+      onHover: ({ active }) => {
+        if (active) {
+          dragApi.start({ scale: 1.05 })
+        } else {
+          dragApi.start({ scale: 1.0 })
+        }
+      }
     },
     { drag: { preventScroll: true } } // Optional configuration for drag gesture
   );
@@ -151,6 +169,7 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
   const reset = () => {
     // For debugging purposes
     dragApi.set({ x: 0, rotateZ: 0, scale: 1, opacity: 1 });
+    scrollApi.set({ y: 0 })
     prevMxRef.current = 0;
     reversedDirectionRef.current = false;
   };

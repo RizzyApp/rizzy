@@ -10,12 +10,15 @@ const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
     : null;
 
   return (
-    <div className="relative w-96 h-[550px] bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden">
+    <div
+      className="relative w-96 h-card bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden"
+      ref={ref}
+    >
       <animated.div
         style={transformFunc}
         className="flex flex-col m-5 min-h-full"
       >
-        <SwipeCardImage src={cardData.src} ref={ref} />
+        <SwipeCardImage src={cardData.src} />
         <SwipeCardBio name={cardData.name} bio={cardData.bio} />
       </animated.div>
     </div>
