@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useSpring } from "@react-spring/web";
-import { useDrag, useGesture } from "@use-gesture/react";
+import { useGesture } from "@use-gesture/react";
 
 const VELOCITY_THRESHOLD = 0.1;
 const MAX_ROTATION = 20;
@@ -44,8 +44,8 @@ const calculateMovementAndBoundary = (mx, halfCardWidth, deckWidth) => {
   return { clampedX, boundary };
 };
 
-const useSwipeAnimation = (deckWidth, onSwipeOut, imageRef) => {
-  const [debugInfo, setDebugInfo] = useState({
+const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
+  const [swipeDebugInfo, setSwipeDebugInfo] = useState({
     clampedX: 0,
     currentMx: 0,
     previousMx: 0,
@@ -102,7 +102,7 @@ const useSwipeAnimation = (deckWidth, onSwipeOut, imageRef) => {
         const trigger = shouldTriggerFlyOut(vx, mx, xDir, boundary, reversedDirectionRef.current);
 
         if (IS_DEVELOPMENT) {
-          setDebugInfo({
+          setSwipeDebugInfo({
             clampedX: clampedX,
             currentMx: mx,
             previousMx: prevMxRef.current,
@@ -138,7 +138,7 @@ const useSwipeAnimation = (deckWidth, onSwipeOut, imageRef) => {
       },
       onWheel: ({ movement: [, my], memo = y.get() }) => {
         console.log(memo);
-        const scrollHeight = imageRef.current.scrollHeight;
+        const scrollHeight = cardImageRef.current.scrollHeight;
         const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
         scrollApi.start({ y: nextY });
         return memo;
@@ -160,11 +160,11 @@ const useSwipeAnimation = (deckWidth, onSwipeOut, imageRef) => {
 
   return {
     bind,
-    debugInfo,
+    swipeDebugInfo,
     reset,
     animatedStyles,
     y
   };
 };
 
-export default useSwipeAnimation;
+export default useSwipeAnimationHandler;

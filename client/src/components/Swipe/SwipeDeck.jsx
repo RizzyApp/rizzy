@@ -1,18 +1,20 @@
 import { useEffect, useRef } from "react";
 import { animated } from "@react-spring/web";
-import useSwipeDeck from "./hooks/useSwipeDeck";
-import DebugInfo from "./DebugInfo";
-import CardContent from "./CardContent/CardContent";
 
-const FIRST_INDEX = 0;
-const MAXIMUM_Z_INDEX = 100;
+import useSwipeDeckManager from "./hooks/useSwipeDeckManager";
+import SwipeDebugInfo from "./SwipeDebugInfo";
+import SwipeCardContent from "./swipeCard/SwipeCardContent";
+
+const FIRST_CARD_INDEX = 0;
+const MAX_Z_INDEX = 100;
+const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const SwipeDeck = ({ initialCards, deckWidth }) => {
-  const animatedDivRef = useRef(null);
-  const imageRef = useRef(null);
+  const swipeCardRef = useRef(null);
+  const cardImageRef = useRef(null);
 
-  const { bind, debugInfo, reset, animatedStyles, y, isDevelopment, cards } =
-    useSwipeDeck(initialCards, deckWidth, imageRef);
+  const { bind, swipeDebugInfo, reset, animatedStyles, y, cards } =
+    useSwipeDeckManager(initialCards, deckWidth, cardImageRef);
 
   useEffect(() => {
     console.log("Component rendered or re-rendered");
@@ -21,22 +23,22 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
   const renderCards = () =>
     cards.map((card, index) => (
       <animated.div
-        ref={index === FIRST_INDEX ? animatedDivRef : null}
+        ref={index === FIRST_CARD_INDEX ? swipeCardRef : null}
         key={index}
-        {...(index === FIRST_INDEX ? bind() : {})}
+        {...(index === FIRST_CARD_INDEX ? bind() : {})}
         style={{
           touchAction: "none",
           position: "absolute",
           zIndex:
-            index === FIRST_INDEX ? MAXIMUM_Z_INDEX : cards.length - index,
-          ...(index === FIRST_INDEX ? animatedStyles : {}),
+            index === FIRST_CARD_INDEX ? MAX_Z_INDEX : cards.length - index,
+          ...(index === FIRST_CARD_INDEX ? animatedStyles : {}),
         }}
       >
-        <CardContent
-          data={card}
+        <SwipeCardContent
+          cardData={card}
           y={y}
-          active={index === FIRST_INDEX}
-          ref={index === FIRST_INDEX ? imageRef : null}
+          active={index === FIRST_CARD_INDEX}
+          ref={index === FIRST_CARD_INDEX ? cardImageRef : null}
         />
       </animated.div>
     ));
@@ -44,7 +46,9 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
   return (
     <div className="relative h-full flex flex-col items-center justify-center">
       {renderCards()}
-      {isDevelopment && <DebugInfo debugInfo={debugInfo} reset={reset} />}
+      {IS_DEVELOPMENT && (
+        <SwipeDebugInfo swipeDebugInfo={swipeDebugInfo} reset={reset} />
+      )}
     </div>
   );
 };

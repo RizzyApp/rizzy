@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-const CardImage = forwardRef(({ src }, ref) => {
+const SwipeCardImage = forwardRef(({ src }, ref) => {
   return (
     <div
       ref={ref}
@@ -15,6 +15,6 @@ const CardImage = forwardRef(({ src }, ref) => {
   );
 });
 
-CardImage.displayName = "CardImaqge";
+SwipeCardImage.displayName = "SwipeCardImage";
 
-export default CardImage;
+export default SwipeCardImage;

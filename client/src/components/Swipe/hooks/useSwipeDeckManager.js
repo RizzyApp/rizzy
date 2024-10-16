@@ -1,10 +1,9 @@
 // useSwipeDeck.js
-import { useEffect, useRef, useState } from "react";
-import useSwipeAnimation from "./useSwipeAnimation";
+import { useEffect, useState } from "react";
+import useSwipeAnimationHandler from "./useSwipeAnimationHandler";
 
-const IS_DEVELOPMENT = import.meta.env.DEV;
 
-const useSwipeDeck = (initialCards, deckWidth, imageRef) => {
+const useSwipeDeckManager = (initialCards, deckWidth, cardImageRef) => {
   const [cards, setCards] = useState(initialCards);
 
 
@@ -14,7 +13,7 @@ const useSwipeDeck = (initialCards, deckWidth, imageRef) => {
   };
 
 
-  const { bind, debugInfo, reset, animatedStyles, y } = useSwipeAnimation(deckWidth, onSwipeOut, imageRef);
+  const { bind, swipeDebugInfo, reset, animatedStyles, y } = useSwipeAnimationHandler(deckWidth, onSwipeOut, cardImageRef);
 
   useEffect(() => {
     reset();
@@ -28,13 +27,12 @@ const useSwipeDeck = (initialCards, deckWidth, imageRef) => {
 
   return {
     bind,
-    debugInfo,
+    swipeDebugInfo,
     reset: handleReset,
     animatedStyles,
     y,
-    isDevelopment: IS_DEVELOPMENT,
     cards
   };
 };
 
-export default useSwipeDeck;
+export default useSwipeDeckManager;

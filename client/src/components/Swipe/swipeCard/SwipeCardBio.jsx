@@ -1,4 +1,4 @@
-function CardBio({ name, bio }) {
+function SwipeCardBio({ name, bio }) {
   return (
     <div className="h-[120px] p-4 bg-white text-center">
       <h3 className="font-bold text-lg mb-2">{name}</h3>
@@ -8,4 +8,4 @@ function CardBio({ name, bio }) {
   );
 }
 
-export default CardBio;
+export default SwipeCardBio;
