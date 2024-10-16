@@ -12,9 +12,8 @@ function CardContent({ src, name, bio }) {
   useGesture(
     {
       onWheel: ({ movement: [, my], memo = y.get() }) => {
-        console.log(y);
-        const scrollHeight =
-          scrollRef.current.scrollHeight - scrollRef.current.clientHeight;
+        console.log(memo);
+        const scrollHeight = scrollRef.current.scrollHeight;
         const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
         api.start({ y: nextY });
         return memo;
