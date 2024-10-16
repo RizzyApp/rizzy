@@ -131,11 +131,22 @@ namespace API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastActivityDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Verified")
                         .HasColumnType("bit");
@@ -150,8 +161,10 @@ namespace API.Migrations
                             Id = 1,
                             Bio = "Developer",
                             BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 15, 20, 48, 7, 571, DateTimeKind.Local).AddTicks(211),
+                            CreatedAt = new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5943),
+                            FirstName = "Pista",
                             Gender = 1,
+                            LastName = "Erős",
                             Verified = true
                         },
                         new
@@ -159,8 +172,10 @@ namespace API.Migrations
                             Id = 2,
                             Bio = "Designer",
                             BirthDate = new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 15, 20, 48, 7, 571, DateTimeKind.Local).AddTicks(270),
+                            CreatedAt = new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5996),
+                            FirstName = "Anna",
                             Gender = 2,
+                            LastName = "Gyenge",
                             Verified = false
                         });
                 });
@@ -241,27 +256,19 @@ namespace API.Migrations
                     b.ToTable("UserMatchInfos");
                 });
 
-            modelBuilder.Entity("API.Models.UsersUserLocation", b =>
+            modelBuilder.Entity("UserUserLocations", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserLocationsId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LocationsId")
+                    b.Property<int>("UsersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.HasKey("UserLocationsId", "UsersId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("UsersId");
 
-                    b.HasIndex("LocationsId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersUserLocation");
+                    b.ToTable("UserUserLocations");
                 });
 
             modelBuilder.Entity("API.Models.BlockedUser", b =>
@@ -343,23 +350,19 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.UsersUserLocation", b =>
+            modelBuilder.Entity("UserUserLocations", b =>
                 {
-                    b.HasOne("API.Models.UserLocations", "Locations")
-                        .WithMany("UsersUserLocations")
-                        .HasForeignKey("LocationsId")
+                    b.HasOne("API.Models.UserLocations", null)
+                        .WithMany()
+                        .HasForeignKey("UserLocationsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", "User")
-                        .WithMany("UsersUserLocations")
-                        .HasForeignKey("UserId")
+                    b.HasOne("API.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Locations");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Models.MatchInfo", b =>
@@ -380,13 +383,6 @@ namespace API.Migrations
                     b.Navigation("UserLoginDetails");
 
                     b.Navigation("UserMatchInfos");
-
-                    b.Navigation("UsersUserLocations");
-                });
-
-            modelBuilder.Entity("API.Models.UserLocations", b =>
-                {
-                    b.Navigation("UsersUserLocations");
                 });
 #pragma warning restore 612, 618
         }

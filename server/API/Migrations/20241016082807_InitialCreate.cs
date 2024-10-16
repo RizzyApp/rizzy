@@ -46,6 +46,9 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -182,26 +185,24 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UsersUserLocation",
+                name: "UserUserLocations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    LocationsId = table.Column<int>(type: "int", nullable: false)
+                    UserLocationsId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UsersUserLocation", x => x.Id);
+                    table.PrimaryKey("PK_UserUserLocations", x => new { x.UserLocationsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_UsersUserLocation_UserLocations_LocationsId",
-                        column: x => x.LocationsId,
+                        name: "FK_UserUserLocations_UserLocations_UserLocationsId",
+                        column: x => x.UserLocationsId,
                         principalTable: "UserLocations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UsersUserLocation_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserUserLocations_Users_UsersId",
+                        column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -209,11 +210,11 @@ namespace API.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Bio", "BirthDate", "CreatedAt", "Gender", "LastActivityDate", "Verified" },
+                columns: new[] { "Id", "Bio", "BirthDate", "CreatedAt", "FirstName", "Gender", "LastActivityDate", "LastName", "MiddleName", "Verified" },
                 values: new object[,]
                 {
-                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 15, 20, 48, 7, 571, DateTimeKind.Local).AddTicks(211), 1, null, true },
-                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 15, 20, 48, 7, 571, DateTimeKind.Local).AddTicks(270), 2, null, false }
+                    { 1, "Developer", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5943), "Pista", 1, null, "Erős", null, true },
+                    { 2, "Designer", new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5996), "Anna", 2, null, "Gyenge", null, false }
                 });
 
             migrationBuilder.CreateIndex(
@@ -257,14 +258,9 @@ namespace API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsersUserLocation_LocationsId",
-                table: "UsersUserLocation",
-                column: "LocationsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersUserLocation_UserId",
-                table: "UsersUserLocation",
-                column: "UserId");
+                name: "IX_UserUserLocations_UsersId",
+                table: "UserUserLocations",
+                column: "UsersId");
         }
 
         /// <inheritdoc />
@@ -286,7 +282,7 @@ namespace API.Migrations
                 name: "UserMatchInfos");
 
             migrationBuilder.DropTable(
-                name: "UsersUserLocation");
+                name: "UserUserLocations");
 
             migrationBuilder.DropTable(
                 name: "MatchInfos");
