@@ -43,6 +43,14 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("BlockedUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BlockedUserId = 2,
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("API.Models.MatchInfo", b =>
@@ -59,6 +67,13 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MatchInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(4090)
+                        });
                 });
 
             modelBuilder.Entity("API.Models.Message", b =>
@@ -111,6 +126,20 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Url = "https://shorturl.at/MXkRc",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Url = "https://shorturl.at/MXkRc",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("API.Models.User", b =>
@@ -161,7 +190,7 @@ namespace API.Migrations
                             Id = 1,
                             Bio = "Developer",
                             BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5943),
+                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3900),
                             FirstName = "Pista",
                             Gender = 1,
                             LastName = "Erős",
@@ -172,7 +201,7 @@ namespace API.Migrations
                             Id = 2,
                             Bio = "Designer",
                             BirthDate = new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 10, 28, 7, 257, DateTimeKind.Local).AddTicks(5996),
+                            CreatedAt = new DateTime(2024, 10, 16, 14, 52, 13, 201, DateTimeKind.Local).AddTicks(3960),
                             FirstName = "Anna",
                             Gender = 2,
                             LastName = "Gyenge",
@@ -197,6 +226,20 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLocations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Latitude = 47.497913m,
+                            Longitude = 19.040236m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Latitude = 47.497913m,
+                            Longitude = 19.040236m
+                        });
                 });
 
             modelBuilder.Entity("API.Models.UserLoginDetail", b =>
@@ -254,6 +297,20 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserMatchInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MatchInfoId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MatchInfoId = 1,
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("UserUserLocations", b =>

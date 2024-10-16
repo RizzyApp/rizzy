@@ -32,9 +32,6 @@ public class AppDbContext : DbContext
             .HasForeignKey(bu => bu.BlockedUserId)
             .OnDelete(DeleteBehavior.Restrict); // Or NoAction
 
-        modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Pista", LastName = "Erős",  Gender = 1, Bio = "Developer", Verified = true, BirthDate = new DateTime(1990, 1, 1), CreatedAt = DateTime.Now },
-            new User { Id = 2, FirstName = "Anna", LastName = "Gyenge", Gender = 2, Bio = "Designer", Verified = false, BirthDate = new DateTime(1995, 5, 5), CreatedAt = DateTime.Now }
-        );
+        Seeder.SeedData(modelBuilder);
     }
 }
