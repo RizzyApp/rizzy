@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://localhost:7276',
+        target: 'http://localhost:5073',
         changeOrigin: true,
         secure: false, // disable SSL verification for local development
       }

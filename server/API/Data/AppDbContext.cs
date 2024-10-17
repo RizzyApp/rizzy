@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<UserLoginDetail> UserLoginDetails { get; set; }
     public DbSet<UserMatchInfo> UserMatchInfos { get; set; }
 
-    public AppDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
@@ -32,6 +32,13 @@ public class AppDbContext : DbContext
             .HasForeignKey(bu => bu.BlockedUserId)
             .OnDelete(DeleteBehavior.Restrict); // Or NoAction
 
-        Seeder.SeedData(modelBuilder);
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.AspNetUser)
+            .WithMany()
+            .HasForeignKey(u => u.AspNetUserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade); 
+        
+        //Seeder.SeedData(modelBuilder);
     }
 }
