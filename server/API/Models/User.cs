@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,10 +8,11 @@ public class User
 {
     public int Id { get; set; }
     public string AspNetUserId { get; }
-    
-    public IdentityUser AspNetUser { get; }
-    
+    [Required]
+    public IdentityUser? AspNetUser { get; set; }
+    [Required]
     public string Name { get; set; }
+    [Required]
     public int Gender { get; set; }
     public DateTime BirthDate { get; set; }
     public string Bio { get; set; }

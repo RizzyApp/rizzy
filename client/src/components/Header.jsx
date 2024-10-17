@@ -46,7 +46,7 @@ const Header = () => {
           onClick={() => navigate("/login")}
           className="bg-transparent hover:bg-buttonHover px-3 py-2 rounded"
         >
-          Log In
+          Login
         </button>
         <ThemeToggle onThemeChange={handleThemeChange} />
       </div>

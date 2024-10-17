@@ -6,7 +6,7 @@ namespace API.Controllers;
 
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authenticationService;
