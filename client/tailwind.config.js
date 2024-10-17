@@ -19,6 +19,9 @@ export default {
         slogan: "8px -8px 5px rgba(0, 0, 0, 0.6)",
         topbar: "0 3px 4px rgba(0, 0, 0, 0.3)",
       },
+      height: {
+        'card': '550px'
+      }
     },
   },
   variants: {},
