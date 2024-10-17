@@ -32,6 +32,13 @@ public class AppDbContext : DbContext
             .HasForeignKey(bu => bu.BlockedUserId)
             .OnDelete(DeleteBehavior.Restrict); // Or NoAction
 
-        Seeder.SeedData(modelBuilder);
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.AspNetUser)
+            .WithMany()
+            .HasForeignKey(u => u.AspNetUserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade); 
+        
+        //Seeder.SeedData(modelBuilder);
     }
 }
