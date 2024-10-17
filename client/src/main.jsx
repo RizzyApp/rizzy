@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import ContactUsPage from "./pages/ContactUsPage.jsx";
 import ProductsPage from "./pages/ProductsPage.jsx";
 import Login from "./components/Login.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/swipe-page",
     element: <SwipePage />,
+  },
+  {
+    path: "/profile-page",
+    element: <ProfilePage />,
   },
   {
     path: "/contact-us",

@@ -3,7 +3,9 @@ function SwipeCardBio({ name, bio }) {
     <div className="h-[120px] p-4 bg-white text-center">
       <h3 className="font-bold text-lg mb-2">{name}</h3>
       <p className="text-sm text-gray-700">{bio}</p>
-      <p>this is a test that appears everywhere, just to see long texts</p>
+      <p className="text-sm text-gray-700">
+        this is a test that appears on every card, just to see long texts
+      </p>
     </div>
   );
 }
