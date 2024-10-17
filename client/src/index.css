@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  display: felx;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.aboutPage::-webkit-scrollbar {
+  display: hidden; /* Chrome */
+}
+
+.aboutPage {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* html,
+body {
+  height: 100%;
+  margin: 0;
+} */
+
 .ffgh {
   position: absolute;
   color: white;
