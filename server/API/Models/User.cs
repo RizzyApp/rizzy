@@ -1,11 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Identity;
+
 namespace API.Models;
 
 public class User
 {
     public int Id { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string? MiddleName { get; set; }
+    public string AspNetUserId { get; }
+    [Required]
+    public IdentityUser? AspNetUser { get; set; }
+    [Required]
+    public string Name { get; set; }
+    [Required]
     public int Gender { get; set; }
     public DateTime BirthDate { get; set; }
     public string Bio { get; set; }

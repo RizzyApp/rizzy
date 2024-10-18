@@ -43,14 +43,6 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("BlockedUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BlockedUserId = 2,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("API.Models.MatchInfo", b =>
@@ -67,13 +59,6 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MatchInfos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1626)
-                        });
                 });
 
             modelBuilder.Entity("API.Models.Message", b =>
@@ -126,20 +111,6 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Url = "https://shorturl.at/MXkRc",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Url = "https://shorturl.at/MXkRc",
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("API.Models.User", b =>
@@ -149,6 +120,10 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AspNetUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Bio")
                         .IsRequired()
@@ -160,21 +135,14 @@ namespace API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastActivityDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MiddleName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Verified")
@@ -182,31 +150,9 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("AspNetUserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Bio = "Developer",
-                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1413),
-                            FirstName = "Pista",
-                            Gender = 1,
-                            LastName = "Erős",
-                            Verified = true
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Bio = "Designer",
-                            BirthDate = new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 10, 16, 18, 55, 13, 973, DateTimeKind.Local).AddTicks(1460),
-                            FirstName = "Anna",
-                            Gender = 2,
-                            LastName = "Gyenge",
-                            Verified = false
-                        });
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("API.Models.UserLocations", b =>
@@ -226,20 +172,6 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLocations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Latitude = 47.497913m,
-                            Longitude = 19.040236m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Latitude = 47.497913m,
-                            Longitude = 19.040236m
-                        });
                 });
 
             modelBuilder.Entity("API.Models.UserLoginDetail", b =>
@@ -297,20 +229,58 @@ namespace API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserMatchInfos");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            MatchInfoId = 1,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            MatchInfoId = 1,
-                            UserId = 2
-                        });
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityUser");
                 });
 
             modelBuilder.Entity("UserUserLocations", b =>
@@ -375,6 +345,17 @@ namespace API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("API.Models.User", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "AspNetUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AspNetUser");
                 });
 
             modelBuilder.Entity("API.Models.UserLoginDetail", b =>
