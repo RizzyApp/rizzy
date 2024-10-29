@@ -26,7 +26,7 @@ function HomePage() {
               </div>
               <button
                 onClick={toggleRegVisibility}
-                className="createaccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
+                className="createAccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
               >
                 Create account
               </button>

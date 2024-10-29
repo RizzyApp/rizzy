@@ -9,35 +9,54 @@ import AboutPage from "./pages/AboutPage.jsx";
 import ContactUsPage from "./pages/ContactUsPage.jsx";
 import ProductsPage from "./pages/ProductsPage.jsx";
 import Login from "./components/Login.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 const router = createBrowserRouter([
-{path: "/", element: <App />, children: [
   {
     path: "/",
-    element: <HomePage />,
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <App />,
+        children: [
+          {
+            path: "/",
+            element: <HomePage />,
+          },
+          {
+            path: "/swipe-page",
+            element: <SwipePage />,
+          },
+          {
+            path: "/contact-us",
+            element: <ContactUsPage />,
+          },
+          {
+            path: "/about",
+            element: <AboutPage />,
+          },
+          {
+            path: "/products",
+            element: <ProductsPage />,
+          },
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/profile",
+            element: <ProfilePage />,
+          },
+          {
+            path: "/register",
+            element: <RegisterPage />,
+          },
+        ],
+      },
+    ],
   },
-  {
-    path: "/swipe-page",
-    element: <SwipePage />,
-  },
-  {
-    path: "/contact-us",
-    element: <ContactUsPage />,
-  },
-  {
-    path: "/about",
-    element: <AboutPage />,
-  },
-  {
-    path: "/products",
-    element: <ProductsPage />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  }
-]
-}
 ]);
 
 

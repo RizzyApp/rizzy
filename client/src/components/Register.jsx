@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import Header from "./Header";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useOutletContext();
   console.log(isFormVisible);
 
-  const toggleFormVisibility = () => {
+  const handleSubmit = () => {
     setIsFormVisible((prevState) => !prevState);
+    navigate("/profile");
+    setIsLoggedIn(true);
   };
 
   return (
@@ -14,7 +19,7 @@ const RegisterPage = () => {
       <h1 className="text-3xl font-semibold drop-shadow-topbar text-center mb-4 rounded text-red">
         Register
       </h1>
-      <form className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
             htmlFor="username"
