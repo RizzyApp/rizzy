@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import "./App.css";
-import HomePage from "./pages/HomePage";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [userToken, setUserToken] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   /* useEffect(() => {
     const getData = async () =>{
@@ -17,7 +17,9 @@ function App() {
 
   return (
     <>
-      <HomePage />
+      <Outlet
+        context={([userToken, setUserToken], [isLoggedIn, setIsLoggedIn])}
+      />
     </>
   );
 }

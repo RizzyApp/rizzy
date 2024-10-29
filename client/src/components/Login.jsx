@@ -1,8 +1,37 @@
 import React from "react";
 import { ThreeDots } from "react-loader-spinner";
 import Header from "./Header";
+import { useOutletContext, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [userToken, setUserToken] = useOutletContext();
+  const [isLoggedIn, setIsLoggedIn] = useOutletContext();
+  const navigate = useNavigate();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const email = e.target.elements.email.value;
+    const password = e.target.elements.password.value;
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    };
+
+    async function postUser() {
+      const response = await fetch("/api/v1/Auth/Login", requestOptions);
+      if (response.ok) {
+        const data = await response.json();
+        setUserToken(data.token);
+        console.log(data.token);
+        setIsLoggedIn(true);
+        navigate("/swipe-page");
+      }
+    }
+    postUser();
+  }
+
   return (
     <>
       <Header />
