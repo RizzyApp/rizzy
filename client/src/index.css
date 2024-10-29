@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  display: felx;
+  display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
