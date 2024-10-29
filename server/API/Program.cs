@@ -20,7 +20,6 @@ AddIdentity();
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5173"));
@@ -37,8 +36,13 @@ if (app.Environment.IsDevelopment())
         
         var userDbContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
         userDbContext.Database.Migrate();
+        
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
     }
 }
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -58,7 +62,8 @@ void AddServices()
     builder.Services.AddScoped<ITokenService, TokenService>();
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-    
+    builder.Services.AddScoped<AuthenticationSeeder>();
+
 }
 
 void ConfigureSwagger()
@@ -143,6 +148,7 @@ void AddIdentity()
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<UsersContext>();
 }
 

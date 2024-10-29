@@ -2,7 +2,7 @@ import React from "react";
 import { ThreeDots } from "react-loader-spinner";
 import Header from "./Header";
 import {  useOutletContext, useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 const Login = () => {
 
   const [userToken, setUserToken] = useOutletContext();
@@ -43,30 +43,30 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
-                  htmlFor="email"
-                  className="block text-lg drop-shadow-slogan font-medium"
+                    htmlFor="email"
+                    className="block text-lg font-medium"
                 >
                   Email address:
                 </label>
                 <input
-                  type="email"
-                  name="email"
-                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
-                  placeholder="Enter your email"
+                    type="email"
+                    name="email"
+                    className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                    placeholder="Enter your email"
                 />
               </div>
               <div>
                 <label
-                  htmlFor="password"
-                  className="block text-lg drop-shadow-slogan font-medium"
+                    htmlFor="password"
+                    className="block text-lg font-medium"
                 >
                   Password:
                 </label>
                 <input
-                  type="password"
-                  name="password"
-                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
-                  placeholder="Enter your password"
+                    type="password"
+                    name="password"
+                    className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                    placeholder="Enter your password"
                 />
               </div>
               <div className="flex justify-center mt-4">
@@ -74,6 +74,7 @@ const Login = () => {
                   Login
                 </button>
               </div>
+              <div>Don’t have an account? <span className="underline"><Link to="/register" >Sign up</Link></span></div>
             </form>
           </div>
         </div>

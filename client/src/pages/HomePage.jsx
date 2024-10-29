@@ -17,15 +17,12 @@ function HomePage() {
       <Header />
       <div className="flex flex-col items-stretch font-poppins bg-custom-gradient h-screen">
         <div className="flex flex-col items-center grow justify-center">
-          {isFormVisible ? (
-            <Register />
-          ) : (
             <>
               <div className="slogan text-3xl mb-10 font-pacifico text-[48px] text-white drop-shadow-slogan">
                 Get your rizz up
               </div>
               <button
-                onClick={toggleRegVisibility}
+                onClick={()=>navigate('/register')}
                 className="createaccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
               >
                 Create account
@@ -37,7 +34,6 @@ function HomePage() {
                 Test SwipePage
               </button>
             </>
-          )}
         </div>
       </div>
     </>
