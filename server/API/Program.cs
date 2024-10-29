@@ -11,12 +11,15 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
+
+
 // Add services to the container.
 AddServices();
 ConfigureSwagger();
 AddDbContexts();
 AddAuthentication();
 AddIdentity();
+
 
 var app = builder.Build();
 
@@ -54,6 +57,7 @@ app.Run();
 
 void AddServices()
 {
+
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddControllers();
@@ -63,6 +67,7 @@ void AddServices()
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
 
 }
 

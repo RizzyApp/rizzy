@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace API.Authentication;
 
@@ -6,11 +7,13 @@ public class AuthenticationSeeder
 {
     private RoleManager<IdentityRole> roleManager;
     private UserManager<IdentityUser> userManager;
+    private readonly RoleSettings _roleSettings;
 
-    public AuthenticationSeeder(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+    public AuthenticationSeeder(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, IOptions<RoleSettings> roleSettings)
     {
         this.roleManager = roleManager;
         this.userManager = userManager;
+        _roleSettings = roleSettings.Value;
     }
 
     public void AddRoles()
@@ -20,16 +23,23 @@ public class AuthenticationSeeder
 
         var tUser = CreateUserRole(roleManager);
         tUser.Wait();
+        
+        var tVip = CreateVipRole(roleManager);
+        tVip.Wait();
     }
 
     private async Task CreateAdminRole(RoleManager<IdentityRole> roleManager)
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin")); //The role string should better be stored as a constant or a value in appsettings
+        await roleManager.CreateAsync(new IdentityRole(_roleSettings.Admin));
     }
 
     async Task CreateUserRole(RoleManager<IdentityRole> roleManager)
     {
-        await roleManager.CreateAsync(new IdentityRole("User")); //The role string should better be stored as a constant or a value in appsettings
+        await roleManager.CreateAsync(new IdentityRole(_roleSettings.User)); 
+    }
+    async Task CreateVipRole(RoleManager<IdentityRole> roleManager)
+    {
+        await roleManager.CreateAsync(new IdentityRole(_roleSettings.VIP)); 
     }
 
     public void AddAdmin()
@@ -44,7 +54,7 @@ public class AuthenticationSeeder
         if (adminInDb == null)
         {
             var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
-            var adminCreated = await userManager.CreateAsync(admin, "admin123");
+            var adminCreated = await userManager.CreateAsync(admin, "strongrizz");
 
             if (adminCreated.Succeeded)
             {
