@@ -1,5 +1,10 @@
+using System.Security.Claims;
 using API.Authentication;
 using API.Contracts;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -10,10 +15,14 @@ namespace API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authenticationService;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public AuthController(IAuthService authenticationService)
+    public AuthController(IAuthService authenticationService, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
         _authenticationService = authenticationService;
+        _signInManager = signInManager;
+        _userManager = userManager;
     }
 
     [HttpPost("Register")]
@@ -24,23 +33,21 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = await _authenticationService.RegisterAsync(request.Email, request.Username, request.Password, "User");
+        var user = new IdentityUser { UserName = request.Username, Email = request.Email };
+        var identityResult = await _userManager.CreateAsync(user, request.Password);
 
-        if (!result.Success)
+        if (!identityResult.Succeeded)
         {
-            AddErrors(result);
+            foreach (var error in identityResult.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
             return BadRequest(ModelState);
         }
-
-        return CreatedAtAction(nameof(Register), new RegistrationResponse(result.Email, result.UserName));
-    }
-
-    private void AddErrors(AuthResult result)
-    {
-        foreach (var error in result.ErrorMessages)
-        {
-            ModelState.AddModelError(error.Key, error.Value);
-        }
+        await _userManager.AddToRoleAsync(user, "User");
+        await _signInManager.SignInAsync(user, isPersistent: true); 
+        
+        return CreatedAtAction(nameof(Register), new RegistrationResponse(user.Email, user.UserName));
     }
     
     [HttpPost("Login")]
@@ -50,17 +57,30 @@ public class AuthController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-
-        var result = await _authenticationService.LoginAsync(request.Email, request.Password);
-
-        if (!result.Success)
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
         {
-            AddErrors(result);
+            ModelState.AddModelError("Login", "Invalid email or password.");
             return BadRequest(ModelState);
         }
 
-        return Ok(new AuthResponse(result.Email, result.UserName, result.Token));
+        var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true, lockoutOnFailure: false);
+
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError("Login", "Invalid email or password.");
+            return BadRequest(ModelState);
+        }
+        
+        return Ok(new AuthResponse(user.Email, user.UserName));
     }
 
+    [Authorize]
+    [HttpPost("Logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync(); 
+        return Ok(new { Message = "Logged out successfully" });
+    }
 }
 

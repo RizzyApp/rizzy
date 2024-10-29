@@ -3,6 +3,7 @@ using API.Authentication;
 using API.Data;
 using API.Models;
 using API.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -68,7 +69,7 @@ void AddServices()
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
-
+    
 }
 
 void ConfigureSwagger()
@@ -122,8 +123,12 @@ void AddAuthentication()
 {
     var jwtSettings = builder.Configuration.GetSection("Authentication");
 
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters()
             {
@@ -138,7 +143,16 @@ void AddAuthentication()
                     Encoding.UTF8.GetBytes(jwtSettings["IssuerSigningKey"])
                 ),
             };
-        });
+
+        })
+        .AddCookie(IdentityConstants.ApplicationScheme, options =>
+        {
+            options.LoginPath = "/login"; 
+            options.ExpireTimeSpan = TimeSpan.FromHours(1);
+            options.SlidingExpiration = true;
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });;
 }
 
 void AddIdentity()
@@ -154,7 +168,8 @@ void AddIdentity()
         options.Password.RequireLowercase = false;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<UsersContext>();
+    .AddEntityFrameworkStores<UsersContext>()
+    .AddSignInManager();
 }
 
 

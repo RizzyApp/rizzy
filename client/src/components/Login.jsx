@@ -4,8 +4,7 @@ import Header from "./Header";
 import {  useOutletContext, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 const Login = () => {
-
-  const [userToken, setUserToken] = useOutletContext();
+  
   const [isLoggedIn, setIsLoggedIn] = useOutletContext();
   const navigate = useNavigate();
 
@@ -24,8 +23,6 @@ const Login = () => {
       const response = await fetch('/api/v1/Auth/Login', requestOptions);
       if (response.ok) {
         const data = await response.json();
-        setUserToken(data.token);
-        console.log(data.token);
         setIsLoggedIn(true);
         navigate("/swipe-page");
       }

@@ -38,6 +38,12 @@ const ProfilePage = () => {
       profile: { ...prevData.profile, [name]: value },
     }));
   };
+  
+  function handleLogout(){    
+    fetch ('/api/v1/Auth/Logout',{
+      method: 'POST'
+    });
+  }
 
   const handleInterestChange = (index, newValue) => {
     const newInterests = [...data.profile.interests];
@@ -84,10 +90,10 @@ const ProfilePage = () => {
             )}
             <button
               onClick={() => {
-                setIsLoggedIn(false);
+                handleLogout();                
                 navigate("/");
               }}
-              className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full"
+              className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
             >
               Logout
             </button>
@@ -147,7 +153,7 @@ const ProfilePage = () => {
 
             <button
               onClick={() => setEdit(!edit)}
-              className="px-6 py-3 text-center bg-transparent text-white border-white rounded-full"
+              className="px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
             >
               {edit ? "Save Changes" : "Edit Profile"}
             </button>

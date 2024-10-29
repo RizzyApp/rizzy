@@ -60,6 +60,7 @@ public class AuthService: IAuthService
         // get the role and pass it to the TokenService
         var roles = await _userManager.GetRolesAsync(managedUser);
         var accessToken = _tokenService.CreateToken(managedUser, roles[0]);
+        
 
         return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken);
     }
