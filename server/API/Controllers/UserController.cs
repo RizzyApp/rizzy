@@ -1,78 +1,51 @@
-//using System.Text;
-//using API.Models;
-//using API.Services;
-//using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Text;
+using API.Contracts;
+using API.Models;
+using API.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
-//namespace API.Controllers;
+namespace API.Controllers;
 
-//[ApiController]
-//[Route("api/v1/users")]
-//public class UserController : ControllerBase
-//{
-//    private readonly IUserRepository _userRepository;
+[ApiController]
+[Route("api/v1/[controller]")]
+public class UserController : ControllerBase
+{
+    private readonly ILogger<UserController> _logger;
+    private readonly IRepository<User> _repository;
+    private readonly UserManager<IdentityUser> _userManager;
 
-//    public UserController(IUserRepository userRepository)
-//    {
-//        _userRepository = userRepository;
-//    }
-    
-//    [HttpGet]
-//    public IActionResult GetUsers()
-//    {
-//        var users = _userRepository.GetAll();
-//        return Ok(users);
-//    }
-    
-//    [HttpGet("{id}")]
-//    public IActionResult GetUserById(int id)
-//    {
-//        var user = _userRepository.GetById(id);
-//        return Ok(user);
-//    }
+    public UserController(ILogger<UserController> logger, IRepository<User> repository, UserManager<IdentityUser> userManager) 
+    {
+        _logger = logger;
+        _repository = repository;
+        _userManager = userManager;
+    }
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<CreateProfileResponse>> PostUser(CreateProfileRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
-//    [HttpPost]
-//    public IActionResult CreateUser([FromBody] Users user)
-//    {
-//        if (user == null)
-//        {
-//            return BadRequest();
-//        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
-//        _userRepository.Add(user);
-//        return Ok(new { message = $"{user.Username} was successfully created", user });
-//    }
-    
-//    [HttpPut("{id}")]
-//    public IActionResult UpdateUser(int id, Users updatedUser)
-//    {
-//        var user = _userRepository.GetById(id);
-//        if (user == null)
-//        {
-//            return NotFound();
-//        }
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
 
-//        user.Username = updatedUser.Username ?? user.Username;
-//        user.Email = updatedUser.Email ?? user.Email;
-//        user.Gender = updatedUser.Gender != null ? updatedUser.Gender : user.Gender;
-//        user.BirthDate = updatedUser.BirthDate != default ? updatedUser.BirthDate : user.BirthDate;
-//        user.Bio = updatedUser.Bio ?? user.Bio;
-//        user.IsVerified = updatedUser.IsVerified; 
-//        user.Role = updatedUser.Role ?? user.Role;
-//        user.LastActivity = updatedUser.LastActivity;
+        var user = await _userManager.FindByIdAsync(userId);
+        
+        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, AspNetUser = user};
 
-//        return Ok(new {message = $"{user.Username} has been updated successfully.", user});
-//    }
-    
-//    [HttpDelete("{id}")]
-//    public IActionResult DeleteUser(int id)
-//    {
-//        var user = _userRepository.GetById(id);
-//        if (user == null)
-//        {
-//            return NotFound();
-//        }
-
-//        _userRepository.Delete(id);
-//        return Ok(new { message = $"{user.Username} is successfully deleted.", user });
-//    }
-//}
+        await _repository.Add(result);
+        
+        return CreatedAtAction(nameof(PostUser), new CreateProfileResponse(result.Name, result.Gender, result.BirthDate, result.Bio));
+    }
+}

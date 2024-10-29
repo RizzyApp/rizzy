@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center font-poppins bg-custom-gradient p-6 text-white min-h-screen h-fit">
+      <div className="aboutPage flex flex-col items-center font-poppins bg-custom-gradient p-6 text-white min-h-screen h-screen overflow-y-scroll">
         <div className="max-w-3xl w-full bg-transparent rounded-lg shadow-lg p-6">
           <h1 className="text-3xl font-bold mb-4 drop-shadow-slogan text-center">
             About <span className="font-bold font-poppins">Rizzy</span>

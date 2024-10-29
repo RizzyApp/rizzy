@@ -35,21 +35,48 @@ const Login = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center min-h-screen bg-custom-gradient font-poppins p-6">
-        <h1 className="text-4xl font-bold mb-4 text-white">
-          Login is Under Development
-        </h1>
-        <div className="flex flex-col items-center">
-          <ThreeDots
-            height="100"
-            width="100"
-            radius="9"
-            color="#fff"
-            ariaLabel="three-dots-loading"
-            wrapperStyle={{}}
-            visible={true}
-          />
-          <p className="text-lg text-white mt-4">Stay tuned!</p>
+      <div className="flex flex-col items-stretch font-poppins bg-custom-gradient h-screen">
+        <div className="flex flex-col items-center grow justify-center">
+          <div className="bg-transparent rounded-lg shadow-2xl self-center m-10 text-white p-6 max-w-md w-full">
+            <h1 className="text-3xl font-semibold drop-shadow-topbar text-center mb-4 rounded text-red">
+              Login
+            </h1>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-lg drop-shadow-slogan font-medium"
+                >
+                  Email address:
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-lg drop-shadow-slogan font-medium"
+                >
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                  placeholder="Enter your password"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <button className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white">
+                  Login
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </>

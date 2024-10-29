@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import logoLight from "../assets/rizzylogo.png";
+import logoDark from "../assets/logo-white.png";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -12,12 +14,13 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-topbar w-full flex justify-between items-center text-white drop-shadow-topbar p-4">
+    <div className="bg-topbar w-full flex justify-between items-center text-white drop-shadow-topbar p-4 overflow-hidden">
       <div className="flex items-center space-x-4">
         <Link
           to="/"
-          className="text-[36px] text-white hover:text-buttonHover font-poppins font-semibold mb-0.5 ml-1"
+          className="logo-container inline-flex gap-2 text-[44px] text-white font-poppins font-semibold mb-0.5 ml-1"
         >
+          <img src={logoDark} className="logo h-[50px] mt-2" />
           Rizzy
         </Link>
         <button

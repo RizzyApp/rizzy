@@ -1,15 +1,16 @@
-import { StrictMode } from "react";
+import { Children, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import SwipePage from "./pages/SwipePage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import ContactUsPage from "./pages/ContactUsPage.jsx";
 import ProductsPage from "./pages/ProductsPage.jsx";
 import Login from "./components/Login.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import HomePage from "./pages/HomePage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -18,31 +19,41 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/swipe-page",
-        element: <SwipePage />,
-      },
-      {
-        path: "/contact-us",
-        element: <ContactUsPage />,
-      },
-      {
-        path: "/about",
-        element: <AboutPage />,
-      },
-      {
-        path: "/products",
-        element: <ProductsPage />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/profile",
-        element: <ProfilePage />,
+        element: <App />,
+        children: [
+          {
+            path: "/",
+            element: <HomePage />,
+          },
+          {
+            path: "/swipe-page",
+            element: <SwipePage />,
+          },
+          {
+            path: "/contact-us",
+            element: <ContactUsPage />,
+          },
+          {
+            path: "/about",
+            element: <AboutPage />,
+          },
+          {
+            path: "/products",
+            element: <ProductsPage />,
+          },
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/profile",
+            element: <ProfilePage />,
+          },
+          {
+            path: "/register",
+            element: <RegisterPage />,
+          },
+        ],
       },
     ],
   },
