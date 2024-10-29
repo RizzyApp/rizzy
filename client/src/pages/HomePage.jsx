@@ -5,12 +5,6 @@ import Register from "../components/Register";
 
 function HomePage() {
   const navigate = useNavigate();
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  console.log(isFormVisible);
-
-  const toggleRegVisibility = () => {
-    setIsFormVisible((prevState) => !prevState);
-  };
 
   return (
     <>
