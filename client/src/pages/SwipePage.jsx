@@ -2,9 +2,26 @@
 import { useNavigate } from "react-router-dom";
 import CardLoader from "../components/Swipe/CardLoader.jsx";
 import Header from "../components/Header.jsx";
+import { useEffect, useState } from 'react';
 
 const App = () => {
   const navigate = useNavigate();
+  const [coords, setCoords] = useState(null);
+
+  const success = (position) =>{
+    // console.log("success: ",position)
+    setCoords(position)
+    console.log(position)
+  }
+  const failed = (position) => {
+    console.error("error: ",position)
+  }
+
+  useEffect( () => {
+    navigator.geolocation.getCurrentPosition(success, failed);
+  }, [])
+
+
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
