@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
+
+
 // Add services to the container.
 AddServices();
 ConfigureSwagger();
@@ -18,8 +20,8 @@ AddDbContexts();
 AddAuthentication();
 AddIdentity();
 
-var app = builder.Build();
 
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,8 +39,13 @@ if (app.Environment.IsDevelopment())
         
         var userDbContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
         userDbContext.Database.Migrate();
+        
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
     }
 }
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -50,6 +57,7 @@ app.Run();
 
 void AddServices()
 {
+
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddControllers();
@@ -58,7 +66,9 @@ void AddServices()
     builder.Services.AddScoped<ITokenService, TokenService>();
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-    
+    builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
+
 }
 
 void ConfigureSwagger()
@@ -143,6 +153,7 @@ void AddIdentity()
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<UsersContext>();
 }
 
