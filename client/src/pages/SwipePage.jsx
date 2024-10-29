@@ -1,5 +1,4 @@
-import React from "react";
-import SwipeDeck from "../components/Swipe/SwipeDeck.jsx";
+
 import { useNavigate } from "react-router-dom";
 import CardLoader from "../components/Swipe/CardLoader.jsx";
 import Header from "../components/Header.jsx";
