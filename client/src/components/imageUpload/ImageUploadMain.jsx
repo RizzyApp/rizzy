@@ -20,12 +20,28 @@ function ImageUploadMain() {
 
     const onCancelEditImage = () => {
         setIsEditing(false);
+        if (croppedImage == null) {
+            setCroppedImage(image);
+        }
     }
 
-    const onImageSelect  = (img) => {
+    const onRemoveImage = () => {
+        setCroppedImage(null);
+        setImage(null);
+    }
+
+    const onImageSelect = (img) => {
         setImage(img)
         setIsEditing(true);
         setCroppedImage(null);
+    }
+
+    const onEdit = () => {
+        setIsEditing(true);
+    }
+
+    const onUpload = () => {
+        console.log("uploaded");
     }
 
 
@@ -36,7 +52,8 @@ function ImageUploadMain() {
             ) : isEditing && (
                 <ImageCropper imageSrc={image} onCropComplete={handleCropComplete} onCancel={onCancelEditImage}/>
             )}
-            {croppedImage && <img src={croppedImage} alt="Cropped result"/>}
+            {croppedImage && <ImagePreview imageSrc={croppedImage} onCancel={onRemoveImage} onEdit={onEdit}
+                                           onUpload={onUpload}/>}
         </div>
     );
 }

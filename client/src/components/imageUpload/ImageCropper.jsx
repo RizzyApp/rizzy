@@ -20,8 +20,8 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
 
     const handleCropComplete = (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
-         getCroppedImg(imageSrc, croppedAreaPixels)
-             .then((croppedImage) => setPreviewImage(croppedImage));
+        getCroppedImg(imageSrc, croppedAreaPixels)
+            .then((croppedImage) => setPreviewImage(croppedImage));
 
     };
 
@@ -37,23 +37,23 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
         <div>
             <div className="fixed top-0 left-0 right-0 bottom-0 bg-custom-gradient "></div>
             <div className="fixed flex justify-center items-center top-0 left-0 right-0 bottom-[80px]">
-                    <Cropper
-                        image={imageSrc}
-                        crop={crop}
-                        zoom={zoom}
-                        aspect={swipeCardImageAspectRatioNum}
-                        onCropChange={setCrop}
-                        onCropComplete={handleCropComplete}
-                        onZoomChange={setZoom}
-                    />
+                <Cropper
+                    image={imageSrc}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={swipeCardImageAspectRatioNum}
+                    onCropChange={setCrop}
+                    onCropComplete={handleCropComplete}
+                    onZoomChange={setZoom}
+                />
                 <div className="fixed right-0">
                     <SwipeCardContent cardData={cardData}></SwipeCardContent>
                 </div>
 
             </div>
             <div className="fixed bottom-0 w-full h-[80px]">
-                <button onClick={onCrop}>Crop</button>
-                <button onClick={onCancel}>Cancel</button>
+                <button className="text-white" onClick={onCrop}>Crop</button>
+                <button className="text-white" onClick={onCancel}>Cancel</button>
             </div>
         </div>
 
