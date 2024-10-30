@@ -82,5 +82,12 @@ public class AuthController : ControllerBase
         await _signInManager.SignOutAsync(); 
         return Ok(new { Message = "Logged out successfully" });
     }
+
+    [Authorize]
+    [HttpGet("IsLoggedIn")]
+    public IActionResult IsLoggedIn()
+    {
+        return NoContent();
+    }
 }
 

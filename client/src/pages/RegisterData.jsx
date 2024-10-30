@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
-  const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
   const [interests, setInterests] = useState("");
   const [ageRange, setAgeRange] = useState([null, null]);
@@ -19,7 +18,6 @@ const RegistrationPage = () => {
     const formData = {
       name,
       birthdate,
-      location,
       bio,
       interests,
       preferences: {
@@ -58,17 +56,6 @@ const RegistrationPage = () => {
             type="date"
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
-            className="border rounded w-full p-2 text-black"
-            required
-          />
-        </label>
-
-        <label className="mb-2">
-          Location:
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
           />

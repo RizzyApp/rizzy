@@ -11,6 +11,8 @@ import ProductsPage from "./pages/ProductsPage.jsx";
 import Login from "./components/Login.jsx";
 import Register from './components/Register.jsx';
 import Profile from "./pages/ProfilePage.jsx";
+import RegisterData from "./pages/RegisterData.jsx";
+
 
 
 const router = createBrowserRouter([
@@ -45,9 +47,13 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
+    path: "/register/data",
+    element: <RegisterData />,
+  },
+  {
     path: "/profile",
     element: <Profile />,
-  },
+  }
 ]}
 ]);
 

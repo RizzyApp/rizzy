@@ -26,7 +26,7 @@ const RegisterPage = () => {
         const data = await response.json();
         setUserName(data.username);
         console.log(data.username);
-        navigate('/profile');
+        navigate('/register/data');
       }
     }
     registerUser();
