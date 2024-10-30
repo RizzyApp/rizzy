@@ -28,10 +28,10 @@ function HomePage() {
                 Test SwipePage
               </button>
               <button
-                onClick={() => navigate("/profile-page")}
+                onClick={() => navigate("/test-picture-page")}
                 className="absolute bottom-0 right-44 text-white"
               >
-                Test ProfilePage
+                Test PictureUpload
               </button>
             </>
         </div>
