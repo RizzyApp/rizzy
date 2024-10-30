@@ -14,23 +14,19 @@ const cardData = {
 
 function ImageCropper({imageSrc, onCropComplete, onCancel}) {
     const [crop, setCrop] = useState({x: 0, y: 0})
-    const [previewImage, setPreviewImage] = useState(null);
-    const [zoom, setZoom] = useState(1)
+    const [zoom, setZoom] = useState(1);
+    const [rotation, setRotation] = useState(0);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
 
     const handleCropComplete = (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
-        getCroppedImg(imageSrc, croppedAreaPixels)
-            .then((croppedImage) => setPreviewImage(() => {
-                cardData.src = croppedImage;
-                return croppedImage
-            }));
-
-
+        getCroppedImg(imageSrc, croppedAreaPixels, rotation, zoom)
+            .then((croppedImage) => cardData.src = croppedImage);
     };
 
-    const onCrop = () => {
-        onCropComplete(croppedAreaPixels);
+    const onCropSave = async () => {
+        const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
+        onCropComplete(croppedImage);
     }
 
 
@@ -42,18 +38,30 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
                     image={imageSrc}
                     crop={crop}
                     zoom={zoom}
+                    rotation={rotation}
                     aspect={swipeCardImageAspectRatioNum}
                     onCropChange={setCrop}
-                    onCropComplete={handleCropComplete}
                     onZoomChange={setZoom}
+                    onRotationChange={setRotation}
+                    onCropComplete={handleCropComplete}
+                    objectFit="contain"
                 />
                 <div className="fixed right-0">
+                    <h2 className="text-xl text-white font-bold">Preview on Card</h2>
                     <SwipeCardContent cardData={cardData}></SwipeCardContent>
                 </div>
 
             </div>
             <div className="fixed bottom-0 w-full h-[80px]">
-                <button className="text-white" onClick={onCrop}>Crop</button>
+                <div className="mb-2">
+                    <label className="text-center text-white mx-1">Zoom</label>
+                    <input type="range" min={1} max={3} step={0.1} value={zoom}
+                           onInput={(e) => setZoom(Number(e.target.value))}/>
+                    <label className="text-center text-white mx-1">Rotation</label>
+                    <input type="range" min={0} max={360} step={1} value={rotation}
+                           onInput={(e) => setRotation(Number(e.target.value))}/>
+                </div>
+                <button className="text-white" onClick={onCropSave}>Crop</button>
                 <button className="text-white" onClick={onCancel}>Cancel</button>
             </div>
         </div>

@@ -11,9 +11,7 @@ function ImageUploadMain() {
     const [croppedImage, setCroppedImage] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    // Handle crop completion and set cropped image
-    const handleCropComplete = async (croppedAreaPixels) => {
-        const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+    const handleCropComplete = (croppedImage) => {
         setCroppedImage(croppedImage);
         setIsEditing(false);
     };
