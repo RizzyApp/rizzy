@@ -21,7 +21,11 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
     const handleCropComplete = (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
         getCroppedImg(imageSrc, croppedAreaPixels)
-            .then((croppedImage) => setPreviewImage(croppedImage));
+            .then((croppedImage) => setPreviewImage(() => {
+                cardData.src = croppedImage;
+                return croppedImage
+            }));
+
 
     };
 
@@ -29,9 +33,6 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
         onCropComplete(croppedAreaPixels);
     }
 
-    useEffect(() => {
-        cardData.src = previewImage;
-    }, [previewImage]);
 
     return (
         <div>
