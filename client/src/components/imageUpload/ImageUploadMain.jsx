@@ -3,7 +3,7 @@ import {useState} from 'react'
 import ImagePreview from "./ImagePreview.jsx";
 import ImageCropper from "./ImageCropper.jsx";
 import ImageUploader from "./ImageUploader.jsx";
-import getCroppedImg from "./utils/cropImage.js";
+import getCroppedImg from "./utils/getCroppedImg.js";
 
 
 function ImageUploadMain() {

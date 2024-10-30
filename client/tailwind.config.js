@@ -8,6 +8,14 @@ export default {
         topbar: "rgba(var(--topbar))",
         buttonHover: "rgba(var(--buttonHover))",
       },
+      aspectRatio: {
+        '1/2': '1/2',
+        '4/3': '4/3',
+        '9/16': '9/16',
+        '3/2': '3/2',
+        '4/5': '4/5',
+        '2/3': '2/3',
+      },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         pacifico: ["Pacifico", "cursive"],
@@ -17,15 +25,6 @@ export default {
       },
       backgroundColor: {
         "glassy": "rgba(255, 255, 255, 0.5)"
-      },
-      boxShadow:{
-        'inset-custom': '0 0 0 35px inset var(--c)'
-      },
-      borderImage: {
-        'conic-custom': 'conic-gradient(var(--c) 0 0) 50% / calc(50% - 15px)'
-      },
-      clipPath:{
-        'circle': 'circle()'
       },
       dropShadow: {
         slogan: "8px -8px 5px rgba(0, 0, 0, 0.6)",
