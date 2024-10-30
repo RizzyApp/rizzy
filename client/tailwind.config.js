@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.jsx"],
+  content: ["./src/**/*.{jsx,js}"],
   darkMode: "class",
   theme: {
     extend: {
@@ -9,12 +9,12 @@ export default {
         buttonHover: "rgba(var(--buttonHover))",
       },
       aspectRatio: {
-        '1/2': '1/2',
-        '4/3': '4/3',
-        '9/16': '9/16',
-        '3/2': '3/2',
-        '4/5': '4/5',
-        '2/3': '2/3',
+        '1/2': '1 / 2',
+        '4/3': '4 / 3',
+        '9/16': '9 / 16',
+        '3/2': '3 / 2',
+        '4/5': '4 / 5',
+        '2/3': '2 / 3',
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
@@ -31,8 +31,10 @@ export default {
         topbar: "0 3px 4px rgba(0, 0, 0, 0.3)",
       },
       height: {
-        'card': '550px'
-      }
+        'card-big': '550px',
+        'card-normal': '400px',
+        'card-small': '200px'
+      },
     },
   },
   variants: {},

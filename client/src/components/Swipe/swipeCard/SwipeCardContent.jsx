@@ -3,7 +3,6 @@ import { animated } from "@react-spring/web";
 
 import SwipeCardImage from "./SwipeCardImage";
 import SwipeCardBio from "./SwipeCardBio";
-import {swipeCardImageAspectRatioClassName} from "../../../constants.js";
 
 const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
   const transformFunc = active
@@ -12,7 +11,7 @@ const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
 
   return (
     <div
-      className={`relative h-card ${swipeCardImageAspectRatioClassName} bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden`}
+      className={`relative h-card-big aspect-4/5 bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden`}
       ref={ref}
     >
       <animated.div

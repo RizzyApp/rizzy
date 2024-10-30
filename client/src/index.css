@@ -74,37 +74,3 @@ button {
   transition: background-color 1s ease, color 1s ease;
 }
 
-
-.plus {
-  width: 30px;
-  height: 100px;
-  background: orange;
-  position: relative;
-}
-
-.plus:before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 0;
-  width: 100px;
-  height: 30px;
-  background: orange;
-}.plus {
-   width: 30px;
-   height: 100px;
-   background: orange;
-   position: relative;
- }
-
-.plus:before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 0;
-  width: 100px;
-  height: 30px;
-  background: orange;
-}

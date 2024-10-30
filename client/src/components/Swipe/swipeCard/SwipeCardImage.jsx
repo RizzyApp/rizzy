@@ -5,10 +5,10 @@ const SwipeCardImage = forwardRef(({ src }, ref) => {
   return (
     <div
       ref={ref}
-      className={`relative flex bg-gray-200 h-card ${swipeCardImageAspectRatioClassName}`}
+      className={`relative flex bg-gray-200 h-card-big ${swipeCardImageAspectRatioClassName}`}
     >
       <img
-        className="h-full w-full object-cover rounded-xl pointer-events-none"
+        className="object-cover rounded-xl pointer-events-none"
         src={src}
         alt=""
       />
