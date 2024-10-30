@@ -3,6 +3,7 @@ using API.Authentication;
 using API.Data;
 using API.Models;
 using API.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
+
+
 // Add services to the container.
 AddServices();
 ConfigureSwagger();
@@ -18,8 +21,8 @@ AddDbContexts();
 AddAuthentication();
 AddIdentity();
 
-var app = builder.Build();
 
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,8 +40,13 @@ if (app.Environment.IsDevelopment())
         
         var userDbContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
         userDbContext.Database.Migrate();
+        
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
     }
 }
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -50,6 +58,7 @@ app.Run();
 
 void AddServices()
 {
+
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddControllers();
@@ -58,6 +67,8 @@ void AddServices()
     builder.Services.AddScoped<ITokenService, TokenService>();
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
     
 }
 
@@ -112,8 +123,12 @@ void AddAuthentication()
 {
     var jwtSettings = builder.Configuration.GetSection("Authentication");
 
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters()
             {
@@ -128,7 +143,16 @@ void AddAuthentication()
                     Encoding.UTF8.GetBytes(jwtSettings["IssuerSigningKey"])
                 ),
             };
-        });
+
+        })
+        .AddCookie(IdentityConstants.ApplicationScheme, options =>
+        {
+            options.LoginPath = "/login"; 
+            options.ExpireTimeSpan = TimeSpan.FromHours(1);
+            options.SlidingExpiration = true;
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });;
 }
 
 void AddIdentity()
@@ -143,7 +167,9 @@ void AddIdentity()
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
     })
-    .AddEntityFrameworkStores<UsersContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<UsersContext>()
+    .AddSignInManager();
 }
 
 

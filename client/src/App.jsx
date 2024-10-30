@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import "./App.css";
 
 function App() {
-  const [userToken, setUserToken] = useState(null);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   /* useEffect(() => {
@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <Outlet
-        context={([userToken, setUserToken], [isLoggedIn, setIsLoggedIn])}
+        context={([isLoggedIn, setIsLoggedIn])}
       />
     </>
   );
