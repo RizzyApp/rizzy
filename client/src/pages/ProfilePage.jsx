@@ -38,8 +38,8 @@ const ProfilePage = () => {
       profile: { ...prevData.profile, [name]: value },
     }));
   };
-  
-  function handleLogout(){    
+
+  function handleLogout(){
     fetch ('/api/v1/Auth/Logout',{
       method: 'POST'
     });
@@ -90,7 +90,7 @@ const ProfilePage = () => {
             )}
             <button
               onClick={() => {
-                handleLogout();                
+                handleLogout();
                 navigate("/");
               }}
               className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"

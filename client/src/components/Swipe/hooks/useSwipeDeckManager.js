@@ -8,7 +8,7 @@ const useSwipeDeckManager = (initialCards, deckWidth, cardImageRef) => {
 
 
   const onSwipeOut = () => {
-    setCards((prevCards) => prevCards.filter((_, index) => index !== 0));
+    setCards((prevCards) => prevCards.slice(1));
     console.log(cards);
   };
 
