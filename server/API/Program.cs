@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using API.Authentication;
 using API.Data;
@@ -145,6 +146,11 @@ void AddAuthentication()
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });;
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("HasNameIdentifier", policy => policy.RequireClaim(ClaimTypes.NameIdentifier));
+    });
 }
 
 void AddIdentity()
