@@ -1,13 +1,14 @@
 import { forwardRef } from "react";
+import {swipeCardImageAspectRatioClassName} from "../../../constants.js";
 
 const SwipeCardImage = forwardRef(({ src }, ref) => {
   return (
     <div
       ref={ref}
-      className="relative flex-shrink-0 flex justify-center items-center bg-gray-200 h-card"
+      className={`relative flex bg-gray-200 h-card-big ${swipeCardImageAspectRatioClassName}`}
     >
       <img
-        className="h-auto object-contain rounded-xl pointer-events-none"
+        className="object-cover rounded-xl pointer-events-none"
         src={src}
         alt=""
       />

@@ -11,7 +11,7 @@ const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
 
   return (
     <div
-      className="relative w-96 h-card bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden"
+      className={`relative h-card-big aspect-4/5 bg-gray-100 shadow-2xl rounded-2xl items-center justify-start cursor-grab select-none overflow-hidden`}
       ref={ref}
     >
       <animated.div
