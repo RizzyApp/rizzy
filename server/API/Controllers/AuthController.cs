@@ -14,13 +14,11 @@ namespace API.Controllers;
 [Route("api/v1/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authenticationService;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public AuthController(IAuthService authenticationService, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+    public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
-        _authenticationService = authenticationService;
         _signInManager = signInManager;
         _userManager = userManager;
     }
@@ -33,7 +31,7 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var user = new IdentityUser { UserName = request.Username, Email = request.Email };
+        var user = new IdentityUser { Email = request.Email, UserName = request.Email };
         var identityResult = await _userManager.CreateAsync(user, request.Password);
 
         if (!identityResult.Succeeded)
@@ -47,7 +45,7 @@ public class AuthController : ControllerBase
         await _userManager.AddToRoleAsync(user, "User");
         await _signInManager.SignInAsync(user, isPersistent: true); 
         
-        return CreatedAtAction(nameof(Register), new RegistrationResponse(user.Email, user.UserName));
+        return CreatedAtAction(nameof(Register), new RegistrationResponse(user.Email));
     }
     
     [HttpPost("Login")]
@@ -72,7 +70,7 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
         
-        return Ok(new AuthResponse(user.Email, user.UserName));
+        return Ok(new AuthResponse(user.Email));
     }
 
     [Authorize]
