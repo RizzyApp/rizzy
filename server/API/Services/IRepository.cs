@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using API.Models;
 
 namespace API.Services;
@@ -9,4 +10,5 @@ public interface IRepository<T> where T : class
     Task Add(T entity);
     Task Update(T entity);
     Task Delete(int id);
+    Task<IEnumerable<T>> Search(Expression<Func<T, bool>> predicate);
 }

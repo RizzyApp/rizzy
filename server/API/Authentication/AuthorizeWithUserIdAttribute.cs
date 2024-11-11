@@ -6,4 +6,4 @@ namespace API.Authentication;
 /// An authorization attribute that ensures the user has the "NameIdentifier" claim.
 /// Inherits from <see cref="AuthorizeAttribute"/> and uses the "HasNameIdentifier" policy.
 /// </summary>
-public class AuthorizeWithNameIdAttribute() : AuthorizeAttribute("HasNameIdentifier");
+public class AuthorizeWithUserIdAttribute() : AuthorizeAttribute("HasNameIdentifier");

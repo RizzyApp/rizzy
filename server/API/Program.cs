@@ -5,12 +5,17 @@ using API.Data;
 using API.Models;
 using API.Services;
 using API.Utils.Exceptions;
+using CloudinaryDotNet;
+using dotenv.net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+DotEnv.Load();
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -55,7 +60,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
 
 
@@ -71,6 +75,13 @@ void AddServices()
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.AddScoped<ICloudinaryUpload, CloudinaryUpload>(provider =>
+    {
+        var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL")
+                            ?? throw new InvalidOperationException("Cloudinary URL not configured.");
+        Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+        return new CloudinaryUpload(cloudinary);
+    });
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
     
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -177,6 +188,4 @@ void AddIdentity()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager();
 }
-
-
 
