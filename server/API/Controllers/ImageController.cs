@@ -43,29 +43,29 @@ public class ImageController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> UploadPhoto(IFormFile file)
+    public async Task<IActionResult> UploadPhoto(IFormFile image)
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         List<string> validExtensions = new List<string>() { ".jpg", ".png" }; //TODO: Add it to appsettings or as an constant
         _logger.LogInformation("User accessed UploadPicture with userId: {userId} ", loggedInUser.Id);
         
-        var extension = Path.GetExtension(file.FileName);
+        var extension = Path.GetExtension(image.FileName);
 
         if (!validExtensions.Contains(extension))
         {
             return BadRequest($"{extension} is not a valid image extension");
         }
 
-        var size = file.Length;
+        var size = image.Length;
 
         if (size > (5 * 1024 * 1024)) //TODO: add it to appsettings or as a constant
         {
-            return BadRequest($"Maximum file size is 5Mb, file size was {file.Length}");
+            return BadRequest($"Maximum file size is 5Mb, file size was {image.Length}");
         }
         
         Console.WriteLine(extension);
 
-        var result = await _cloudinaryUpload.Upload(file);
+        var result = await _cloudinaryUpload.Upload(image);
 
         var photo = new Photo
         {

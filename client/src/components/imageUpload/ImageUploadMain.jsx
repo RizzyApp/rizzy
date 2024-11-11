@@ -3,6 +3,7 @@ import {useState} from 'react'
 import ImagePreview from "./ImagePreview.jsx";
 import ImageCropper from "./ImageCropper.jsx";
 import ImageUploader from "./ImageUploader.jsx";
+import dataURLtoBlob from "./utils/dataURLToBlob.js";
 import getCroppedImg from "./utils/getCroppedImg.js";
 
 
@@ -39,7 +40,26 @@ function ImageUploadMain() {
     }
 
     const onUpload = () => {
+        const formData = new FormData();
+        formData.append("image", dataURLtoBlob(croppedImage));
+        const fetchOptions = {
+            method: "POST",
+            body: formData, 
+        }
 
+        fetch("/api/v1/Image", fetchOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Image upload failed");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Image uploaded successfully:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
     }
 
 
