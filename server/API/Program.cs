@@ -38,9 +38,6 @@ if (app.Environment.IsDevelopment())
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
         
-        var userDbContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
-        userDbContext.Database.Migrate();
-        
         var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
         authenticationSeeder.AddRoles();
         authenticationSeeder.AddAdmin();
@@ -112,11 +109,6 @@ void AddDbContexts()
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
-
-    builder.Services.AddDbContext<UsersContext>(options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
 }
 
 void AddAuthentication()
@@ -168,7 +160,7 @@ void AddIdentity()
         options.Password.RequireLowercase = false;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<UsersContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager();
 }
 

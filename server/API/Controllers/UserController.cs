@@ -42,7 +42,7 @@ public class UserController : ControllerBase
 
         var user = await _userManager.FindByIdAsync(userId);
         
-        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, AspNetUser = user, };
+        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, AspNetUser = user };
 
         await _repository.Add(result);
         
