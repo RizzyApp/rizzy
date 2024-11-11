@@ -1,4 +1,6 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
 
@@ -19,7 +21,14 @@ public class User
     public bool Verified { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? LastActivityDate { get; set; }
-
+    public string[]? Interests { get; set; }
+    public int PreferredMinAge { get; set; }
+    public int PreferredMaxAge { get; set; }
+    public int PreferredLocationRange { get; set; }
+    public int PreferredGender { get; set; }
+    
+    [InverseProperty("User")]
+    public ICollection<Swipes> Swipes { get; set; }
     public ICollection<BlockedUser> BlockedUsers { get; set; }
     public ICollection<Message> Messages { get; set; }
     public ICollection<Photo> Photos { get; set; }

@@ -1,7 +1,7 @@
-import {StrictMode} from "react";
-import {createRoot} from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import SwipePage from "./pages/SwipePage.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -12,54 +12,60 @@ import Login from "./components/Login.jsx";
 import Register from './components/Register.jsx';
 import Profile from "./pages/ProfilePage.jsx";
 import TestPicturePage from "./pages/TestPicturePage.jsx";
+import RegisterData from "./pages/RegisterData.jsx";
+
 
 
 const router = createBrowserRouter([
-    {
-        path: "/", element: <App/>, children: [
-            {
-                path: "/",
-                element: <HomePage/>,
-            },
-            {
-                path: "/swipe-page",
-                element: <SwipePage/>,
-            },
-            {
-                path: "/contact-us",
-                element: <ContactUsPage/>,
-            },
-            {
-                path: "/about",
-                element: <AboutPage/>,
-            },
-            {
-                path: "/products",
-                element: <ProductsPage/>,
-            },
-            {
-                path: "/login",
-                element: <Login/>,
-            },
-            {
-                path: "/register",
-                element: <Register/>,
-            },
-            {
-                path: "/profile",
-                element: <Profile/>,
-            },
-            {
-                path: "/test-picture-page",
-                element: <TestPicturePage/>,
-            }
-        ]
-    }
+{
+  path: "/", element: <App />, children: [
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path: "/swipe-page",
+    element: <SwipePage />,
+  },
+  {
+    path: "/contact-us",
+    element: <ContactUsPage />,
+  },
+  {
+    path: "/about",
+    element: <AboutPage />,
+  },
+  {
+    path: "/products",
+    element: <ProductsPage />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/register/data",
+    element: <RegisterData />,
+  },
+  {
+    path: "/test-picture-page",
+    element: <TestPicturePage/>,
+  }
+]}
 ]);
 
 
+
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <RouterProvider router={router}/>
-    </StrictMode>
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
 );

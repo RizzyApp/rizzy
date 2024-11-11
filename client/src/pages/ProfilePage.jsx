@@ -43,6 +43,7 @@ const ProfilePage = () => {
     fetch ('/api/v1/Auth/Logout',{
       method: 'POST'
     });
+    setIsLoggedIn(false);
   }
 
   const handleInterestChange = (index, newValue) => {

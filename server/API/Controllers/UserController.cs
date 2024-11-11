@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using System.Text;
 using API.Contracts;
@@ -6,7 +7,6 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace API.Controllers;
 
@@ -14,13 +14,11 @@ namespace API.Controllers;
 [Route("api/v1/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
     private readonly IRepository<User> _repository;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public UserController(ILogger<UserController> logger, IRepository<User> repository, UserManager<IdentityUser> userManager) 
+    public UserController(IRepository<User> repository, UserManager<IdentityUser> userManager) 
     {
-        _logger = logger;
         _repository = repository;
         _userManager = userManager;
     }
@@ -42,7 +40,7 @@ public class UserController : ControllerBase
 
         var user = await _userManager.FindByIdAsync(userId);
         
-        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, AspNetUser = user};
+        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, Interests = request.Interests, PreferredMinAge = request.PreferredMinAge, PreferredMaxAge = request.PreferredMaxAge, PreferredLocationRange = request.PreferredLocationRange, PreferredGender = request.PreferredGender, AspNetUser = user, CreatedAt = DateTime.Now, LastActivityDate = DateTime.Now};
 
         await _repository.Add(result);
         

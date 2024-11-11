@@ -6,5 +6,10 @@ public record CreateProfileRequest(
     [Required]string Name, 
     [Required]int Gender,
     [Required]DateTime BirthDate,
-    string Bio
+    string Bio,
+    string[] Interests,
+    int PreferredMinAge,
+    int PreferredMaxAge,
+    int PreferredLocationRange,
+    [Required]int PreferredGender
     );

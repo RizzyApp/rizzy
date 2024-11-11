@@ -1,36 +1,48 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
-  const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
   const [interests, setInterests] = useState("");
-  const [ageRange, setAgeRange] = useState([null, null]);
-  const [locationRadius, setLocationRadius] = useState("");
+  const [preferredMinAge, setMinimumAge] = useState("");
+  const [preferredMaxAge, setMaximumAge] = useState("");
+  const [preferredLocationRange, setLocationRadius] = useState("");
   const [gender, setGender] = useState("");
+  const [preferredGender, setGenderPreference] = useState("");
+
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const formData = {
       name,
+      gender,
       birthdate,
-      location,
       bio,
-      interests,
-      preferences: {
-        ageRange,
-        locationRadius,
-        gender,
-      },
+      interests: interests.split(',').map(i => i.trim()),
+      preferredMinAge,
+      preferredMaxAge,
+      preferredLocationRange,
+      preferredGender
     };
 
-    console.table(formData);
-    navigate("/swipe-page");
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    };
+
+    async function postUser() {
+      const response = await fetch('/api/v1/User', requestOptions);
+      if (response.ok) {
+        const data = await response.json();
+        navigate("/swipe-page");
+      }
+    }
+    postUser();
   };
 
   return (
@@ -53,22 +65,24 @@ const RegistrationPage = () => {
         </label>
 
         <label className="mb-2">
+          Gender:
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            className="border rounded w-full p-2 text-black"
+          >
+            <option value="">Select Gender</option>
+            <option value="1">Female</option>
+            <option value="2">Male</option>
+          </select>
+        </label>
+
+        <label className="mb-2">
           Birthdate:
           <input
             type="date"
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
-            className="border rounded w-full p-2 text-black"
-            required
-          />
-        </label>
-
-        <label className="mb-2">
-          Location:
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
           />
@@ -99,8 +113,8 @@ const RegistrationPage = () => {
           Age Range:
           <input
             type="number"
-            value={ageRange[0] || ""}
-            onChange={(e) => setAgeRange([e.target.value, ageRange[1]])}
+            value={preferredMinAge}
+            onChange={(e) => setMinimumAge(e.target.value)}
             min="18"
             className="border rounded w-full p-2 text-black"
             required
@@ -108,8 +122,8 @@ const RegistrationPage = () => {
           to
           <input
             type="number"
-            value={ageRange[1] || ""}
-            onChange={(e) => setAgeRange([ageRange[0], e.target.value])}
+            value={preferredMaxAge}
+            onChange={(e) => setMaximumAge(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
           />
@@ -119,7 +133,7 @@ const RegistrationPage = () => {
           Location Radius (kilometer):
           <input
             type="number"
-            value={locationRadius || ""}
+            value={preferredLocationRange || ""}
             onChange={(e) => setLocationRadius(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
@@ -129,14 +143,14 @@ const RegistrationPage = () => {
         <label className="mb-2">
           Gender Preference:
           <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
+            value={preferredGender}
+            onChange={(e) => setGenderPreference(e.target.value)}
             className="border rounded w-full p-2 text-black"
           >
             <option value="">Select Gender</option>
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
-            <option value="Both">Both</option>
+            <option value="1">Female</option>
+            <option value="2">Male</option>
+            <option value="3">Both</option>
           </select>
         </label>
 
