@@ -4,6 +4,7 @@ using API.Authentication;
 using API.Data;
 using API.Models;
 using API.Services;
+using API.Utils.Exceptions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -25,11 +26,14 @@ AddIdentity();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5173"));
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
     
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"Connection String: {connectionString}");
@@ -44,6 +48,7 @@ if (app.Environment.IsDevelopment())
         authenticationSeeder.AddAdmin();
     }
 }
+
 
 
 app.UseAuthentication();
@@ -67,6 +72,9 @@ void AddServices()
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
+    
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
     
 }
 
