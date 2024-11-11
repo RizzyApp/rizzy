@@ -39,7 +39,7 @@ function ImageUploadMain() {
     }
 
     const onUpload = () => {
-        console.log("uploaded");
+
     }
 
 
