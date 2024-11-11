@@ -3,7 +3,7 @@ using API.Models;
 
 namespace API.Services;
 
-public interface IUserByIdentityService
+public interface IUserService
 {
    Task<User> GetUserByIdentityIdAsync(ClaimsPrincipal userClaims);
 }

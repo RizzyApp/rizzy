@@ -15,11 +15,13 @@ public class ImageController : ControllerBase
     private ILogger<ImageController> _logger;
     private ICloudinaryUpload _cloudinaryUpload;
     private IRepository<Photo> _photoRepository;
+    private IUserService _userService;
 
-    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload)
+    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload, IUserService userService)
     {
         _logger = logger;
         _cloudinaryUpload = cloudinaryUpload;
+        _userService = userService;
     }
 
 
@@ -39,13 +41,13 @@ public class ImageController : ControllerBase
         return null;
     }
 
-    [AuthorizeWithUserId]
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> UploadPhoto(IFormFile file)
     {
-        var userId = User.GetUserId();
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         List<string> validExtensions = new List<string>() { ".jpg", ".png" }; //TODO: Add it to appsettings or as an constant
-        _logger.LogInformation("User accessed UploadPicture with userId: {userId} ", userId);
+        _logger.LogInformation("User accessed UploadPicture with userId: {userId} ", loggedInUser.Id);
         
         var extension = Path.GetExtension(file.FileName);
 
@@ -67,7 +69,7 @@ public class ImageController : ControllerBase
 
         var photo = new Photo
         {
-            UserId = userId, //Identity has string Ids
+            UserId = loggedInUser.Id,
             Url = result.Url.ToString()
         };
 

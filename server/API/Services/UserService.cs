@@ -5,12 +5,12 @@ using API.Utils.Exceptions;
 
 namespace API.Services;
 
-public class UserByIdentityService : IUserByIdentityService
+public class UserService : IUserService
 {
     private readonly IRepository<User> _userRepository;
-    private readonly ILogger<UserByIdentityService> _logger;
+    private readonly ILogger<UserService> _logger;
 
-    public UserByIdentityService(IRepository<User> userRepository, ILogger<UserByIdentityService> logger)
+    public UserService(IRepository<User> userRepository, ILogger<UserService> logger)
     {
         _userRepository = userRepository;
         _logger = logger;
