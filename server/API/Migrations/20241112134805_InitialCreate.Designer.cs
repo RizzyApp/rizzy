@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241111213613_InitialCreate")]
+    [Migration("20241112134805_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -203,7 +203,7 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("API.Models.UserLocations", b =>
+            modelBuilder.Entity("API.Models.UserLocation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -217,66 +217,30 @@ namespace API.Migrations
                     b.Property<decimal>("Longitude")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserLocations");
                 });
 
-            modelBuilder.Entity("API.Models.UserLoginDetail", b =>
+            modelBuilder.Entity("MatchInfoUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MatchInfosId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Password")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("UsersId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("MatchInfosId", "UsersId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("UsersId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserLoginDetails");
-                });
-
-            modelBuilder.Entity("API.Models.UserMatchInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("MatchInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatchInfoId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserMatchInfos");
+                    b.ToTable("MatchInfoUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -477,21 +441,6 @@ namespace API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("UserUserLocations", b =>
-                {
-                    b.Property<int>("UserLocationsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserLocationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserUserLocations");
-                });
-
             modelBuilder.Entity("API.Models.BlockedUser", b =>
                 {
                     b.HasOne("API.Models.User", "BlockedUserNavigation")
@@ -571,34 +520,30 @@ namespace API.Migrations
                     b.Navigation("AspNetUser");
                 });
 
-            modelBuilder.Entity("API.Models.UserLoginDetail", b =>
+            modelBuilder.Entity("API.Models.UserLocation", b =>
                 {
                     b.HasOne("API.Models.User", "User")
-                        .WithMany("UserLoginDetails")
-                        .HasForeignKey("UserId")
+                        .WithOne("UserLocation")
+                        .HasForeignKey("API.Models.UserLocation", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.UserMatchInfo", b =>
+            modelBuilder.Entity("MatchInfoUser", b =>
                 {
-                    b.HasOne("API.Models.MatchInfo", "MatchInfo")
-                        .WithMany("UserMatchInfos")
-                        .HasForeignKey("MatchInfoId")
+                    b.HasOne("API.Models.MatchInfo", null)
+                        .WithMany()
+                        .HasForeignKey("MatchInfosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", "User")
-                        .WithMany("UserMatchInfos")
-                        .HasForeignKey("UserId")
+                    b.HasOne("API.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("MatchInfo");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -652,26 +597,9 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UserUserLocations", b =>
-                {
-                    b.HasOne("API.Models.UserLocations", null)
-                        .WithMany()
-                        .HasForeignKey("UserLocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("API.Models.MatchInfo", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("UserMatchInfos");
                 });
 
             modelBuilder.Entity("API.Models.User", b =>
@@ -684,9 +612,8 @@ namespace API.Migrations
 
                     b.Navigation("Swipes");
 
-                    b.Navigation("UserLoginDetails");
-
-                    b.Navigation("UserMatchInfos");
+                    b.Navigation("UserLocation")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
