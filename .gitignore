@@ -254,6 +254,7 @@ _Pvt_Extensions
 .paket/paket.exe
 paket-files/
 
+
 # FAKE - F# Make
 .fake/
 
@@ -272,3 +273,5 @@ __pycache__/
 # tools/
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
+
+.env

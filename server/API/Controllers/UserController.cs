@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using System.Text;
@@ -7,6 +8,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -14,14 +16,16 @@ namespace API.Controllers;
 [Route("api/v1/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IRepository<User> _repository;
+    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<UserLocation> _userLocationRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IUserService _userService;
 
 
-    public UserController(IRepository<User> repository, UserManager<IdentityUser> userManager, IUserService userService) 
+    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, UserManager<IdentityUser> userManager, IUserService userService) 
     {
-        _repository = repository;
+        _userRepository = userRepository;
+        _userLocationRepository = userLocationRepository;
         _userManager = userManager;
         _userService = userService;
     }
@@ -45,29 +49,108 @@ public class UserController : ControllerBase
         
         var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, Interests = request.Interests, PreferredMinAge = request.PreferredMinAge, PreferredMaxAge = request.PreferredMaxAge, PreferredLocationRange = request.PreferredLocationRange, PreferredGender = request.PreferredGender, AspNetUser = user, CreatedAt = DateTime.Now, LastActivityDate = DateTime.Now};
 
-        await _repository.Add(result);
+        await _userRepository.Add(result);
         
         return CreatedAtAction(nameof(PostUser), new CreateProfileResponse(result.Name, result.Gender, result.BirthDate, result.Bio));
     }
 
     [Authorize]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserCardDto>>> GetSwipeUsers([FromQuery] decimal longitude,
-        [FromQuery] decimal latitude, [FromQuery] double preferredDistance, [FromQuery] int preferredMinAge, [FromQuery] int preferredMaxAge, [FromQuery] int preferredGender)
+    [HttpPost("Location")]
+    public async Task<ActionResult> PostLocation([FromBody] LocationUpdateDto locationRequest)
     {
-        
-
-        return Ok();
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        await _userLocationRepository.Add(new UserLocation
+        {
+            UserId = loggedInUser.Id,
+            Latitude = locationRequest.Latitude,
+            Longitude = locationRequest.Longitude,
+        });
+        return Created();
     }
 
-    private static double GetDistance(double latitude1, double longitude1, double latitude2, double longitude2)
+    [Authorize]
+    [HttpGet("Location")]
+    public async Task<ActionResult<UserLocation>> GetLocation()
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
+        if (userLocation == null)
+        {
+            return NotFound("Location not found");
+        }
+        Console.WriteLine(GetDistance(47.80m, 20.57m, 47.74m, 20.39m));
+
+        return Ok(new
+        {
+            userLocation.Id,
+            userLocation.UserId,
+            userLocation.Latitude,
+            userLocation.Longitude
+        });
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserCardDto>>> GetSwipeUsers()
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
+        var userPreferredMinAge = loggedInUser.PreferredMinAge;
+        var userPreferredMaxAge  = loggedInUser.PreferredMaxAge;
+        var userPreferredLocationRange = loggedInUser.PreferredLocationRange;
+        var userLatitude = userLocation!.Latitude;
+        var userLongitude = userLocation.Longitude;
+        var userPreferredGender = loggedInUser.PreferredGender;
+
+
+        const double kmToDegrees = 0.009;
+
+        var minLat = userLatitude - (decimal)(userPreferredLocationRange * kmToDegrees);
+        var maxLat = userLatitude + (decimal)(userPreferredLocationRange * kmToDegrees);
+        var minLon = userLongitude - (decimal)(userPreferredLocationRange * kmToDegrees);
+        var maxLon = userLongitude + (decimal)(userPreferredLocationRange * kmToDegrees);
+
+
+
+        var users = await _userRepository.Query()
+            .Include(u =>u.Photos)
+            .Include(u => u.UserLocation)
+            .Where(u => u.Id != loggedInUser.Id)
+            .Where(u => u.Gender == userPreferredGender)
+            .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
+            .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
+            .ToListAsync();
+
+        var filteredUsers = users
+            .Where(u => GetAge(u.BirthDate) >= userPreferredMinAge && GetAge(u.BirthDate) <= userPreferredMaxAge)
+            .Where(u => GetDistance(userLatitude, userLongitude, u.UserLocation.Latitude, u.UserLocation.Longitude) <= userPreferredLocationRange)
+            .Select(u => new UserCardDto(
+                u.Id,
+                u.Name,
+                GetAge(u.BirthDate),
+                u.Bio,
+                (int)GetDistance(userLatitude, userLongitude, u.UserLocation.Latitude, u.UserLocation.Longitude),
+                u.Photos.Select(p => p.Url)
+            ));
+
+        return Ok(filteredUsers);
+    }
+
+    private static int GetAge(DateTime birthDate)
+    {
+        return DateTime.Now.Year - birthDate.Year;
+    }
+
+    private static double GetDistance(decimal latitude1, decimal longitude1, decimal latitude2, decimal longitude2)
     {
         const double earthRadiusKm = 6371.0;
 
-        var lat1 = latitude1 * Math.PI / 180.0;
-        var lon1 = longitude1 * Math.PI / 180.0;
-        var lat2 = latitude2 * Math.PI / 180.0;
-        var lon2 = longitude2 * Math.PI / 180.0;
+        var lat1 = (double)latitude1 * Math.PI / 180.0;
+        var lon1 = (double)longitude1 * Math.PI / 180.0;
+        var lat2 = (double)latitude2 * Math.PI / 180.0;
+        var lon2 = (double)longitude2 * Math.PI / 180.0;
 
         var dlat = lat2 - lat1;
         var dlon = lon2 - lon1;
@@ -81,4 +164,9 @@ public class UserController : ControllerBase
         return earthRadiusKm * c;
 
     }
+
+
+    //[FromQuery]
+    //decimal longitude,
+    //[FromQuery] decimal latitude, [FromQuery] double preferredDistance, [FromQuery] int preferredMinAge, [FromQuery] int preferredMaxAge, [FromQuery] int preferredGender
 }
