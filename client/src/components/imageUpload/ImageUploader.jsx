@@ -65,7 +65,7 @@ function ImageUploader({ onImageSelect }) {
 
 
     return(
-        <div className="w-32 h-52">
+        <div className="w-32 h-52 ">
             <div {...getRootProps({style})}>
                 <input {...getInputProps()} />
                 <p className="text-blue-500">Upload Image</p>

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using API.Authentication;
 using API.Models;
 using API.Services;
+using API.Services.ImageUpload;
 using API.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,16 @@ public class ImageController : ControllerBase
     private ICloudinaryUpload _cloudinaryUpload;
     private IRepository<Photo> _photoRepository;
     private IUserService _userService;
+    private IImageValidationService _imageValidationService;
 
-    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload, IUserService userService, IRepository<Photo> photoRepository)
+    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload,
+        IUserService userService, IImageValidationService imageValidationService, IRepository<Photo> photoRepository)
     {
         _logger = logger;
         _cloudinaryUpload = cloudinaryUpload;
         _userService = userService;
         _photoRepository = photoRepository;
+        _imageValidationService = imageValidationService;
     }
 
 
@@ -47,24 +51,17 @@ public class ImageController : ControllerBase
     public async Task<IActionResult> UploadPhoto(IFormFile image)
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
-        List<string> validExtensions = new List<string>() { ".jpg", ".png" }; //TODO: Add it to appsettings or as an constant
         _logger.LogInformation("User accessed UploadPicture with userId: {userId} ", loggedInUser.Id);
-        
-        var extension = Path.GetExtension(image.FileName);
 
-        if (!validExtensions.Contains(extension))
+        if (!_imageValidationService.IsFileSizeValid(image.Length))
         {
-            return BadRequest($"{extension} is not a valid image extension");
+            return BadRequest("image exceeds maximum size"); //the frontend should provide the better description
         }
 
-        var size = image.Length;
-
-        if (size > (5 * 1024 * 1024)) //TODO: add it to appsettings or as a constant
+        if (!_imageValidationService.IsResolutionAndAspectRatioValid(image))
         {
-            return BadRequest($"Maximum file size is 5Mb, file size was {image.Length}");
+            return BadRequest("image has the wrong aspect ratio or resolution exceeds maximum");
         }
-        
-        //Console.WriteLine(extension);
 
         var result = await _cloudinaryUpload.Upload(image);
 
