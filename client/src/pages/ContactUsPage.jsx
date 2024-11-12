@@ -3,7 +3,7 @@ import Header from "../components/Header";
 
 const ContactUsPage = () => {
   return (
-    <>
+    <div className="h-screen overflow-hidden">
       <Header />
       <div className="flex flex-col items-center font-poppins bg-custom-gradient text-white h-screen">
         <div className="p-4 w-full max-w-md mt-20">
@@ -37,7 +37,7 @@ const ContactUsPage = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

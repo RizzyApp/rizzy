@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .aboutPage::-webkit-scrollbar {
@@ -73,4 +73,3 @@ button {
   --buttonHover: 207, 80, 86;
   transition: background-color 1s ease, color 1s ease;
 }
-

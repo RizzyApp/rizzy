@@ -1,9 +1,8 @@
 import React from "react";
 import Header from "./Header";
-import {  useOutletContext, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useOutletContext, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 const Login = () => {
-  
   const [isLoggedIn, setIsLoggedIn] = useOutletContext();
   const navigate = useNavigate();
 
@@ -13,13 +12,13 @@ const Login = () => {
     const password = e.target.elements.password.value;
 
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     };
 
     async function postUser() {
-      const response = await fetch('/api/v1/Auth/Login', requestOptions);
+      const response = await fetch("/api/v1/Auth/Login", requestOptions);
       if (response.ok) {
         const data = await response.json();
         setIsLoggedIn(true);
@@ -30,7 +29,7 @@ const Login = () => {
   }
 
   return (
-    <>
+    <div className=" h-screen overflow-hidden">
       <Header />
       <div className="flex flex-col items-stretch font-poppins bg-custom-gradient h-screen">
         <div className="flex flex-col items-center grow justify-center">
@@ -40,31 +39,25 @@ const Login = () => {
             </h1>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label
-                    htmlFor="email"
-                    className="block text-lg font-medium"
-                >
+                <label htmlFor="email" className="block text-lg font-medium">
                   Email address:
                 </label>
                 <input
-                    type="email"
-                    name="email"
-                    className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
-                    placeholder="Enter your email"
+                  type="email"
+                  name="email"
+                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                  placeholder="Enter your email"
                 />
               </div>
               <div>
-                <label
-                    htmlFor="password"
-                    className="block text-lg font-medium"
-                >
+                <label htmlFor="password" className="block text-lg font-medium">
                   Password:
                 </label>
                 <input
-                    type="password"
-                    name="password"
-                    className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
-                    placeholder="Enter your password"
+                  type="password"
+                  name="password"
+                  className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
+                  placeholder="Enter your password"
                 />
               </div>
               <div className="flex justify-center mt-4">
@@ -72,12 +65,17 @@ const Login = () => {
                   Login
                 </button>
               </div>
-              <div>Don’t have an account? <span className="underline"><Link to="/register" >Sign up</Link></span></div>
+              <div>
+                Don’t have an account?{" "}
+                <span className="underline">
+                  <Link to="/register">Sign up</Link>
+                </span>
+              </div>
             </form>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
