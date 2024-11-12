@@ -4,7 +4,7 @@ import { ThreeDots } from "react-loader-spinner";
 
 const ProductsPage = () => {
   return (
-    <>
+    <div className="h-screen overflow-hidden">
       <Header />
       <div className="flex flex-col items-center justify-center min-h-screen bg-custom-gradient font-poppins p-6">
         <h1 className="text-4xl font-bold mb-4 text-white">
@@ -25,7 +25,7 @@ const ProductsPage = () => {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
