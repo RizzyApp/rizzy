@@ -64,20 +64,6 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLocations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Latitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLocations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -241,6 +227,30 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MatchInfoUser",
+                columns: table => new
+                {
+                    MatchInfosId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MatchInfoUser", x => new { x.MatchInfosId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_MatchInfoUser_MatchInfos_MatchInfosId",
+                        column: x => x.MatchInfosId,
+                        principalTable: "MatchInfos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MatchInfoUser_Users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -317,73 +327,21 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLoginDetails",
+                name: "UserLocations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Latitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLoginDetails", x => x.Id);
+                    table.PrimaryKey("PK_UserLocations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserLoginDetails_Users_UserId",
+                        name: "FK_UserLocations_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserMatchInfos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    MatchInfoId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserMatchInfos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserMatchInfos_MatchInfos_MatchInfoId",
-                        column: x => x.MatchInfoId,
-                        principalTable: "MatchInfos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserMatchInfos_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserUserLocations",
-                columns: table => new
-                {
-                    UserLocationsId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserUserLocations", x => new { x.UserLocationsId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_UserUserLocations_UserLocations_UserLocationsId",
-                        column: x => x.UserLocationsId,
-                        principalTable: "UserLocations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserUserLocations_Users_UsersId",
-                        column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -439,6 +397,11 @@ namespace API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MatchInfoUser_UsersId",
+                table: "MatchInfoUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_MatchInfoId",
                 table: "Messages",
                 column: "MatchInfoId");
@@ -464,29 +427,15 @@ namespace API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLoginDetails_UserId",
-                table: "UserLoginDetails",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserMatchInfos_MatchInfoId",
-                table: "UserMatchInfos",
-                column: "MatchInfoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserMatchInfos_UserId",
-                table: "UserMatchInfos",
-                column: "UserId");
+                name: "IX_UserLocations_UserId",
+                table: "UserLocations",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AspNetUserId",
                 table: "Users",
                 column: "AspNetUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserUserLocations_UsersId",
-                table: "UserUserLocations",
-                column: "UsersId");
         }
 
         /// <inheritdoc />
@@ -511,6 +460,9 @@ namespace API.Migrations
                 name: "BlockedUsers");
 
             migrationBuilder.DropTable(
+                name: "MatchInfoUser");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -520,22 +472,13 @@ namespace API.Migrations
                 name: "Swipes");
 
             migrationBuilder.DropTable(
-                name: "UserLoginDetails");
-
-            migrationBuilder.DropTable(
-                name: "UserMatchInfos");
-
-            migrationBuilder.DropTable(
-                name: "UserUserLocations");
+                name: "UserLocations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "MatchInfos");
-
-            migrationBuilder.DropTable(
-                name: "UserLocations");
 
             migrationBuilder.DropTable(
                 name: "Users");

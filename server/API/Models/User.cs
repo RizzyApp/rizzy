@@ -11,7 +11,7 @@ public class User
     public int Id { get; set; }
     public string AspNetUserId { get; }
     [Required]
-    public IdentityUser? AspNetUser { get; set; }
+    public IdentityUser AspNetUser { get; set; }
     [Required]
     public string Name { get; set; }
     [Required]
@@ -27,12 +27,12 @@ public class User
     public int PreferredLocationRange { get; set; }
     public int PreferredGender { get; set; }
     
+    
     [InverseProperty("User")]
     public ICollection<Swipes> Swipes { get; set; }
     public ICollection<BlockedUser> BlockedUsers { get; set; }
     public ICollection<Message> Messages { get; set; }
     public ICollection<Photo> Photos { get; set; }
-    public ICollection<UserLoginDetail> UserLoginDetails { get; set; }
-    public ICollection<UserMatchInfo> UserMatchInfos { get; set; }
-    public ICollection<UserLocations> UserLocations { get; set; }
+    public ICollection<MatchInfo> MatchInfos { get; set; }
+    public UserLocation UserLocation { get; set; }
 }

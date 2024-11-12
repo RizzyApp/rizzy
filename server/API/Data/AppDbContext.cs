@@ -9,13 +9,11 @@ public class AppDbContext : IdentityDbContext<IdentityUser, IdentityRole, string
 {
     public DbSet<Swipes> Swipes { get; set; }
     public DbSet<MatchInfo> MatchInfos { get; set; }
-    public DbSet<UserLocations> UserLocations { get; set; }
+    public DbSet<UserLocation> UserLocations { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<BlockedUser> BlockedUsers { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Photo> Photos { get; set; }
-    public DbSet<UserLoginDetail> UserLoginDetails { get; set; }
-    public DbSet<UserMatchInfo> UserMatchInfos { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
