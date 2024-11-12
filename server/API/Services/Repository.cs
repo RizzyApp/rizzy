@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using System.Linq.Expressions;
+using API.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
@@ -42,5 +43,10 @@ public class Repository<T> : IRepository<T> where T : class
             _context.Remove(entity);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task<IEnumerable<T>> Search(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>().Where(predicate).ToListAsync();
     }
 }

@@ -1,14 +1,19 @@
+using System.Security.Claims;
 using System.Text;
 using API.Authentication;
 using API.Data;
-using API.Models;
 using API.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using API.Utils.Exceptions;
+using CloudinaryDotNet;
+using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+DotEnv.Load();
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -24,11 +29,14 @@ AddIdentity();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5173"));
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
     
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"Connection String: {connectionString}");
@@ -45,11 +53,11 @@ if (app.Environment.IsDevelopment())
 }
 
 
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
 
 
@@ -65,7 +73,18 @@ void AddServices()
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.AddScoped<ICloudinaryUpload, CloudinaryUpload>(provider =>
+    {
+        var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL")
+                            ?? throw new InvalidOperationException("Cloudinary URL not configured.");
+        Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+        return new CloudinaryUpload(cloudinary);
+    });
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
+    
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
     
 }
 
@@ -145,6 +164,11 @@ void AddAuthentication()
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });;
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("HasNameIdentifier", policy => policy.RequireClaim(ClaimTypes.NameIdentifier));
+    });
 }
 
 void AddIdentity()
@@ -163,6 +187,4 @@ void AddIdentity()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager();
 }
-
-
 
