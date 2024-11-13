@@ -69,6 +69,26 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
+    [HttpPut]
+    public async Task<ActionResult> UpdateLocation([FromBody] LocationUpdateDto update)
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        var userUpdate = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
+        if (userUpdate == null)
+        {
+            return NotFound("User not found");
+        }
+
+        userUpdate.Latitude = update.Latitude;
+        userUpdate.Longitude = update.Longitude;
+
+        await _userLocationRepository.Update(userUpdate);
+        return Ok();
+
+    }
+
+    [Authorize]
     [HttpGet("Location")]
     public async Task<ActionResult<UserLocation>> GetLocation()
     {
@@ -79,7 +99,7 @@ public class UserController : ControllerBase
         {
             return NotFound("Location not found");
         }
-        Console.WriteLine(GetDistance(47.80m, 20.57m, 47.74m, 20.39m));
+
 
         return Ok(new
         {
