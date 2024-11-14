@@ -1,3 +1,4 @@
+/*
 import {useState} from 'react'
 
 import ImagePreview from "./ImagePreview.jsx";
@@ -76,4 +77,4 @@ function ImageUploadMain() {
     );
 }
 
-export default ImageUploadMain;
+export default ImageUploadMain;*/

@@ -3,6 +3,7 @@ using System.Text;
 using API.Authentication;
 using API.Data;
 using API.Services;
+using API.Services.ImageUpload;
 using API.Utils.Exceptions;
 using CloudinaryDotNet;
 using dotenv.net;
@@ -79,6 +80,7 @@ void AddServices()
         return new CloudinaryUpload(cloudinary);
     });
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
     
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -26,12 +26,6 @@ function HomePage() {
           >
             Test SwipePage
           </button>
-          <button
-            onClick={() => navigate("/test-picture-page")}
-            className="fixed bottom-1 right-44 text-white"
-          >
-            Test PictureUpload
-          </button>
         </div>
       </div>
     </div>

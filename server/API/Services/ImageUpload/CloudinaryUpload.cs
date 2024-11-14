@@ -1,7 +1,7 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 
-namespace API.Services;
+namespace API.Services.ImageUpload;
 
 public class CloudinaryUpload : ICloudinaryUpload
 {
