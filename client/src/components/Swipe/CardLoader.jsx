@@ -38,6 +38,7 @@ const db = [
 
 function CardLoader() {
   const [users, setUsers] = useState(null);
+  const [numberOfUsers, setNumberOfUsers] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,16 +47,47 @@ function CardLoader() {
         const data = await response.json();
         console.log(data);
         setUsers(data);
+        // setUsers(prevUsers => {
+        //   if(prevUsers === null) {
+        //     setNumberOfUsers(data.length);
+        //     return data;
+        //   }
+        //   const newUsers = [...prevUsers];
+        //   newUsers.splice(0, prevUsers.length - 1);
+        //   const newData =  [...newUsers, ...data];
+        //   setNumberOfUsers(newData.length)
+        //   return newData;
+        // })
       }
     };
     fetchData();
+    // if(numberOfUsers < 2) {
+    //   fetchData();
+    // }
+
   }, []);
 
-  if(!users){
-    return <div>loading...</div>
+  const handleSwipeOut = (userId, direction) => {
+    const swipeData = {
+      swipedUserId: userId,
+      swipeType: direction === 1 ? 'right' : 'left',
+    };
+
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(swipeData),
+    };
+
+    const response = fetch('api/v1/Swipe', fetchOptions)
+  };
+  if (!users) {
+    return <div>loading...</div>;
   }
 
-  return <SwipeDeck initialCards={users} setInitialCards={setUsers} deckWidth={400}></SwipeDeck>;
+  return <SwipeDeck initialCards={users} deckWidth={400} onSwipe={handleSwipeOut} setNumberOfUsers={setNumberOfUsers}></SwipeDeck>;
 }
 
 export default CardLoader;

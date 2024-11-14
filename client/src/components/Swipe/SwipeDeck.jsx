@@ -9,12 +9,12 @@ const FIRST_CARD_INDEX = 0;
 const MAX_Z_INDEX = 100;
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
-const SwipeDeck = ({ initialCards, deckWidth }) => {
+const SwipeDeck = ({ initialCards, deckWidth, onSwipe, setNumberOfUsers }) => {
   const swipeCardRef = useRef(null);
   const cardImageRef = useRef(null);
 
   const { bind, swipeDebugInfo, reset, animatedStyles, y, cards } =
-    useSwipeDeckManager(initialCards, deckWidth, cardImageRef);
+    useSwipeDeckManager(initialCards, deckWidth, cardImageRef, onSwipe, setNumberOfUsers);
 
   useEffect(() => {
     console.log("Component rendered or re-rendered");

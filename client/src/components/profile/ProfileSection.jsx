@@ -20,10 +20,10 @@ const ProfileSection = ({
 
     switch (+value) {
       case 0:
-        gender = "Male";
+        gender = "Female";
         break;
       case 1:
-        gender = "Female";
+        gender = "Male";
         break;
       case 2:
         gender = "Both";
@@ -192,8 +192,8 @@ const ProfileSection = ({
                 onChange={handleChange}
                 className={commonInputStyles}
               >
-                <option value={0}>Male</option>
-                <option value={1}>Female</option>
+                <option value={0}>Female</option>
+                <option value={1}>Male</option>
                 <option value={2}>Both</option>
               </select>
             ) : (
