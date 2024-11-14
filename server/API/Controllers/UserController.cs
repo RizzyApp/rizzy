@@ -18,14 +18,16 @@ public class UserController : ControllerBase
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserLocation> _userLocationRepository;
+    private readonly IRepository<Swipes> _swipesRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IUserService _userService;
 
 
-    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, UserManager<IdentityUser> userManager, IUserService userService) 
+    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, IRepository<Swipes> swipesRepository, UserManager<IdentityUser> userManager, IUserService userService) 
     {
         _userRepository = userRepository;
         _userLocationRepository = userLocationRepository;
+        _swipesRepository = swipesRepository;
         _userManager = userManager;
         _userService = userService;
     }
@@ -69,7 +71,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut]
+    [HttpPut("Location")]
     public async Task<ActionResult> UpdateLocation([FromBody] LocationUpdateDto update)
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
@@ -117,6 +119,7 @@ public class UserController : ControllerBase
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
 
+
         var userPreferredMinAge = loggedInUser.PreferredMinAge;
         var userPreferredMaxAge  = loggedInUser.PreferredMaxAge;
         var userPreferredLocationRange = loggedInUser.PreferredLocationRange;
@@ -137,10 +140,13 @@ public class UserController : ControllerBase
         var users = await _userRepository.Query()
             .Include(u =>u.Photos)
             .Include(u => u.UserLocation)
+            .Include(u => u.Swipes)
             .Where(u => u.Id != loggedInUser.Id)
-            .Where(u => u.Gender == userPreferredGender)
+            .Where(u => loggedInUser.Swipes == null  || !loggedInUser.Swipes.Select(s =>s.SwipedUserId).Contains(u.Id))
+            .Where(u => loggedInUser.PreferredGender == 2 || u.Gender == userPreferredGender)
             .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
             .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
+            .Take(10)
             .ToListAsync();
 
         var filteredUsers = users
@@ -184,9 +190,4 @@ public class UserController : ControllerBase
         return earthRadiusKm * c;
 
     }
-
-
-    //[FromQuery]
-    //decimal longitude,
-    //[FromQuery] decimal latitude, [FromQuery] double preferredDistance, [FromQuery] int preferredMinAge, [FromQuery] int preferredMaxAge, [FromQuery] int preferredGender
 }
