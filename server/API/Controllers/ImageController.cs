@@ -17,11 +17,12 @@ public class ImageController : ControllerBase
     private IRepository<Photo> _photoRepository;
     private IUserService _userService;
 
-    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload, IUserService userService)
+    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload, IUserService userService, IRepository<Photo> photoRepository)
     {
         _logger = logger;
         _cloudinaryUpload = cloudinaryUpload;
         _userService = userService;
+        _photoRepository = photoRepository;
     }
 
 
