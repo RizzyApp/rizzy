@@ -6,21 +6,12 @@ const enabledClassname = "cursor-pointer transition duration-300 ease-in-out tra
 const notEnabledClassname = "opacity-50"
 
 
-const PhotoItem = ({index, image, onImageUpdate, isEnabled, onClick }) => {
-    const [showOptions, setShowOptions] = useState(false);
-
-    const handleImageUpload = (file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => onImageUpdate(index, reader.result);
-        reader.readAsDataURL(file);
-        setShowOptions(false);
-    };
-
-
+const PhotoItem = ({index, image, isEnabled, onClick, isEditing, children }) => {
+    
     return (
         <div
             className={`photo-item relative flex items-center justify-center aspect-[4/5] bg-gray-200 
-            border-2 text-black border-gray-300 rounded-lg ${isEnabled ? enabledClassname : notEnabledClassname}`}
+            border-2 text-black border-gray-300 rounded-lg ${isEditing ? isEnabled ? enabledClassname : notEnabledClassname: ""}`}
             onClick={onClick}
         >
             {image ? (
@@ -32,6 +23,7 @@ const PhotoItem = ({index, image, onImageUpdate, isEnabled, onClick }) => {
             ) : (
                 <img className="sample w-16" src={pictureUpload} alt="Upload Icon"/>
             )}
+            {children}
         </div>
     );
 };

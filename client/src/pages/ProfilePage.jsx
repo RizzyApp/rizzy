@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Header from "../components/Header";
 import {useNavigate, useOutletContext} from "react-router-dom";
 import PhotoGallery from "../components/profile/PhotoGallery";
@@ -30,9 +30,10 @@ const initialProfile = {
 };
 
 const ProfilePage = () => {
-    const [data, setData] = useState({profile: initialProfile});
+    const [data, setData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useOutletContext();
+    const [photos, setPhotos] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -48,6 +49,35 @@ const ProfilePage = () => {
         navigate("/");
     };
 
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch("/api/v1/User/profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: data.profile.name,
+                    bio: data.profile.bio,
+                    interests: data.profile.interests,
+                    preferredMinAge: data.profile.preferredMinAge,
+                    preferredMaxAge: data.profile.preferredMaxAge,
+                    preferredLocationRange: data.profile.preferredLocationRange,
+                    preferredGender: data.profile.preferredGender,
+                }),
+            });
+
+            if (response.ok) {
+                console.log("Profile updated successfully");
+                setIsEditing(false);
+            } else {
+                console.error("Failed to update profile");
+            }
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        }
+    };
+
     const handleInterestChange = (index, newValue) => {
         const newInterests = [...data.profile.interests];
         newInterests[index] = newValue;
@@ -55,6 +85,43 @@ const ProfilePage = () => {
             profile: {...prevData.profile, interests: newInterests},
         }));
     };
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const response = await fetch("/api/v1/User/profile", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.ok) {
+                    const profileData = await response.json();
+                    console.log("pd ", profileData);
+
+                    setData({ profile: profileData });
+                    const photosWithPlaceholders = [
+                        ...profileData.photos,
+                        ...Array(6 - profileData.photos.length).fill(null),
+                    ];
+                    setPhotos(photosWithPlaceholders);
+
+                    console.log("photos ", photos);
+                } else {
+                    console.error("Failed to fetch profile data.");
+                }
+            } catch (error) {
+                console.error("Error fetching profile data:", error);
+            }
+        };
+
+        fetchProfileData();
+    }, []);
+
+
+    if (data !== null) console.log(data);
+    if (!data) return <div>Loading...</div>;
 
     return (
         <>
@@ -67,9 +134,10 @@ const ProfilePage = () => {
                     handleLogout={handleLogout}
                     handleInterestChange={handleInterestChange}
                     setEdit={setIsEditing}
+                    onSave={handleSaveChanges}
                 />
                 <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
-                    <PhotoGallery isEditing={isEditing} initialImages={data.profile.images}/>
+                    <PhotoGallery isEditing={isEditing} initialImages={photos}/>
                 </div>
             </div>
         </>

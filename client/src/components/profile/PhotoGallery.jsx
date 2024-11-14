@@ -1,15 +1,17 @@
 import React, {useState, useRef} from "react";
 import PhotoItem from "./PhotoItem";
 import ImageCropper from "./ImageCropper.jsx";
+import deleteIcon from "../../assets/delete-icon.png";
 
 const emptyImages = [null, null, null, null, null, null];
-
+const maxImageCount = 6;
 
 const PhotoGallery = ({isEditing, initialImages}) => {
-    const filledImages = [...initialImages, ...emptyImages].slice(0, 6);
-    const [images, setImages] = useState(filledImages);
+    const filledInitialImages = [...initialImages, ...emptyImages].slice(0, maxImageCount);
+    const [images, setImages] = useState(filledInitialImages);
     const [uploadedImage, setUploadedImage] = useState(null);
     const [isCropping, setIsCropping] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const inputRef = useRef(null);
 
@@ -23,6 +25,9 @@ const PhotoGallery = ({isEditing, initialImages}) => {
         if (index === firstEmptyIndex) {
             console.log("I'm empty");
             inputRef.current.click();
+        }
+        if (images[index] != null && isEditing) {
+            setSelectedIndex(index);
         }
 
         console.log("hello");
@@ -53,7 +58,13 @@ const PhotoGallery = ({isEditing, initialImages}) => {
         replaceFirstEmptyIndex(uploadedImage);
     }
 
-    const deleteImage = (index) => updateImage(index, null);
+    const deleteImage = (index) => {
+        const newImages = [...images]
+        newImages.splice(index, 1);
+        setSelectedIndex(null);
+        setImages([...newImages, ...emptyImages].slice(0, maxImageCount));
+
+    }
 
     const firstEmptyIndex = images.findIndex((image) => image === null);
 
@@ -72,11 +83,20 @@ const PhotoGallery = ({isEditing, initialImages}) => {
                                 key={index}
                                 index={index}
                                 image={image}
-                                onImageUpdate={updateImage}
-                                onDelete={deleteImage}
                                 isEnabled={index === firstEmptyIndex || image !== null}
                                 onClick={() => handleSelection(index)}
-                            />
+                                isEditing={isEditing}
+                            >
+                                {image != null && isEditing && <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteImage(index);
+                                    }}
+                                    className="absolute w-12 top-2 right-2 bg-white p-0 rounded-full"
+                                >
+                                    <img src={deleteIcon} alt="delete icon"/>
+                                </button>}
+                            </PhotoItem>
                         )
                     }
                 )}

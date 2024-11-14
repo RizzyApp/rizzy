@@ -1,39 +1,25 @@
 import React from "react";
 
-const ProfileSection = ({ data, edit, handleChange, handleLogout, handleInterestChange, setEdit }) => {
+const ProfileSection = ({ data, edit, handleChange, handleLogout, handleInterestChange, onSave, setEdit }) => {
     const commonInputStyles = "border rounded w-full text-black p-2 h-10";
-
+    
+    
+    
+    
     return (
         <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
             <div className="flex">
                 <div className="w-1/3 flex flex-col items-center border-r pr-4">
                     <img
-                        src={data.profile.photos[0].url}
+                        src={data.profile.photos[0] ?? "x"}
                         alt="Profile"
                         className="w-40 h-40 rounded-full mb-4"
                     />
-                    {edit ? (
-                        <input
-                            type="text"
-                            name="name"
-                            value={data.profile.name}
-                            onChange={handleChange}
-                            className={`${commonInputStyles} text-center`}
-                        />
-                    ) : (
-                        <h2 className="text-xl font-semibold">{data.profile.name}</h2>
-                    )}
-                    {edit ? (
-                        <input
-                            type="number"
-                            name="age"
-                            value={data.profile.age}
-                            onChange={handleChange}
-                            className={`${commonInputStyles} text-center`}
-                        />
-                    ) : (
-                        <p>Age: {data.profile.age}</p>
-                    )}
+
+                    <h2 className="text-xl font-semibold">{data.profile.name}</h2>
+
+                    <p>Age: {data.profile.age}</p>
+
                     <button
                         onClick={handleLogout}
                         className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
@@ -81,7 +67,9 @@ const ProfileSection = ({ data, edit, handleChange, handleLogout, handleInterest
                                         <input
                                             type="text"
                                             value={interest}
-                                            onChange={(e) => handleInterestChange(index, e.target.value)}
+                                            onChange={(e) =>
+                                                handleInterestChange(index, e.target.value)
+                                            }
                                             className={commonInputStyles}
                                         />
                                     ) : (
@@ -92,8 +80,79 @@ const ProfileSection = ({ data, edit, handleChange, handleLogout, handleInterest
                         </ul>
                     </div>
 
+                    {/* this is new stuff Mark */}
+
+                    <div>
+                        <h3 className="text-lg font-semibold">Preferred Minimum Age</h3>
+                        {edit ? (
+                            <input
+                                type="number"
+                                name="preferredMinAge"
+                                min={18}
+                                value={data.profile.preferredMinAge}
+                                onChange={handleChange}
+                                className={commonInputStyles}
+                            />
+                        ) : (
+                            <p>{data.profile.preferredMinAge}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-semibold">Preferred Maximum Age</h3>
+                        {edit ? (
+                            <input
+                                type="number"
+                                name="preferredMaxAge"
+                                value={data.profile.preferredMaxAge}
+                                onChange={handleChange}
+                                className={commonInputStyles}
+                            />
+                        ) : (
+                            <p>{data.profile.preferredMaxAge}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-semibold">
+                            Preferred Location Range
+                        </h3>
+                        {edit ? (
+                            <input
+                                type="number"
+                                name="preferredLocationRange"
+                                value={data.profile.preferredLocationRange}
+                                onChange={handleChange}
+                                className={commonInputStyles}
+                            />
+                        ) : (
+                            <p>{data.profile.preferredLocationRange + " km"}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-semibold">Preferred Gender:</h3>
+                        {edit ? (
+                            <select
+                                name="preferredGender"
+                                value={data.profile.preferredGender}
+                                onChange={handleChange}
+                                className={commonInputStyles}
+                            >
+                                <option value={0}>Male</option>
+                                <option value={1}>Female</option>
+                                <option value={2}>Both</option>
+                            </select>
+                        ) : (
+                            <p>{data.profile.preferredGender}</p>
+                        )}
+                    </div>
+
                     <button
-                        onClick={() => setEdit(!edit)}
+                        onClick={() => {
+                            if (edit) onSave();
+                            setEdit(!edit);
+                        }}
                         className="px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
                     >
                         {edit ? "Save Changes" : "Edit Profile"}
