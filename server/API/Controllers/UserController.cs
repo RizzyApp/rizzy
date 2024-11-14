@@ -181,7 +181,11 @@ public class UserController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserCardDto>>> GetSwipeUsers()
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        loggedInUser = await _userRepository.Query().Include(u => u.Swipes)
+            .FirstOrDefaultAsync(u => u.Id == loggedInUser.Id);
+
         var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
 
 
         var userPreferredMinAge = loggedInUser.PreferredMinAge;
@@ -200,6 +204,8 @@ public class UserController : ControllerBase
         var maxLon = userLongitude + (decimal)(userPreferredLocationRange * kmToDegrees);
 
 
+        var initialCount = await _userRepository.Query().CountAsync();
+        Console.WriteLine(initialCount);
 
         var users = await _userRepository.Query()
             .Include(u =>u.Photos)
@@ -210,8 +216,9 @@ public class UserController : ControllerBase
             .Where(u => loggedInUser.PreferredGender == 2 || u.Gender == userPreferredGender)
             .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
             .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
-            .Take(10)
+            .Take(5)
             .ToListAsync();
+
 
         var filteredUsers = users
             .Where(u => GetAge(u.BirthDate) >= userPreferredMinAge && GetAge(u.BirthDate) <= userPreferredMaxAge)
