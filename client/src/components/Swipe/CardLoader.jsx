@@ -51,7 +51,11 @@ function CardLoader() {
     fetchData();
   }, []);
 
-  return <SwipeDeck initialCards={users} deckWidth={400}></SwipeDeck>;
+  if(!users){
+    return <div>loading...</div>
+  }
+
+  return <SwipeDeck initialCards={users} setInitialCards={setUsers} deckWidth={400}></SwipeDeck>;
 }
 
 export default CardLoader;
