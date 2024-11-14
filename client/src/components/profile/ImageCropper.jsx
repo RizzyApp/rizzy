@@ -46,10 +46,11 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
                     onCropComplete={handleCropComplete}
                     objectFit="contain"
                 />
-                <div className="fixed right-0">
+                {/*   <div className="fixed right-0">
                     <h2 className="text-xl text-white font-bold">Preview on Card</h2>
                     <SwipeCardContent cardData={cardData}></SwipeCardContent>
-                </div>
+                </div>*/}
+                {/*TODO: fix this swipeCard preview */}
 
             </div>
             <div className="fixed bottom-0 w-full h-[80px]">
