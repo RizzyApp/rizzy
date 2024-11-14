@@ -46,24 +46,26 @@ function CardLoader() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setUsers(prevUsers => {
-          if(prevUsers === null) {
-            setNumberOfUsers(data.length);
-            return data;
-          }
-          const newUsers = [...prevUsers];
-          newUsers.splice(0, prevUsers.length - 1);
-          const newData =  [...newUsers, ...data];
-          setNumberOfUsers(newData.length)
-          return newData;
-        })
+        setUsers(data);
+        // setUsers(prevUsers => {
+        //   if(prevUsers === null) {
+        //     setNumberOfUsers(data.length);
+        //     return data;
+        //   }
+        //   const newUsers = [...prevUsers];
+        //   newUsers.splice(0, prevUsers.length - 1);
+        //   const newData =  [...newUsers, ...data];
+        //   setNumberOfUsers(newData.length)
+        //   return newData;
+        // })
       }
     };
-    if(numberOfUsers < 2) {
-      fetchData();
-    }
+    fetchData();
+    // if(numberOfUsers < 2) {
+    //   fetchData();
+    // }
 
-  }, [numberOfUsers]);
+  }, []);
 
   const handleSwipeOut = (userId, direction) => {
     const swipeData = {
@@ -79,10 +81,7 @@ function CardLoader() {
       body: JSON.stringify(swipeData),
     };
 
-    const response = fetch('api/v1/Swipe', fetchOptions).then(() => setNumberOfUsers(prev => {
-      console.log(prev - 1);
-      return prev - 1
-    }));
+    const response = fetch('api/v1/Swipe', fetchOptions)
   };
   if (!users) {
     return <div>loading...</div>;

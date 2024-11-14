@@ -216,7 +216,6 @@ public class UserController : ControllerBase
             .Where(u => loggedInUser.PreferredGender == 2 || u.Gender == userPreferredGender)
             .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
             .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
-            .Take(5)
             .ToListAsync();
 
 
