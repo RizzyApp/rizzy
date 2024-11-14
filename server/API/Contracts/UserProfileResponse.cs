@@ -6,6 +6,7 @@ public record UserProfileResponse
 (
     string Name,
     int Gender,
+    int Age,
     DateTime BirthDate,
     string Bio,
     bool Verified,
@@ -14,5 +15,5 @@ public record UserProfileResponse
     int PreferredMaxAge,
     int PreferredLocationRange,
     int PreferredGender,
-    ICollection<Photo> Photos
+    List<string> Photos
 );

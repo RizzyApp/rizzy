@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import pictureUpload from "../assets/picture_upload_icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 
-const PhotoGallery = () => {
+const PhotoGallery = ({ photos }) => {
   const [images, setImages] = useState([null, null, null, null, null, null]);
   const [isUrl, setIsUrl] = useState(false);
   const [showOptions, setShowOptions] = useState(null);
   const [clickedOutside, setClickedOutside] = useState(false);
 
   if (images) console.log(images);
+
+  useEffect(() => {
+    if (photos) setImages(photos);
+  }, [photos]);
 
   const handleOutsideClick = (e) => {
     if (!e.target.closest(".photo-item")) {

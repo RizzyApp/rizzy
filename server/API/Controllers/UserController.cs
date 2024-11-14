@@ -20,16 +20,18 @@ public class UserController : ControllerBase
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserLocation> _userLocationRepository;
+    private readonly IRepository<Photo> _userPhotoRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IUserService _userService;
 
 
-    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, UserManager<IdentityUser> userManager, IUserService userService) 
+    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, UserManager<IdentityUser> userManager, IUserService userService, IRepository<Photo> userPhoto) 
     {
         _userRepository = userRepository;
         _userLocationRepository = userLocationRepository;
         _userManager = userManager;
         _userService = userService;
+        _userPhotoRepository = userPhoto;
     }
     [Authorize]
     [HttpPost]
@@ -61,12 +63,18 @@ public class UserController : ControllerBase
     public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+
+        var photos = _userPhotoRepository.Query().Where(p => p.UserId == loggedInUser.Id).Select(p => p.Url).ToList();
+        Console.WriteLine("p count: " + photos.Count);
+
         
-        var photos = loggedInUser.Photos ?? new List<Photo>();
+        //var email = loggedInUser.AspNetUser.Email;
+        
         
         var userProfileResponse = new UserProfileResponse(
-            loggedInUser.Name, 
-            loggedInUser.Gender, 
+            loggedInUser.Name,
+            loggedInUser.Gender,
+            GetAge(loggedInUser.BirthDate),
             loggedInUser.BirthDate, 
             loggedInUser.Bio, 
             loggedInUser.Verified, 
@@ -80,6 +88,35 @@ public class UserController : ControllerBase
         
         return Ok(userProfileResponse);
     }
+    
+    [Authorize]
+    [HttpPut("profile")]
+    public async Task<ActionResult<UserProfileResponse>> UpdateUserProfile([FromBody] UpdateUserProfileRequest request)
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        
+        loggedInUser.Name = request.Name;
+        loggedInUser.Bio = request.Bio;
+        loggedInUser.Interests = request.Interests;
+        loggedInUser.PreferredMinAge = request.PreferredMinAge;
+        loggedInUser.PreferredMaxAge = request.PreferredMaxAge;
+        loggedInUser.PreferredLocationRange = request.PreferredLocationRange;
+        loggedInUser.PreferredGender = request.PreferredGender;
+    
+        
+        try
+        {
+            await _userRepository.Update(loggedInUser);
+            //await _userRepository.SaveChangesAsync();
+        
+            return Ok(new { Message = "Update successful" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "An error occurred while updating the profile", Details = ex.Message });
+        }
+    }
+
 
     [Authorize]
     [HttpPost("Location")]
