@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import PhotoGallery from "../components/PhotoGallery";
@@ -28,16 +28,82 @@ const initialProfile = {
 };
 
 const ProfilePage = () => {
-  const [data, setData] = useState({ profile: initialProfile });
+  const [data, setData] = useState(null); //{ profile: initialProfile }
   const [edit, setEdit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useOutletContext();
   const navigate = useNavigate();
+  const [photos, setPhotos] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch("/api/v1/User/profile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const profileData = await response.json();
+          console.log("pd ", profileData);
+
+          setData({ profile: profileData });
+          const photosWithPlaceholders = [
+            ...profileData.photos,
+            ...Array(6 - profileData.photos.length).fill(null),
+          ];
+          setPhotos(photosWithPlaceholders);
+
+          console.log("photos ", photos);
+        } else {
+          console.error("Failed to fetch profile data.");
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
+  if (data !== null) console.log(data);
+  if (!data) return <div>Loading...</div>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
       profile: { ...prevData.profile, [name]: value },
     }));
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const response = await fetch("/api/v1/User/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.profile.name,
+          bio: data.profile.bio,
+          interests: data.profile.interests,
+          preferredMinAge: data.profile.preferredMinAge,
+          preferredMaxAge: data.profile.preferredMaxAge,
+          preferredLocationRange: data.profile.preferredLocationRange,
+          preferredGender: data.profile.preferredGender,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Profile updated successfully");
+        setEdit(false);
+      } else {
+        console.error("Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   const handleLogout = () => {
@@ -65,32 +131,15 @@ const ProfilePage = () => {
           <div className="flex">
             <div className="w-1/3 flex flex-col items-center border-r pr-4">
               <img
-                src={data.profile.photos[0].url}
+                src={data.profile.photos[0] ?? "x"}
                 alt="Profile"
                 className="w-40 h-40 rounded-full mb-4"
               />
-              {edit ? (
-                <input
-                  type="text"
-                  name="name"
-                  value={data.profile.name}
-                  onChange={handleChange}
-                  className={`${commonInputStyles} text-center`}
-                />
-              ) : (
-                <h2 className="text-xl font-semibold">{data.profile.name}</h2>
-              )}
-              {edit ? (
-                <input
-                  type="number"
-                  name="age"
-                  value={data.profile.age}
-                  onChange={handleChange}
-                  className={`${commonInputStyles} text-center`}
-                />
-              ) : (
-                <p>Age: {data.profile.age}</p>
-              )}
+
+              <h2 className="text-xl font-semibold">{data.profile.name}</h2>
+
+              <p>Age: {data.profile.age}</p>
+
               <button
                 onClick={handleLogout}
                 className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
@@ -151,8 +200,79 @@ const ProfilePage = () => {
                 </ul>
               </div>
 
+              {/* this is new stuff Mark */}
+
+              <div>
+                <h3 className="text-lg font-semibold">Preferred Minimum Age</h3>
+                {edit ? (
+                  <input
+                    type="number"
+                    name="preferredMinAge"
+                    min={18}
+                    value={data.profile.preferredMinAge}
+                    onChange={handleChange}
+                    className={commonInputStyles}
+                  />
+                ) : (
+                  <p>{data.profile.preferredMinAge}</p>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold">Preferred Maximum Age</h3>
+                {edit ? (
+                  <input
+                    type="number"
+                    name="preferredMaxAge"
+                    value={data.profile.preferredMaxAge}
+                    onChange={handleChange}
+                    className={commonInputStyles}
+                  />
+                ) : (
+                  <p>{data.profile.preferredMaxAge}</p>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold">
+                  Preferred Location Range
+                </h3>
+                {edit ? (
+                  <input
+                    type="number"
+                    name="preferredLocationRange"
+                    value={data.profile.preferredLocationRange}
+                    onChange={handleChange}
+                    className={commonInputStyles}
+                  />
+                ) : (
+                  <p>{data.profile.preferredLocationRange + " km"}</p>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold">Preferred Gender:</h3>
+                {edit ? (
+                  <select
+                    name="preferredGender"
+                    value={data.profile.preferredGender}
+                    onChange={handleChange}
+                    className={commonInputStyles}
+                  >
+                    <option value={0}>Male</option>
+                    <option value={1}>Female</option>
+                    <option value={2}>Both</option>
+                  </select>
+                ) : (
+                  <p>{data.profile.preferredGender}</p>
+                )}
+              </div>
+
               <button
-                onClick={() => setEdit(!edit)}
+                onClick={() => {
+                  if (edit) handleSaveChanges();
+                  setEdit(!edit);
+                }}
                 className="px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
               >
                 {edit ? "Save Changes" : "Edit Profile"}
@@ -163,7 +283,7 @@ const ProfilePage = () => {
 
         {/* Photo Gallery Section */}
         <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
-          <PhotoGallery />
+          <PhotoGallery photos={photos} />
         </div>
       </div>
     </>
