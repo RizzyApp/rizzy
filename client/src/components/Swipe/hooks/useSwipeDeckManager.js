@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import useSwipeAnimationHandler from "./useSwipeAnimationHandler";
 
 
-const useSwipeDeckManager = (initialCards, deckWidth, cardImageRef) => {
+const useSwipeDeckManager = (initialCards, deckWidth, cardImageRef, onSwipe) => {
   const [cards, setCards] = useState(initialCards);
 
 
-  const onSwipeOut = () => {
-    setCards((prevCards) => prevCards.slice(1));
+  const onSwipeOut = (direction) => {
+    setCards((prevCards) => {
+      onSwipe(prevCards[0].id,direction);
+      return prevCards.slice(1)
+    });
     console.log(cards);
   };
 

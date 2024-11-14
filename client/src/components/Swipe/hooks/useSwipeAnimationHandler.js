@@ -129,7 +129,7 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
             x: FLY_RANGE * (mx > 0 ? 1 : -1),
             rotateZ: (clampedX / boundary) * MAX_ROTATION,
             opacity: 0,
-            onRest: onSwipeOut, // Callback when the fallout animation finishes
+            onRest: () => onSwipeOut(mx > 0 ? 1 : -1), // Callback when the fallout animation finishes
           });
         } else {
           // Reset animation if not swiping out
