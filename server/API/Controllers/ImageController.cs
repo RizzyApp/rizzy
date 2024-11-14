@@ -38,7 +38,7 @@ public class ImageController : ControllerBase
     {
         var userId = User.GetUserId();
 
-        Console.WriteLine(userId);
+        //Console.WriteLine(userId);
         return null;
     }
 
@@ -64,7 +64,7 @@ public class ImageController : ControllerBase
             return BadRequest($"Maximum file size is 5Mb, file size was {image.Length}");
         }
         
-        Console.WriteLine(extension);
+        //Console.WriteLine(extension);
 
         var result = await _cloudinaryUpload.Upload(image);
 

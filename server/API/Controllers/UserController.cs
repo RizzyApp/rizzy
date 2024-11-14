@@ -20,15 +20,17 @@ public class UserController : ControllerBase
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserLocation> _userLocationRepository;
+    private readonly IRepository<Swipes> _swipesRepository;
     private readonly IRepository<Photo> _userPhotoRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IUserService _userService;
 
 
-    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, UserManager<IdentityUser> userManager, IUserService userService, IRepository<Photo> userPhoto) 
+    public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository, IRepository<Swipes> swipesRepository, UserManager<IdentityUser> userManager, IUserService userService, IRepository<Photo> userPhoto) 
     {
         _userRepository = userRepository;
         _userLocationRepository = userLocationRepository;
+        _swipesRepository = swipesRepository;
         _userManager = userManager;
         _userService = userService;
         _userPhotoRepository = userPhoto;
@@ -133,6 +135,26 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
+    [HttpPut("Location")]
+    public async Task<ActionResult> UpdateLocation([FromBody] LocationUpdateDto update)
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        var userUpdate = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
+        if (userUpdate == null)
+        {
+            return NotFound("User not found");
+        }
+
+        userUpdate.Latitude = update.Latitude;
+        userUpdate.Longitude = update.Longitude;
+
+        await _userLocationRepository.Update(userUpdate);
+        return Ok();
+
+    }
+
+    [Authorize]
     [HttpGet("Location")]
     public async Task<ActionResult<UserLocation>> GetLocation()
     {
@@ -143,7 +165,7 @@ public class UserController : ControllerBase
         {
             return NotFound("Location not found");
         }
-        Console.WriteLine(GetDistance(47.80m, 20.57m, 47.74m, 20.39m));
+
 
         return Ok(new
         {
@@ -160,6 +182,7 @@ public class UserController : ControllerBase
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
+
 
         var userPreferredMinAge = loggedInUser.PreferredMinAge;
         var userPreferredMaxAge  = loggedInUser.PreferredMaxAge;
@@ -181,10 +204,13 @@ public class UserController : ControllerBase
         var users = await _userRepository.Query()
             .Include(u =>u.Photos)
             .Include(u => u.UserLocation)
+            .Include(u => u.Swipes)
             .Where(u => u.Id != loggedInUser.Id)
-            .Where(u => u.Gender == userPreferredGender)
+            .Where(u => loggedInUser.Swipes == null  || !loggedInUser.Swipes.Select(s =>s.SwipedUserId).Contains(u.Id))
+            .Where(u => loggedInUser.PreferredGender == 2 || u.Gender == userPreferredGender)
             .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
             .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
+            .Take(10)
             .ToListAsync();
 
         var filteredUsers = users
@@ -228,9 +254,4 @@ public class UserController : ControllerBase
         return earthRadiusKm * c;
 
     }
-
-
-    //[FromQuery]
-    //decimal longitude,
-    //[FromQuery] decimal latitude, [FromQuery] double preferredDistance, [FromQuery] int preferredMinAge, [FromQuery] int preferredMaxAge, [FromQuery] int preferredGender
 }

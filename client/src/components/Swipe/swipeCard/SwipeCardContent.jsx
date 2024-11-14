@@ -18,8 +18,8 @@ const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
         style={transformFunc}
         className="flex flex-col m-5 min-h-full"
       >
-        <SwipeCardImage src={cardData.src} />
-        <SwipeCardBio name={cardData.name} bio={cardData.bio} />
+        <SwipeCardImage cardData={cardData}/>
+        <SwipeCardBio cardData={cardData} />
       </animated.div>
     </div>
   );

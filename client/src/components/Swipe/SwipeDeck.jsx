@@ -45,7 +45,7 @@ const SwipeDeck = ({ initialCards, deckWidth }) => {
 
   return (
     <div className="relative h-full flex flex-col items-center justify-center">
-      {renderCards()}
+      {!initialCards ? "loading..." : renderCards()}
       {IS_DEVELOPMENT && (
         <SwipeDebugInfo swipeDebugInfo={swipeDebugInfo} reset={reset} />
       )}

@@ -35,6 +35,9 @@ export default {
         'card-normal': '400px',
         'card-small': '200px'
       },
+      textShadow: {
+        'outline': '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+      },
     },
   },
   variants: {},
