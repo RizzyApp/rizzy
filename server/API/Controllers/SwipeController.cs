@@ -38,10 +38,6 @@ public class SwipeController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> PostSwipe([FromBody] SwipeDto swipeDto)
     {
-        if (swipeDto.SwipeType != "left" && swipeDto.SwipeType != "right")
-        {
-            return BadRequest("Non existing swipe type");
-        }
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
 
         if (swipeDto.SwipedUserId == loggedInUser.Id)
