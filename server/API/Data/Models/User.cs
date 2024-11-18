@@ -9,7 +9,7 @@ namespace API.Models;
 public class User
 {
     public int Id { get; set; }
-    public string AspNetUserId { get; }
+    public string AspNetUserId { get; set; }
     [Required]
     public IdentityUser AspNetUser { get; set; }
     [Required]
