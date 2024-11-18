@@ -1,6 +1,4 @@
-using API.Models;
-
-namespace API.Contracts;
+namespace API.Contracts.UserProfile;
 
 public record UserProfileResponse
 (

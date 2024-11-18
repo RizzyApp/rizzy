@@ -1,4 +1,4 @@
-namespace API.Contracts;
+namespace API.Contracts.UserProfile;
 
 public record CreateProfileResponse(
     string Name, 

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.Authentication;
 using API.Contracts;
+using API.Contracts.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -26,11 +27,6 @@ public class AuthController : ControllerBase
     [HttpPost("Register")]
     public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var user = new IdentityUser { Email = request.Email, UserName = request.Email };
         var identityResult = await _userManager.CreateAsync(user, request.Password);
 
@@ -51,10 +47,6 @@ public class AuthController : ControllerBase
     [HttpPost("Login")]
     public async Task<ActionResult<AuthResponse>> Authenticate([FromBody] AuthRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {

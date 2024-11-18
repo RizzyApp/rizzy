@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Contracts;
+namespace API.Contracts.Auth;
 
 public record RegistrationRequest(
     [Required]string Email, 

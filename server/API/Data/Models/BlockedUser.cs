@@ -1,4 +1,6 @@
-﻿namespace API.Models;
+﻿using API.Data.Models;
+
+namespace API.Models;
 
 public class BlockedUser
 {

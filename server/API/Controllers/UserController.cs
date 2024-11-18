@@ -4,6 +4,8 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using System.Text;
 using API.Contracts;
+using API.Contracts.UserProfile;
+using API.Data.Models;
 using API.Models;
 using API.Services;
 using API.Utils.Exceptions;
@@ -37,13 +39,13 @@ public class UserController : ControllerBase
     }
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<CreateProfileResponse>> PostUser(CreateProfileRequest request)
+    public async Task<ActionResult<CreateProfileResponse>> PostUser(ProfileRequestDto requestDto)
     {
-        if (!ModelState.IsValid)
+        if (requestDto.PreferredMinAge > requestDto.PreferredMaxAge)
         {
-            return BadRequest(ModelState);
+            return BadRequest("Preferred min age can't be bigger than preferred max age");
         }
-
+        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
         if (userId == null)
@@ -53,7 +55,7 @@ public class UserController : ControllerBase
 
         var user = await _userManager.FindByIdAsync(userId);
         
-        var result = new User(){Name = request.Name, Gender = request.Gender, BirthDate = request.BirthDate, Bio = request.Bio, Interests = request.Interests, PreferredMinAge = request.PreferredMinAge, PreferredMaxAge = request.PreferredMaxAge, PreferredLocationRange = request.PreferredLocationRange, PreferredGender = request.PreferredGender, AspNetUser = user, CreatedAt = DateTime.Now, LastActivityDate = DateTime.Now};
+        var result = new User(){Name = requestDto.Name, Gender = requestDto.Gender, BirthDate = requestDto.BirthDate, Bio = requestDto.Bio, Interests = requestDto.Interests, PreferredMinAge = requestDto.PreferredMinAge, PreferredMaxAge = requestDto.PreferredMaxAge, PreferredLocationRange = requestDto.PreferredLocationRange, PreferredGender = requestDto.PreferredGender, AspNetUser = user, CreatedAt = DateTime.Now, LastActivityDate = DateTime.Now};
 
         await _userRepository.Add(result);
         
@@ -93,17 +95,23 @@ public class UserController : ControllerBase
     
     [Authorize]
     [HttpPut("profile")]
-    public async Task<ActionResult<UserProfileResponse>> UpdateUserProfile([FromBody] UpdateUserProfileRequest request)
+    public async Task<ActionResult<UserProfileResponse>> UpdateUserProfile([FromBody] ProfileRequestDto requestDto)
     {
+        if (requestDto.PreferredMinAge > requestDto.PreferredMaxAge)
+        {
+            return BadRequest("Preferred min age can't be bigger than preferred max age");
+        }
+
+        
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         
-        loggedInUser.Name = request.Name;
-        loggedInUser.Bio = request.Bio;
-        loggedInUser.Interests = request.Interests;
-        loggedInUser.PreferredMinAge = request.PreferredMinAge;
-        loggedInUser.PreferredMaxAge = request.PreferredMaxAge;
-        loggedInUser.PreferredLocationRange = request.PreferredLocationRange;
-        loggedInUser.PreferredGender = request.PreferredGender;
+        loggedInUser.Name = requestDto.Name;
+        loggedInUser.Bio = requestDto.Bio;
+        loggedInUser.Interests = requestDto.Interests;
+        loggedInUser.PreferredMinAge = requestDto.PreferredMinAge;
+        loggedInUser.PreferredMaxAge = requestDto.PreferredMaxAge;
+        loggedInUser.PreferredLocationRange = requestDto.PreferredLocationRange;
+        loggedInUser.PreferredGender = requestDto.PreferredGender;
     
         
         try

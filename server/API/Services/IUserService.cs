@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using API.Data.Models;
 using API.Models;
 
 namespace API.Services;

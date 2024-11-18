@@ -1,5 +1,6 @@
 using System.Net;
 using System.Security.Claims;
+using API.Data.Models;
 using API.Models;
 using API.Utils.Exceptions;
 
