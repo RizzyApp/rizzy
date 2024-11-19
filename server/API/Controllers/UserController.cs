@@ -183,89 +183,11 @@ public class UserController : ControllerBase
             userLocation.Longitude
         });
     }
-
-    [Authorize]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserCardDto>>> GetSwipeUsers()
-    {
-        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
-        loggedInUser = await _userRepository.Query().Include(u => u.Swipes)
-            .FirstOrDefaultAsync(u => u.Id == loggedInUser.Id);
-
-        var userLocation = await _userLocationRepository.Query().FirstOrDefaultAsync(u => u.UserId == loggedInUser.Id);
-
-
-
-        var userPreferredMinAge = loggedInUser.PreferredMinAge;
-        var userPreferredMaxAge  = loggedInUser.PreferredMaxAge;
-        var userPreferredLocationRange = loggedInUser.PreferredLocationRange;
-        var userLatitude = userLocation!.Latitude;
-        var userLongitude = userLocation.Longitude;
-        var userPreferredGender = loggedInUser.PreferredGender;
-
-
-        const double kmToDegrees = 0.009;
-
-        var minLat = userLatitude - (decimal)(userPreferredLocationRange * kmToDegrees);
-        var maxLat = userLatitude + (decimal)(userPreferredLocationRange * kmToDegrees);
-        var minLon = userLongitude - (decimal)(userPreferredLocationRange * kmToDegrees);
-        var maxLon = userLongitude + (decimal)(userPreferredLocationRange * kmToDegrees);
-
-
-        var initialCount = await _userRepository.Query().CountAsync();
-        Console.WriteLine(initialCount);
-
-        var users = await _userRepository.Query()
-            .Include(u =>u.Photos)
-            .Include(u => u.UserLocation)
-            .Include(u => u.Swipes)
-            .Where(u => u.Id != loggedInUser.Id)
-            .Where(u => loggedInUser.Swipes == null  || !loggedInUser.Swipes.Select(s =>s.SwipedUserId).Contains(u.Id))
-            .Where(u => loggedInUser.PreferredGender == 2 || u.Gender == userPreferredGender)
-            .Where(u => u.UserLocation.Latitude >= minLat && u.UserLocation.Latitude <= maxLat)
-            .Where(u => u.UserLocation.Longitude >= minLon && u.UserLocation.Longitude <= maxLon)
-            .ToListAsync();
-
-
-        var filteredUsers = users
-            .Where(u => GetAge(u.BirthDate) >= userPreferredMinAge && GetAge(u.BirthDate) <= userPreferredMaxAge)
-            .Where(u => GetDistance(userLatitude, userLongitude, u.UserLocation.Latitude, u.UserLocation.Longitude) <= userPreferredLocationRange)
-            .Select(u => new UserCardDto(
-                u.Id,
-                u.Name,
-                GetAge(u.BirthDate),
-                u.Bio,
-                (int)GetDistance(userLatitude, userLongitude, u.UserLocation.Latitude, u.UserLocation.Longitude),
-                u.Photos.Select(p => p.Url)
-            ));
-
-        return Ok(filteredUsers);
-    }
+    
 
     private static int GetAge(DateTime birthDate)
     {
         return DateTime.Now.Year - birthDate.Year;
     }
-
-    private static double GetDistance(decimal latitude1, decimal longitude1, decimal latitude2, decimal longitude2)
-    {
-        const double earthRadiusKm = 6371.0;
-
-        var lat1 = (double)latitude1 * Math.PI / 180.0;
-        var lon1 = (double)longitude1 * Math.PI / 180.0;
-        var lat2 = (double)latitude2 * Math.PI / 180.0;
-        var lon2 = (double)longitude2 * Math.PI / 180.0;
-
-        var dlat = lat2 - lat1;
-        var dlon = lon2 - lon1;
-
-        var a = Math.Sin(dlat / 2) * Math.Sin(dlat / 2) +
-                   Math.Cos(lat1) * Math.Cos(lat2) *
-                   Math.Sin(dlon / 2) * Math.Sin(dlon / 2);
-
-        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-        return earthRadiusKm * c;
-
-    }
+    
 }

@@ -74,10 +74,10 @@ public class AuthController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("IsLoggedIn")]
-    public IActionResult IsLoggedIn()
+    [HttpGet("auth-status")]
+    public IActionResult GetAuthStatus()
     {
-        return NoContent();
+        return Ok(new { IsLoggedIn = true });
     }
 }
 

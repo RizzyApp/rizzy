@@ -41,10 +41,10 @@ public class User
     
     
     [InverseProperty("User")]
-    public ICollection<Swipes> Swipes { get; set; }
-    public ICollection<BlockedUser> BlockedUsers { get; set; }
-    public ICollection<Message> Messages { get; set; }
-    public ICollection<Photo> Photos { get; set; }
-    public ICollection<MatchInfo> MatchInfos { get; set; }
+    public ICollection<Swipes>? Swipes { get; set; }
+    public ICollection<BlockedUser>? BlockedUsers { get; set; }
+    public ICollection<Message>? Messages { get; set; }
+    public ICollection<Photo>? Photos { get; set; }
+    public ICollection<MatchInfo>? MatchInfos { get; set; }
     public UserLocation UserLocation { get; set; }
 }
