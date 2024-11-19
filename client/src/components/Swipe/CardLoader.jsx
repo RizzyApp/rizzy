@@ -51,6 +51,14 @@ const mergeUniqueUsersBasedOnId = (previous, current, otherIdsToExclude) => {
     return Array.from(userIds.values());
 };
 
+const deleteSwipes = async () => {
+    const options = {
+        "method": "DELETE"
+    }
+    await fetch(ENDPOINTS.USER.DELETE_SWIPES, options);
+    window.location.reload();
+}
+
 
 function CardLoader() {
     const [users, setUsers] = useState(null);
@@ -77,7 +85,7 @@ function CardLoader() {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
-                if (data.length < 1) {
+                if (data.length < 2) {
                     setNoMoreUsers(true);
                 }
                 setUsers(prevUsers => {
