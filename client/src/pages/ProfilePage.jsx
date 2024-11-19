@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import PhotoGallery from "../components/profile/PhotoGallery";
 import ProfileSection from "../components/profile/ProfileSection";
+import ENDPOINTS from "../endpoints.js";
 
 const initialProfile = {
   name: "Rowan Atkinson",
@@ -47,14 +48,14 @@ const ProfilePage = () => {
   };
 
   const handleLogout = () => {
-    fetch("/api/v1/Auth/Logout", { method: "POST" });
+    fetch(ENDPOINTS.AUTH.LOGOUT, { method: "POST" });
     setIsLoggedIn(false);
     navigate("/");
   };
 
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch("/api/v1/User/profile", {
+      const response = await fetch(ENDPOINTS.USER.PUT_PROFILE, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +85,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch("/api/v1/User/profile", {
+        const response = await fetch(ENDPOINTS.USER.GET_PROFILE, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

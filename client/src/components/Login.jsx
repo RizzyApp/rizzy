@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./Header";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import ENDPOINTS from "../endpoints.js";
 const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useOutletContext();
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Login = () => {
     };
 
     async function postUser() {
-      const response = await fetch("/api/v1/Auth/Login", requestOptions);
+      const response = await fetch(ENDPOINTS.AUTH.LOGIN, requestOptions);
       if (response.ok) {
         const data = await response.json();
         setIsLoggedIn(true);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import "./App.css";
+import ENDPOINTS from "./endpoints.js";
 
 function App() {
 
@@ -9,7 +10,7 @@ function App() {
 
   useEffect(() => {
     (async()=>{
-      const response = await fetch("/api/v1/Auth/IsLoggedIn")
+      const response = await fetch(ENDPOINTS.AUTH.AUTH_STATUS)
       setIsLoggedIn(response.ok);
       setCheckingAuth(false);
     })()

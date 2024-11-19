@@ -1,5 +1,6 @@
 import Header from "./Header.jsx";
 import { useNavigate } from "react-router-dom";
+import ENDPOINTS from "../endpoints.js";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const RegisterPage = () => {
     };
 
     async function registerUser() {
-      const response = await fetch("/api/v1/Auth/Register", requestOptions);
+      const response = await fetch(ENDPOINTS.AUTH.REGISTER, requestOptions);
       if (response.ok) {
         const data = await response.json();
         console.log(data);

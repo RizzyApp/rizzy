@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import SwipeDeck from './SwipeDeck';
+import ENDPOINTS from "../../endpoints.js";
 
 const db = [
     {
@@ -42,7 +43,7 @@ function CardLoader() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('/api/v1/User');
+      const response = await fetch(ENDPOINTS.USERS.GET_SWIPE_USERS);
       if (response.ok) {
         const data = await response.json();
         console.log(data);

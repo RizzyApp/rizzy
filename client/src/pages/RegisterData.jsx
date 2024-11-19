@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ENDPOINTS from "../endpoints.js";
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
@@ -36,7 +37,7 @@ const RegistrationPage = () => {
     };
 
     async function postUser() {
-      const response = await fetch('/api/v1/User', requestOptions);
+      const response = await fetch(ENDPOINTS.USER.POST_PROFILE, requestOptions);
       if (response.ok) {
         const data = await response.json();
         navigate("/swipe-page");
