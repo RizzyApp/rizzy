@@ -3,40 +3,7 @@ import SwipeDeck from './SwipeDeck';
 import ENDPOINTS from "../../endpoints.js";
 import {useNavigate} from "react-router-dom";
 
-const db = [
-    {
-        id: 1,
-        name: 'Mr.Bean',
-        photos: [],
-        bio: 'This is a very cool bio',
-        age: 30,
-        distance: 34,
-    },
-    {
-        id: 2,
-        name: 'Mr.Bean',
-        photos: ['./image/bean-1.jpg', './image/bean-2.jpg', './image/bean-3.jpg', './image/bean-3.jpg', './image/bean-4.jpg'],
-        bio: 'This is a not so cool bio',
-        age: 30,
-        distance: 34,
-    },
-    {
-        id: 3,
-        name: 'Mr.Bean',
-        photos: [],
-        bio: 'This is an okay bio',
-        age: 30,
-        distance: 34,
-    },
-    {
-        id: 4,
-        name: 'Mr.Bean',
-        photos: ['./image/bean-1.jpg', './image/bean-2.jpg', './image/bean-3.jpg', './image/bean-3.jpg', './image/bean-4.jpg'],
-        bio: 'This is a very bad bio',
-        age: 30,
-        distance: 34,
-    },
-];
+const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const mergeUniqueUsersBasedOnId = (previous, current, otherIdsToExclude) => {
     const userIds = new Map();
@@ -132,12 +99,17 @@ function CardLoader() {
     if (users.length < 1 && noMoreUsers) {
         return <div>
             <div>We could not find any users, please change your preferences in the Profile page!</div>
-            <button onClick={() => navigate("/profile")}>Go to Profile</button>
+            <button className="text-white" onClick={() => navigate("/profile")}>Go to Profile</button>
+            <br/>
+            {IS_DEVELOPMENT && <button className="text-white mt-4" onClick={deleteSwipes}>DELETE SWIPES</button>}
         </div>
     }
 
 
-    return <SwipeDeck users={users} setUsers={setUsers} deckWidth={400} onSwipe={handleSwipeOut}></SwipeDeck>;
+    return <>
+        <SwipeDeck users={users} setUsers={setUsers} deckWidth={400} onSwipe={handleSwipeOut}></SwipeDeck>
+        {IS_DEVELOPMENT && <button className=" fixed left-0 top-1/3 text-white" onClick={deleteSwipes}>DELETE SWIPES</button>}
+    </>
 }
 
 export default CardLoader;

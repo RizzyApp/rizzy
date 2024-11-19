@@ -10,6 +10,7 @@ public interface IRepository<T> where T : class
     Task Add(T entity);
     Task Update(T entity);
     Task Delete(int id);
+    Task RemoveRange(IEnumerable<T> entities);
     IQueryable<T> Query();
     Task SaveChangesAsync();
     Task<IEnumerable<T>> Search(Expression<Func<T, bool>> predicate);

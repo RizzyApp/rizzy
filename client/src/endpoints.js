@@ -7,7 +7,8 @@ const ENDPOINTS = {
         PUT_PROFILE: `${API_BASE_URL}/api/v1/User/profile`,
         POST_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
         PUT_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
-        GET_LOCATION: `${API_BASE_URL}/api/v1/User/Location`
+        GET_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
+        DELETE_SWIPES: `${API_BASE_URL}/api/v1/User/Swipes`
     },
     USERS: {
         GET_SWIPE_USERS: `${API_BASE_URL}/api/v1/Users/swipe-users` 

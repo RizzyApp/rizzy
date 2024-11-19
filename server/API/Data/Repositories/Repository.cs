@@ -47,6 +47,12 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
+    public async Task RemoveRange(IEnumerable<T> entities)
+    {
+        _context.Set<T>().RemoveRange(entities);
+        await _context.SaveChangesAsync();
+    }
+
     public IQueryable<T> Query()
     {
         return _dbSet.AsQueryable();
