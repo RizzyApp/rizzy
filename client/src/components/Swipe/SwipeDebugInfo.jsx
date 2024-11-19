@@ -1,4 +1,4 @@
-function SwipeDebugInfo({ swipeDebugInfo, reset }) {
+function SwipeDebugInfo({ swipeDebugInfo }) {
   return (
     <div className="fixed top-20 left-0 p-4 bg-white text-black z-50 select-none">
       <p>Clamped Movment X (mx): {swipeDebugInfo.clampedX.toFixed(2)}</p>
@@ -13,9 +13,6 @@ function SwipeDebugInfo({ swipeDebugInfo, reset }) {
       <p className={swipeDebugInfo.trigger ? "text-green-500" : "text-red-500"}>
         Trigger: {swipeDebugInfo.trigger ? "true" : "false"}
       </p>
-      <button className="bg-white border-red-800" onClick={reset}>
-        Reset
-      </button>
     </div>
   );
 }

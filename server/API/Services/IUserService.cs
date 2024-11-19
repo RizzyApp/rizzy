@@ -11,5 +11,5 @@ public interface IUserService
 
     public Task<IEnumerable<UserCardDto>> GetFilteredUsersAsync(
         int? userId, int? preferredGender, int minAge, int maxAge,
-        decimal latitude, decimal longitude, int locationRange, IEnumerable<int>? excludedUserIds = null);
+        decimal latitude, decimal longitude, int locationRange, int amount, IEnumerable<int>? excludedUserIds = null);
 }

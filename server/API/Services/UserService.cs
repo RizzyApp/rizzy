@@ -43,7 +43,7 @@ public class UserService : IUserService
     
     public async Task<IEnumerable<UserCardDto>> GetFilteredUsersAsync(
         int? userId, int? preferredGender, int minAge, int maxAge,
-        decimal latitude, decimal longitude, int locationRange, IEnumerable<int>? excludedUserIds = null)
+        decimal latitude, decimal longitude, int locationRange, int amount, IEnumerable<int>? excludedUserIds = null)
     {
         const double kmToDegrees = 0.009;
         var minLat = latitude - (decimal)(locationRange * kmToDegrees);
@@ -75,7 +75,9 @@ public class UserService : IUserService
                 u.Bio,
                 (int)GetDistance(latitude, longitude, u.UserLocation.Latitude, u.UserLocation.Longitude),
                 u.Photos.Select(p => p.Url)
-            ));
+            ))
+            .Take(amount)
+            .ToList();
     }
     
     private static int GetAge(DateTime birthDate)
