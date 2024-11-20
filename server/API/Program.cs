@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using API.Authentication;
 using API.Data;
+using API.Data.Repositories;
 using API.Services;
 using API.Services.ImageUpload;
 using API.Utils.Exceptions;
@@ -37,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5173"));
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+    //app.UseDeveloperExceptionPage();
     
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"Connection String: {connectionString}");
@@ -74,15 +75,16 @@ void AddServices()
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
-    builder.Services.AddScoped<ICloudinaryUpload, CloudinaryUpload>(provider =>
+    builder.Services.AddScoped<ICloudinaryService, CloudinaryService>(provider =>
     {
         var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL")
                             ?? throw new InvalidOperationException("Cloudinary URL not configured.");
         Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
-        return new CloudinaryUpload(cloudinary);
+        return new CloudinaryService(cloudinary);
     });
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
+    builder.Services.AddScoped<IImageService, ImageService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
     
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

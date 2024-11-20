@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.Authentication;
-using API.Models;
+using API.Data.Models;
+using API.Data.Repositories;
 using API.Services;
 using API.Services.ImageUpload;
 using API.Utils;
@@ -14,37 +15,17 @@ namespace API.Controllers;
 public class ImageController : ControllerBase
 {
     private ILogger<ImageController> _logger;
-    private ICloudinaryUpload _cloudinaryUpload;
-    private IRepository<Photo> _photoRepository;
     private IUserService _userService;
-    private IImageValidationService _imageValidationService;
+    private readonly IImageService _imageService;
 
-    public ImageController(ILogger<ImageController> logger, ICloudinaryUpload cloudinaryUpload,
-        IUserService userService, IImageValidationService imageValidationService, IRepository<Photo> photoRepository)
+    public ImageController(ILogger<ImageController> logger,
+        IUserService userService, IImageService imageService)
     {
         _logger = logger;
-        _cloudinaryUpload = cloudinaryUpload;
         _userService = userService;
-        _photoRepository = photoRepository;
-        _imageValidationService = imageValidationService;
+        _imageService = imageService;
     }
-
-
-    [HttpGet("{userId}")]
-    public Task<ActionResult<Photo>> GetPhotosByUser()
-    {
-        return null;
-    }
-
-    [HttpGet]
-    [AuthorizeWithUserId]
-    public async Task<ActionResult<Photo>> GetOwnPhotos()
-    {
-        var userId = User.GetUserId();
-
-        //Console.WriteLine(userId);
-        return null;
-    }
+    
 
     [Authorize]
     [HttpPost]
@@ -53,25 +34,7 @@ public class ImageController : ControllerBase
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
         _logger.LogInformation("User accessed UploadPicture with userId: {userId} ", loggedInUser.Id);
 
-        if (!_imageValidationService.IsFileSizeValid(image.Length))
-        {
-            return BadRequest("image exceeds maximum size"); //the frontend should provide the better description
-        }
-
-        if (!_imageValidationService.IsResolutionAndAspectRatioValid(image))
-        {
-            return BadRequest("image has the wrong aspect ratio or resolution exceeds maximum");
-        }
-
-        var result = await _cloudinaryUpload.Upload(image);
-
-        var photo = new Photo
-        {
-            UserId = loggedInUser.Id,
-            Url = result.Url.ToString()
-        };
-
-        await _photoRepository.Add(photo);
+        await _imageService.ValidateAndUpload(image, loggedInUser.Id);
 
         return Created();
     }

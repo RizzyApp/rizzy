@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import Cropper from 'react-easy-crop'
 import SwipeCardContent from "../swipe/swipeCard/SwipeCardContent.jsx";
 import getCroppedImg from "./utils/getCroppedImg.js";
-import {swipeCardImageAspectRatioNum} from "../../constants.js";
+import {SWIPE_CARD_ASPECT_RATIO} from "../../constants.js";
 
 const cardData = {
     id: 1,
@@ -39,7 +39,7 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
                     crop={crop}
                     zoom={zoom}
                     rotation={rotation}
-                    aspect={swipeCardImageAspectRatioNum}
+                    aspect={SWIPE_CARD_ASPECT_RATIO}
                     onCropChange={setCrop}
                     onZoomChange={setZoom}
                     onRotationChange={setRotation}

@@ -11,7 +11,7 @@ const ProfileSection = ({
   handleAddInterest,
   handleDeleteInterest,
   newInterest,
-  setNewInterest,
+  setNewInterest, isUploading
 }) => {
   const commonInputStyles = "border rounded w-full text-black p-2 h-10";
 
@@ -203,10 +203,13 @@ const ProfileSection = ({
 
           <button
             onClick={() => {
+              if(isUploading){ //we don't want them to make changes
+                return;
+              }
               if (edit) onSave();
               setEdit(!edit);
             }}
-            className="px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
+            className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${isUploading ? "disabled" : ""}`}
           >
             {edit ? "Save Changes" : "Edit Profile"}
           </button>

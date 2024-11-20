@@ -1,3 +1,5 @@
+using API.Contracts.Photo;
+
 namespace API.Contracts.UserProfile;
 
 public record UserProfileResponse
@@ -13,5 +15,5 @@ public record UserProfileResponse
     int PreferredMaxAge,
     int PreferredLocationRange,
     int PreferredGender,
-    List<string> Photos
+    List<PhotoDto> Photos
 );

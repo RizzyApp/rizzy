@@ -1,13 +1,13 @@
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using API.Contracts;
+using API.Contracts.Photo;
 using API.Contracts.UserProfile;
 using API.Data.Models;
-using API.Models;
+using API.Data.Repositories;
 using API.Services;
+using API.Services.ImageUpload;
 using API.Utils.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,21 +23,23 @@ public class UserController : ControllerBase
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserLocation> _userLocationRepository;
     private readonly IRepository<Swipes> _swipesRepository;
-    private readonly IRepository<Photo> _userPhotoRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IUserService _userService;
+    private readonly ILogger<UserController> _logger;
+    private readonly IImageService _imageService;
 
 
     public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository,
         IRepository<Swipes> swipesRepository, UserManager<IdentityUser> userManager, IUserService userService,
-        IRepository<Photo> userPhoto)
+        ILogger<UserController> logger, IImageService imageService)
     {
         _userRepository = userRepository;
         _userLocationRepository = userLocationRepository;
         _swipesRepository = swipesRepository;
         _userManager = userManager;
         _userService = userService;
-        _userPhotoRepository = userPhoto;
+        _logger = logger;
+        _imageService = imageService;
     }
 
     [Authorize]
@@ -79,12 +81,14 @@ public class UserController : ControllerBase
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
 
-        var photos = _userPhotoRepository.Query().Where(p => p.UserId == loggedInUser.Id).Select(p => p.Url).ToList();
-        Console.WriteLine("p count: " + photos.Count);
+        loggedInUser = _userRepository.Query()
+            .Include(u => u.Photos)
+            .FirstOrDefault(u => u.Id == loggedInUser.Id);
 
 
-        //var email = loggedInUser.AspNetUser.Email;
-
+        var photos = loggedInUser.Photos
+            .Select(p => new PhotoDto(p.Id, p.Url))
+            .ToList();
 
         var userProfileResponse = new UserProfileResponse(
             loggedInUser.Name,
@@ -213,6 +217,31 @@ public class UserController : ControllerBase
         await _swipesRepository.RemoveRange(loggedInUser.Swipes);
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("photos/changes")]
+    public async Task<IActionResult> ProcessPhotoChanges([FromForm] string metadata, [FromForm] List<IFormFile> files)
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        
+        _logger.LogInformation("User accessed ProcessPhotoChanges with userId: {userId} ", loggedInUser!.Id);
+        
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+        var photoChangeMetadata = JsonSerializer.Deserialize<List<PhotoChangeMetadata>>(metadata, options);
+        
+        if (photoChangeMetadata == null)
+        {
+            return BadRequest("Invalid metadata format.");
+        }
+        
+        await _imageService.HandleChanges(photoChangeMetadata, files, loggedInUser.Id);
+
+        return Ok("Changes were processed");
     }
 
 

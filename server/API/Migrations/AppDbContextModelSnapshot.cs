@@ -22,7 +22,7 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Models.BlockedUser", b =>
+            modelBuilder.Entity("API.Data.Models.BlockedUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace API.Migrations
                     b.ToTable("BlockedUsers");
                 });
 
-            modelBuilder.Entity("API.Models.MatchInfo", b =>
+            modelBuilder.Entity("API.Data.Models.MatchInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace API.Migrations
                     b.ToTable("MatchInfos");
                 });
 
-            modelBuilder.Entity("API.Models.Message", b =>
+            modelBuilder.Entity("API.Data.Models.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,13 +91,16 @@ namespace API.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("API.Models.Photo", b =>
+            modelBuilder.Entity("API.Data.Models.Photo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CloudinaryAssetId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -113,7 +116,7 @@ namespace API.Migrations
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("API.Models.Swipes", b =>
+            modelBuilder.Entity("API.Data.Models.Swipes", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,7 +146,7 @@ namespace API.Migrations
                     b.ToTable("Swipes");
                 });
 
-            modelBuilder.Entity("API.Models.User", b =>
+            modelBuilder.Entity("API.Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,7 +203,7 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("API.Models.UserLocation", b =>
+            modelBuilder.Entity("API.Data.Models.UserLocation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -438,15 +441,15 @@ namespace API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Models.BlockedUser", b =>
+            modelBuilder.Entity("API.Data.Models.BlockedUser", b =>
                 {
-                    b.HasOne("API.Models.User", "BlockedUserNavigation")
+                    b.HasOne("API.Data.Models.User", "BlockedUserNavigation")
                         .WithMany()
                         .HasForeignKey("BlockedUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", "User")
+                    b.HasOne("API.Data.Models.User", "User")
                         .WithMany("BlockedUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -457,15 +460,15 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.Message", b =>
+            modelBuilder.Entity("API.Data.Models.Message", b =>
                 {
-                    b.HasOne("API.Models.MatchInfo", "MatchInfo")
+                    b.HasOne("API.Data.Models.MatchInfo", "MatchInfo")
                         .WithMany("Messages")
                         .HasForeignKey("MatchInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", "User")
+                    b.HasOne("API.Data.Models.User", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -476,9 +479,9 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.Photo", b =>
+            modelBuilder.Entity("API.Data.Models.Photo", b =>
                 {
-                    b.HasOne("API.Models.User", "User")
+                    b.HasOne("API.Data.Models.User", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -487,15 +490,15 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.Swipes", b =>
+            modelBuilder.Entity("API.Data.Models.Swipes", b =>
                 {
-                    b.HasOne("API.Models.User", "SwipedUser")
+                    b.HasOne("API.Data.Models.User", "SwipedUser")
                         .WithMany()
                         .HasForeignKey("SwipedUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", "User")
+                    b.HasOne("API.Data.Models.User", "User")
                         .WithMany("Swipes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -506,7 +509,7 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Models.User", b =>
+            modelBuilder.Entity("API.Data.Models.User", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "AspNetUser")
                         .WithMany()
@@ -517,11 +520,11 @@ namespace API.Migrations
                     b.Navigation("AspNetUser");
                 });
 
-            modelBuilder.Entity("API.Models.UserLocation", b =>
+            modelBuilder.Entity("API.Data.Models.UserLocation", b =>
                 {
-                    b.HasOne("API.Models.User", "User")
+                    b.HasOne("API.Data.Models.User", "User")
                         .WithOne("UserLocation")
-                        .HasForeignKey("API.Models.UserLocation", "UserId")
+                        .HasForeignKey("API.Data.Models.UserLocation", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -530,13 +533,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("MatchInfoUser", b =>
                 {
-                    b.HasOne("API.Models.MatchInfo", null)
+                    b.HasOne("API.Data.Models.MatchInfo", null)
                         .WithMany()
                         .HasForeignKey("MatchInfosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.User", null)
+                    b.HasOne("API.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -594,12 +597,12 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Models.MatchInfo", b =>
+            modelBuilder.Entity("API.Data.Models.MatchInfo", b =>
                 {
                     b.Navigation("Messages");
                 });
 
-            modelBuilder.Entity("API.Models.User", b =>
+            modelBuilder.Entity("API.Data.Models.User", b =>
                 {
                     b.Navigation("BlockedUsers");
 

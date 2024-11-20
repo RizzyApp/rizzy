@@ -1,5 +1,5 @@
 import {forwardRef} from 'react';
-import {swipeCardImageAspectRatioClassName} from '../../../constants.js';
+import {SWIPE_CARD_ASPECT_RATIO_CLASSNAME} from '../../../constants.js';
 
 const placeholderDistance = 25;
 

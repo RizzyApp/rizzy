@@ -8,7 +8,8 @@ const ENDPOINTS = {
         POST_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
         PUT_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
         GET_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
-        DELETE_SWIPES: `${API_BASE_URL}/api/v1/User/Swipes`
+        DELETE_SWIPES: `${API_BASE_URL}/api/v1/User/Swipes`,
+        POST_PHOTO_CHANGES: `${API_BASE_URL}/api/v1/user/photos/changes`
     },
     USERS: {
         GET_SWIPE_USERS: `${API_BASE_URL}/api/v1/Users/swipe-users` 
@@ -17,7 +18,7 @@ const ENDPOINTS = {
         POST_SWIPE: `${API_BASE_URL}/api/v1/Swipe`
     },
     IMAGE:{
-        POST: `${API_BASE_URL}/api/v1/Image`
+        POST: `${API_BASE_URL}/api/v1/Image`,
     },
     AUTH:{
         REGISTER: `${API_BASE_URL}/api/v1/Auth/Register`,

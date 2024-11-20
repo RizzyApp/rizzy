@@ -3,14 +3,14 @@ using CloudinaryDotNet.Actions;
 
 namespace API.Services.ImageUpload;
 
-public class CloudinaryUpload : ICloudinaryUpload
+public class CloudinaryService : ICloudinaryService
 {
 
-    private readonly Cloudinary _cloudinaryService;
+    private readonly Cloudinary _cloudinarySdk;
 
-    public CloudinaryUpload(Cloudinary cloudinaryService)
+    public CloudinaryService(Cloudinary cloudinarySdk)
     {
-        _cloudinaryService = cloudinaryService;
+        _cloudinarySdk = cloudinarySdk;
     }
 
     public async Task<ImageUploadResult> Upload(IFormFile image)
@@ -25,7 +25,16 @@ public class CloudinaryUpload : ICloudinaryUpload
         };
 
 
-        var uploadResult = await _cloudinaryService.UploadAsync(uploadParams);
+        var uploadResult = await _cloudinarySdk.UploadAsync(uploadParams);
         return uploadResult;
+    }
+
+    public bool Delete(string assetId)
+    {
+        var deletionParams = new DeletionParams(assetId);
+
+        var deletionResult = _cloudinarySdk.Destroy(deletionParams);
+
+        return deletionResult.Result == "ok";
     }
 }

@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using API.Contracts;
 using API.Data.Models;
-using API.Models;
 
 namespace API.Services;
 

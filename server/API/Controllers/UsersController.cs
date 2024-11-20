@@ -1,6 +1,6 @@
 using API.Contracts;
 using API.Data.Models;
-using API.Models;
+using API.Data.Repositories;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
