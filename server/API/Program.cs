@@ -86,6 +86,7 @@ void AddServices()
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
     builder.Services.AddScoped<IImageService, ImageService>();
+    builder.Services.AddScoped<IMatchService, MatchService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
     
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

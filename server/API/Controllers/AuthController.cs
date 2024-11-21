@@ -1,9 +1,4 @@
-using System.Security.Claims;
-using API.Authentication;
-using API.Contracts;
 using API.Contracts.Auth;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -14,13 +14,15 @@ public class SwipesController : ControllerBase
 {
     private readonly IRepository<Swipes> _swipeRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IMatchService _matchService;
     private readonly IUserService _userService;
 
-    public SwipesController(IRepository<Swipes> swipeRepository, IRepository<User> userRepository, IUserService userService)
+    public SwipesController(IRepository<Swipes> swipeRepository, IMatchService matchService, IRepository<User> userRepository, IUserService userService)
     {
         _swipeRepository = swipeRepository;
         _userRepository = userRepository;
         _userService = userService;
+        _matchService = matchService;
     }
 
     [Authorize]
@@ -48,17 +50,22 @@ public class SwipesController : ControllerBase
 
         var swipedUser = await _userRepository.GetByIdAsync(swipeDto.SwipedUserId);
 
+        if (swipedUser is null)
+        {
+            return BadRequest($"swiped user with id {swipeDto.SwipedUserId} does not exist");
+        }
+
         var swipe = new Swipes
         {
             UserId = loggedInUser.Id,
             User = loggedInUser,
-            SwipedUserId = swipeDto.SwipedUserId,
-            SwipedUser = swipedUser!,
+            SwipedUserId = swipedUser.Id,
             SwipeType = swipeDto.SwipeType,
             CreatedAt = DateTime.Now
         };
 
         await _swipeRepository.AddAsync(swipe);
+        await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
         return Ok();
     }
     

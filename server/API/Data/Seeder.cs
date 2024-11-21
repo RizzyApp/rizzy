@@ -7,14 +7,13 @@ namespace API.Data;
 public static class AppDbSeeder
 {
     private static readonly Random Random = new Random(50);
+    private const double LOCATION_DEVIATION = 2;
+    private const int TESTUSER_ID = 1;
 
     public static async Task SeedDataAsync(AppDbContext context, UserManager<IdentityUser> userManager)
     {
         if (!await context.Users.AnyAsync())
         {
-            var budapestLocation = new UserLocation
-                { Latitude = 47.4979M, Longitude = 19.0402M }; // Budapest coordinates
-
             var identityUsers = new List<IdentityUser>();
             var appUsers = new List<User>();
 
@@ -42,14 +41,26 @@ public static class AppDbSeeder
                 var randomNameIndex = Random.Next(femaleNames.Count);
                 var gender = Random.Next(0, 2);
                 var name = gender == 1 ? maleNames[randomNameIndex] : femaleNames[randomNameIndex];
-                var userLocation = new UserLocation
-                    { Latitude = 47.4979M, Longitude = 19.0402M };
+                var userLocationIndex = Random.Next(_locations.Count);
+                var userLocation = AddSomeDeviationToLocation(LOCATION_DEVIATION, _locations[userLocationIndex]);
 
                 var imageUrl = gender == 1 ? GetRandomMaleImage() : GetRandomFemaleImage();
                 var photo = new Photo()
                 {
                     Url = imageUrl
                 };
+
+                var swipesList = new List<Swipes>();
+
+                if (i < 10)
+                {
+                    swipesList.Add(new Swipes
+                    {
+                        SwipedUserId = TESTUSER_ID,
+                        UserId = i + 2, //TODO: Not necessarily a good way of doing it
+                        SwipeType = "right"
+                    });
+                }
 
                 appUsers.Add(new User
                 {
@@ -66,12 +77,13 @@ public static class AppDbSeeder
                     PreferredMaxAge = Random.Next(30, 40),
                     PreferredLocationRange = Random.Next(10, 100), // Random location range
                     PreferredGender = Random.Next(0, 3), // Random preferred gender
-                    UserLocation = userLocation
+                    UserLocation = userLocation,
+                    Swipes = swipesList
                 });
             }
-            
-            await SeedTestUserAsync(context, userManager);
-            
+
+            await SeedTestUserAsync(context, userManager); //this must be the first one always!!!
+
             for (int i = 0; i < identityUsers.Count; i++)
             {
                 var identityUser = identityUsers[i];
@@ -133,7 +145,8 @@ public static class AppDbSeeder
                         },
                         new Photo
                         {
-                            Url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh4WVAwlOj6XKpnXevQNEtqxssmeuEdo6jkQ&s"
+                            Url =
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh4WVAwlOj6XKpnXevQNEtqxssmeuEdo6jkQ&s"
                         }
                     ],
                     PreferredLocationRange = 50,
@@ -212,6 +225,36 @@ public static class AppDbSeeder
         "Emma", "Mia", "Amelia", "Olivia", "Lily",
         "Chloe", "Grace", "Zoe", "Isabella", "Eva"
     };
+
+    private static List<UserLocation> _locations = new()
+    {
+        new UserLocation
+            { Latitude = 47.4979M, Longitude = 19.0402M },
+        new UserLocation
+        {
+            Latitude = 48.1m, Longitude = 20.78333m
+        },
+        new UserLocation
+        {
+            Latitude = 47.68388m, Longitude = 17.5820m
+        },
+        new UserLocation
+        {
+            Latitude = 52.5529m, Longitude = 13.2730m
+        }
+    };
+
+    private static UserLocation AddSomeDeviationToLocation(double maxDeviation, UserLocation location)
+    {
+        var newLatitude = (decimal)(Random.NextDouble() * maxDeviation) + location.Latitude;
+        var newLongitude = (decimal)(Random.NextDouble() * maxDeviation) + location.Longitude;
+
+        return new UserLocation
+        {
+            Latitude = newLatitude,
+            Longitude = newLongitude
+        };
+    }
 
     private static string GetRandomMaleImage()
     {

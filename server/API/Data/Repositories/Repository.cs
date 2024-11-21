@@ -68,7 +68,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _context.Set<T>().Where(predicate).ToListAsync();
+       return await _context.Set<T>().Where(predicate).ToListAsync();
     }
     
     public async Task BeginTransactionAsync()
