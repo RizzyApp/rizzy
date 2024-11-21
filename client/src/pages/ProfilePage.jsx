@@ -5,7 +5,7 @@ import PhotoGallery from "../components/profile/PhotoGallery";
 import ProfileSection from "../components/profile/ProfileSection";
 import ENDPOINTS from "../endpoints.js";
 import dataURLtoBlob from "../components/profile/utils/dataURLToBlob.js";
-
+import useCustomToast from "../hooks/useCustomToast.js";
 
 const createPictureChangesFormData = (initialPhotos, photoURLs) => {
 
@@ -56,7 +56,8 @@ const ProfilePage = () => {
     const [initialPhotos, setInitialPhotos] = useState(null);
     const [changedPhotoUrls, setChangedPhotoUrls] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
-    
+    const {showPromiseToast} = useCustomToast();
+
     const handleChange = (e) => {
         const {name, value} = e.target;
         setData((prevData) => ({
@@ -103,10 +104,13 @@ const ProfilePage = () => {
                 });
             }
 
-            const [profileResponse, photoResponse] = await Promise.all([
-                profileUpdatePromise,
-                photoUpdatePromise,
-            ]);
+            const promises = [profileUpdatePromise];
+            if (photoUpdatePromise) {
+                promises.push(photoUpdatePromise);
+            }
+
+            const results = await showPromiseToast(Promise.all(promises), "yay nice",
+                "oops", "loading...")
 
 
             const profileResponse = results[0];
@@ -115,7 +119,6 @@ const ProfilePage = () => {
             if (profileResponse.ok && (!photoUpdatePromise || photoResponse?.ok)) {
                 console.log("Profile and photos updated successfully");
                 setIsEditing(false);
-
             } else {
                 console.error("Failed to update profile or photos");
             }
@@ -200,6 +203,7 @@ const ProfilePage = () => {
                     handleDeleteInterest={handleDeleteInterest}
                     newInterest={newInterest}
                     setNewInterest={setNewInterest}
+                    isUploading={isUploading}
                 />
                 <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
                     <PhotoGallery isEditing={isEditing} initialImages={initialPhotos.map(p => p.url)}

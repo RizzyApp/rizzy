@@ -18,7 +18,7 @@
     "react-easy-crop": "^5.1.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.26.2",
-    "react-tinder-card": "^1.6.4"
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
