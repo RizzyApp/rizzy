@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import SwipeDeck from './SwipeDeck';
 import ENDPOINTS from "../../endpoints.js";
 import {useNavigate} from "react-router-dom";
+import fetchWithCredentials from "../../utils/fetchWithCredentials.js";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
@@ -22,7 +23,7 @@ const deleteSwipes = async () => {
     const options = {
         "method": "DELETE"
     }
-    await fetch(ENDPOINTS.SWIPE.DELETE_SWIPES, options);
+    await fetchWithCredentials(ENDPOINTS.SWIPE.DELETE_SWIPES, options);
     window.location.reload();
 }
 
@@ -32,6 +33,7 @@ function CardLoader() {
     const [loading, setLoading] = useState(false);
     const [noMoreUsers, setNoMoreUsers] = useState(false);
     const [swipedUserIds, setSwipedUserIds] = useState([]);
+    const [error, setError] = useState(false); //TODO: Show actual error messages for users
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +41,7 @@ function CardLoader() {
     });
 
     useEffect(() => {
-        if ((!users || users.length < 2)  && !loading && !noMoreUsers) {
+        if ((!users || users.length < 2)  && !loading && !noMoreUsers && !error) {
             fetchData();
         }
 
@@ -48,7 +50,7 @@ function CardLoader() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(ENDPOINTS.USERS.GET_SWIPE_USERS);
+            const response = await fetchWithCredentials(ENDPOINTS.USERS.GET_SWIPE_USERS);
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -62,8 +64,10 @@ function CardLoader() {
 
             } else {
                 console.error('Failed to fetch users', response.status);
+                setError(true);
             }
         } catch (error) {
+            setError(true);
             console.error('Error fetching users:', error);
         }
         setLoading(false);
@@ -85,7 +89,7 @@ function CardLoader() {
 
         try {
             setSwipedUserIds(prev => [...prev, userId]);
-            const response = await fetch(ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
+            const response = await fetchWithCredentials(ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
 
         } catch (error) {
             console.error('Error swiping user:', error);

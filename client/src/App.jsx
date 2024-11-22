@@ -3,7 +3,8 @@ import {Link, Outlet} from "react-router-dom";
 import ENDPOINTS from "./endpoints.js";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import {SignalRProvider} from "./components/contexts/SignalRContext.jsx";
+import fetchWithCredentials from "./utils/fetchWithCredentials.js";
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
 
     useEffect(() => {
         (async () => {
-            const response = await fetch(ENDPOINTS.AUTH.AUTH_STATUS)
+            const response = await fetchWithCredentials(ENDPOINTS.AUTH.AUTH_STATUS)
             setIsLoggedIn(response.ok);
             setCheckingAuth(false);
         })()
@@ -33,10 +34,12 @@ function App() {
     }, []);  */
 
     return (
-        <div>
-            <ToastContainer position="top-right" />
-            <Outlet context={([isLoggedIn, setIsLoggedIn])}/>
-        </div>
+        <>
+            <SignalRProvider>
+                <ToastContainer position="top-right"/>
+                <Outlet context={([isLoggedIn, setIsLoggedIn])}/>
+            </SignalRProvider>
+        </>
     );
 }
 

@@ -1,4 +1,4 @@
-namespace API.Authentication;
+namespace API.Services.Authentication;
 
 public class RoleSettings
 {

@@ -23,21 +23,21 @@ const App = () => {
     setGeoLocationDenied(true); // Set denied to true
   };
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(success, failed);
-  }, [askPermission]);
+  // useEffect(() => {
+  //   navigator.geolocation.getCurrentPosition(success, failed);
+  // }, [askPermission]);
 
-  if (geoLocationDenied) {
-    return (
-      <GeoLocationDenied setAskPermission={setAskPermission}/>
-    );
-  }
-
-  if (!geoLocationAccepted) {
-    return (
-      <GeoLocationNotAccepted/>
-    );
-  }
+  // if (geoLocationDenied) {
+  //   return (
+  //     <GeoLocationDenied setAskPermission={setAskPermission}/>
+  //   );
+  // }
+  //
+  // if (!geoLocationAccepted) {
+  //   return (
+  //     <GeoLocationNotAccepted/>
+  //   );
+  // }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

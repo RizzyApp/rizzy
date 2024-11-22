@@ -4,6 +4,7 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ENDPOINTS from "../endpoints.js";
 import DevelopmentMessage from "./DevelopmentMessage.jsx";
+import fetchWithCredentials from "../utils/fetchWithCredentials.js";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
@@ -20,10 +21,11 @@ const Login = () => {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({email, password}),
+            credentials: "include",
         };
 
         async function postUser() {
-            const response = await fetch(ENDPOINTS.AUTH.LOGIN, requestOptions);
+            const response = await fetchWithCredentials(ENDPOINTS.AUTH.LOGIN, requestOptions);
             if (response.ok) {
                 const data = await response.json();
                 setIsLoggedIn(true);

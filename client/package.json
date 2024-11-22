@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@react-spring/web": "^9.5.5",
     "@use-gesture/react": "^10.3.1",
     "react": "^18.3.1",

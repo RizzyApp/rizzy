@@ -25,6 +25,10 @@ const ENDPOINTS = {
         LOGIN: `${API_BASE_URL}/api/v1/Auth/Login`,
         LOGOUT: `${API_BASE_URL}/api/v1/Auth/Logout`,
         AUTH_STATUS: `${API_BASE_URL}/api/v1/Auth/auth-status`
+    },
+    LIVE:{
+        NOTIFICATIONS: `${API_BASE_URL}/api/notificationHub`,
+        CHAT: `${API_BASE_URL}/api/chatHub`,
     }
 
 };

@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using System.Text;
-using API.Authentication;
 using API.Data;
 using API.Data.Repositories;
+using API.Hubs;
 using API.Services;
+using API.Services.Authentication;
 using API.Services.ImageUpload;
+using API.Utils.Configuration;
 using API.Utils.Exceptions;
 using API.Utils.Filters;
 using CloudinaryDotNet;
@@ -28,6 +30,7 @@ ConfigureSwagger();
 AddDbContexts();
 AddAuthentication();
 AddIdentity();
+AddCors();
 
 
 var app = builder.Build();
@@ -36,11 +39,12 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5173"));
+    app.UseCors("CorsPolicy");
+    
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.UseDeveloperExceptionPage();
-    
+
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"Connection String: {connectionString}");
 
@@ -50,29 +54,33 @@ if (app.Environment.IsDevelopment())
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         dbContext.Database.Migrate();
         await AppDbSeeder.SeedDataAsync(dbContext, userManager);
-        
+
         var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
         authenticationSeeder.AddRoles();
         authenticationSeeder.AddAdmin();
     }
 }
-
+else
+{
+    app.UseCors("CorsPolicy");
+}
 
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<NotificationHub>("api/notificationHub");
+app.MapHub<ChatHub>("api/chatHub");
 app.MapControllers();
 app.Run();
 
 
 void AddServices()
 {
-
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddControllers();
-    
+
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
@@ -88,15 +96,22 @@ void AddServices()
     builder.Services.AddScoped<IImageService, ImageService>();
     builder.Services.AddScoped<IMatchService, MatchService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
-    
+
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-    
+    builder.Services.AddSignalR(options =>
+    {
+        var environment = builder.Environment;
+
+        if (environment.IsDevelopment())
+        {
+            options.EnableDetailedErrors = true;
+        }
+    });
 }
 
 void ConfigureSwagger()
 {
-
     builder.Services.AddSwaggerGen(option =>
     {
         option.SwaggerDoc("v1",
@@ -130,7 +145,6 @@ void ConfigureSwagger()
 
 void AddDbContexts()
 {
-    
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -161,16 +175,17 @@ void AddAuthentication()
                     Encoding.UTF8.GetBytes(jwtSettings["IssuerSigningKey"])
                 ),
             };
-
         })
         .AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
-            options.LoginPath = "/login"; 
+            options.LoginPath = "/login";
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
             options.SlidingExpiration = true;
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        });;
+            options.Cookie.SameSite = SameSiteMode.None;
+        });
+    ;
 
     builder.Services.AddAuthorization(options =>
     {
@@ -181,17 +196,37 @@ void AddAuthentication()
 void AddIdentity()
 {
     builder.Services.AddIdentityCore<IdentityUser>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-        options.User.RequireUniqueEmail = true;
-        options.Password.RequireDigit = false;
-        options.Password.RequiredLength = 6;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-    })
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddSignInManager();
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.User.RequireUniqueEmail = true;
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddSignInManager();
 }
 
+void AddCors()
+{
+    var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
+
+    if (corsSettings is null)
+    {
+        throw new InvalidOperationException("Cors settings is missing from appsettings");
+    }
+    
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.WithOrigins(corsSettings.AllowedOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+    });
+}

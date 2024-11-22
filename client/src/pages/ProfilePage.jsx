@@ -6,6 +6,7 @@ import ProfileSection from "../components/profile/ProfileSection";
 import ENDPOINTS from "../endpoints.js";
 import dataURLtoBlob from "../components/profile/utils/dataURLToBlob.js";
 import useCustomToast from "../hooks/useCustomToast.js";
+import fetchWithCredentials from "../utils/fetchWithCredentials.js";
 
 const createPictureChangesFormData = (initialPhotos, photoURLs) => {
 
@@ -66,7 +67,7 @@ const ProfilePage = () => {
     };
 
     const handleLogout = () => {
-        fetch(ENDPOINTS.AUTH.LOGOUT, {method: "POST"});
+        fetchWithCredentials(ENDPOINTS.AUTH.LOGOUT, {method: "POST"});
         setIsLoggedIn(false);
         navigate("/");
     };
@@ -78,7 +79,7 @@ const ProfilePage = () => {
             const {metadata, formData} = createPictureChangesFormData(initialPhotos, changedPhotoUrls);
 
             // Prepare the profile update promise
-            const profileUpdatePromise = fetch(ENDPOINTS.USER.PUT_PROFILE, {
+            const profileUpdatePromise = fetchWithCredentials(ENDPOINTS.USER.PUT_PROFILE, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -98,7 +99,7 @@ const ProfilePage = () => {
             let photoUpdatePromise = null;
             console.log(metadata);
             if (metadata.some((item) => item.action !== "KEEP")) {
-                photoUpdatePromise = fetch(ENDPOINTS.IMAGE.POST_IMAGE_CHANGES, {
+                photoUpdatePromise = fetchWithCredentials(ENDPOINTS.IMAGE.POST_IMAGE_CHANGES, {
                     method: "POST",
                     body: formData,
                 });
@@ -132,7 +133,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
-                const response = await fetch(ENDPOINTS.USER.GET_PROFILE, {
+                const response = await fetchWithCredentials(ENDPOINTS.USER.GET_PROFILE, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

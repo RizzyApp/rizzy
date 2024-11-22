@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace API.Authentication;
+namespace API.Services.Authentication;
 
 /// <summary>
 /// An authorization attribute that ensures the user has the "NameIdentifier" claim.

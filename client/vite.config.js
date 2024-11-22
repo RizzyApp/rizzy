@@ -11,16 +11,10 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   plugins: [react(), svgr()],
   server: {
-    proxy: {
-      '/api': {
-        target: 'https://localhost:7276',
-        changeOrigin: true,
-        secure: false, // disable SSL verification for local development
-      }
-    },
     https:{
       key: fs.readFileSync(path.resolve(__dirname, 'localhost.key')),
       cert: fs.readFileSync(path.resolve(__dirname, 'localhost.crt'))
-    }
+    },
+    port: 5276
   }
 });

@@ -70,7 +70,12 @@ public class Repository<T> : IRepository<T> where T : class
     {
        return await _context.Set<T>().Where(predicate).ToListAsync();
     }
-    
+
+    public async Task<T?> FindFirstAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+    }
+
     public async Task BeginTransactionAsync()
     {
         if (_currentTransaction is not null)

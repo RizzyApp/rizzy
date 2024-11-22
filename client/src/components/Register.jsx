@@ -1,6 +1,7 @@
 import Header from "./Header.jsx";
 import { useNavigate } from "react-router-dom";
 import ENDPOINTS from "../endpoints.js";
+import fetchWithCredentials from "../utils/fetchWithCredentials.js";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const RegisterPage = () => {
     };
 
     async function registerUser() {
-      const response = await fetch(ENDPOINTS.AUTH.REGISTER, requestOptions);
+      const response = await fetchWithCredentials(ENDPOINTS.AUTH.REGISTER, requestOptions);
       if (response.ok) {
         const data = await response.json();
         console.log(data);
