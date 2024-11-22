@@ -6,6 +6,7 @@ using API.Data.Repositories;
 using API.Services;
 using API.Services.ImageUpload;
 using API.Utils.Exceptions;
+using API.Utils.Filters;
 using CloudinaryDotNet;
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -122,6 +123,7 @@ void ConfigureSwagger()
                 new string[] { }
             }
         });
+        option.DocumentFilter<LowercasePathFilter>();
     });
 }
 

@@ -40,7 +40,7 @@ const ProfileSection = ({
       <div className="flex">
         <div className="w-1/3 flex flex-col items-center border-r pr-4">
           <img
-            src={data.profile.photos[0] ?? "x"}
+            src={data.profile.photos[0].url ?? "x"}
             alt="Profile"
             className="w-40 h-40 rounded-full mb-4"
           />

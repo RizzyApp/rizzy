@@ -51,13 +51,13 @@ public class ImageService : IImageService
             Url = result.Url.ToString()
         };
 
-        await _photoRepository.Add(photo);
+        await _photoRepository.AddAsync(photo);
         _logger.LogInformation("Successfully uploaded and saved photo for userId {UserId}.", userId);
     }
 
     public async Task DeleteImage(int photoId, int userId)
     {
-        var photo = await _photoRepository.GetById(photoId);
+        var photo = await _photoRepository.GetByIdAsync(photoId);
 
         if (photo is null)
         {
@@ -75,14 +75,14 @@ public class ImageService : IImageService
             _cloudinaryService.Delete(photo.CloudinaryAssetId);
         }
 
-        await _photoRepository.Delete(photoId);
+        await _photoRepository.DeleteAsync(photoId);
         _logger.LogInformation("Successfully deleted photo with id {PhotoId} for userId {UserId}.", photoId, userId);
     }
 
     public async Task HandleChanges(IEnumerable<PhotoChangeMetadata> metadata, List<IFormFile> files, int userId)
     {
         metadata = metadata.ToList();
-        var userPhotos = await _photoRepository.Search(p => p.UserId == userId);
+        var userPhotos = await _photoRepository.SearchAsync(p => p.UserId == userId);
         userPhotos = userPhotos.ToList();
 
         var imagesAdded = metadata.Count(m => m.Action is PhotoChangesActionType.ADD);

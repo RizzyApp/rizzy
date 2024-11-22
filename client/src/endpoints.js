@@ -2,23 +2,23 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ENDPOINTS = {
     USER:{
-        POST_PROFILE: `${API_BASE_URL}/api/v1/User`,
+        POST_PROFILE: `${API_BASE_URL}/api/v1/User/profile`,
         GET_PROFILE: `${API_BASE_URL}/api/v1/User/profile`,
         PUT_PROFILE: `${API_BASE_URL}/api/v1/User/profile`,
         POST_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
         PUT_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
         GET_LOCATION: `${API_BASE_URL}/api/v1/User/Location`,
-        DELETE_SWIPES: `${API_BASE_URL}/api/v1/User/Swipes`,
-        POST_PHOTO_CHANGES: `${API_BASE_URL}/api/v1/user/photos/changes`
     },
     USERS: {
         GET_SWIPE_USERS: `${API_BASE_URL}/api/v1/Users/swipe-users` 
     },
     SWIPE:{
-        POST_SWIPE: `${API_BASE_URL}/api/v1/Swipe`
+        POST_SWIPE: `${API_BASE_URL}/api/v1/Swipes`,
+        DELETE_SWIPES: `${API_BASE_URL}/api/v1/User/Swipes/all`,
     },
     IMAGE:{
-        POST: `${API_BASE_URL}/api/v1/Image`,
+        POST_IMAGE: `${API_BASE_URL}/api/v1/Image`,
+        POST_IMAGE_CHANGES: `${API_BASE_URL}/api/v1/user/image/changes`
     },
     AUTH:{
         REGISTER: `${API_BASE_URL}/api/v1/Auth/Register`,

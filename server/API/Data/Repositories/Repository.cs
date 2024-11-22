@@ -22,24 +22,24 @@ public class Repository<T> : IRepository<T> where T : class
         return await _context.Set<T>().ToListAsync();
     }
 
-    public async Task<T?> GetById(int id)
+    public async Task<T?> GetByIdAsync(int id)
     {
         return await _context.Set<T>().FindAsync(id);
     }
 
-    public async Task Add(T entity)
+    public async Task AddAsync(T entity)
     {
         await _context.AddAsync(entity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Update(T entity)
+    public async Task UpdateAsync(T entity)
     {
         _context.Update(entity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Delete(int id)
+    public async Task DeleteAsync(int id)
     {
         var entity = await _context.Set<T>().FindAsync(id);
         if (entity != null)
@@ -49,7 +49,7 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
-    public async Task RemoveRange(IEnumerable<T> entities)
+    public async Task RemoveRangeAsync(IEnumerable<T> entities)
     {
         _context.Set<T>().RemoveRange(entities);
         await _context.SaveChangesAsync();
@@ -66,7 +66,7 @@ public class Repository<T> : IRepository<T> where T : class
     }
     
 
-    public async Task<IEnumerable<T>> Search(Expression<Func<T, bool>> predicate)
+    public async Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate)
     {
         return await _context.Set<T>().Where(predicate).ToListAsync();
     }

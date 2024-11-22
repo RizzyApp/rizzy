@@ -98,7 +98,7 @@ const ProfilePage = () => {
             let photoUpdatePromise = null;
             console.log(metadata);
             if (metadata.some((item) => item.action !== "KEEP")) {
-                photoUpdatePromise = fetch(ENDPOINTS.USER.POST_PHOTO_CHANGES, {
+                photoUpdatePromise = fetch(ENDPOINTS.IMAGE.POST_IMAGE_CHANGES, {
                     method: "POST",
                     body: formData,
                 });

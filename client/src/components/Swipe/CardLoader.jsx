@@ -22,7 +22,7 @@ const deleteSwipes = async () => {
     const options = {
         "method": "DELETE"
     }
-    await fetch(ENDPOINTS.USER.DELETE_SWIPES, options);
+    await fetch(ENDPOINTS.SWIPE.DELETE_SWIPES, options);
     window.location.reload();
 }
 

@@ -27,7 +27,7 @@ public class UserService : IUserService
             throw new MissingClaimException();
         }
 
-        var searchResults = await _userRepository.Search(user => user.AspNetUserId == identityUserId);
+        var searchResults = await _userRepository.SearchAsync(user => user.AspNetUserId == identityUserId);
 
         var user = searchResults.FirstOrDefault();
 
