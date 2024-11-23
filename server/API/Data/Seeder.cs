@@ -1,3 +1,4 @@
+using API.Data.Enums;
 using API.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ public static class AppDbSeeder
     private const double LOCATION_DEVIATION = 2;
     private const int TESTUSER_ID = 1;
     private const int USERS_TO_RIGHT_SWIPE_TEST_USER = 10;
+    private const int USERS_TO_MATCH_TEST_USER = 5;
 
     public static async Task SeedDataAsync(AppDbContext context, UserManager<IdentityUser> userManager)
     {
@@ -74,6 +76,7 @@ public static class AppDbSeeder
             await SeedTestUserAsync(context, userManager); //this must be the first one always!!!
 
             var swipesLeft = USERS_TO_RIGHT_SWIPE_TEST_USER;
+            var matchesLeft = USERS_TO_MATCH_TEST_USER;
             for (int i = 0; i < identityUsers.Count; i++)
             {
                 var identityUser = identityUsers[i];
@@ -87,28 +90,89 @@ public static class AppDbSeeder
                     appUser.AspNetUserId = identityUser.Id;
                     var added = context.Users.Add(appUser);
                     await context.SaveChangesAsync();
-                    
+
                     if (swipesLeft > 0)
                     {
-                        var swipe = new List<Swipes>()
-                        {
-                            new Swipes
-                            {
-                                UserId = added.Entity.Id,
-                                SwipeType = "right",
-                                SwipedUserId = TESTUSER_ID
-                            }
-                        };
-
-                        added.Entity.Swipes = swipe;
-                        context.Users.Update(added.Entity);
+                        await SeedSwipe(context, added.Entity, TESTUSER_ID);
                         swipesLeft--;
                     }
+                    
+                    if (matchesLeft > 0)
+                    {
+                        await SeedSwipesAndMatchInfo(context, added.Entity, TESTUSER_ID, appUser.Name);
+                        matchesLeft--;
+                    }
+                }
+
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+
+
+
+    private static async Task SeedSwipe(AppDbContext context, User user, int testUserId)
+    {
+        var swipe = new Swipes
+        {
+            UserId = user.Id,
+            SwipeType = "right",
+            SwipedUserId = testUserId
+        };
+        context.Swipes.Add(swipe);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedSwipesAndMatchInfo(AppDbContext context, User user, int testUserId, string userName)
+    {
+        var swipe = new Swipes
+        {
+            UserId = user.Id,
+            SwipeType = "right",
+            SwipedUserId = testUserId
+        };
+        context.Swipes.Add(swipe);
+
+        var testUserSwipe = new Swipes
+        {
+            UserId = testUserId,
+            SwipeType = "right",
+            SwipedUserId = user.Id
+        };
+
+        context.Swipes.Add(testUserSwipe);
+        
+        var matchInfo = new MatchInfo
+        {
+            CreatedAt = DateTime.UtcNow,
+            Users = new List<User>
+            {
+                user,
+                context.Users.First(u => u.Id == testUserId) // Fetch test user from the context
+            },
+            Messages = new List<Message>
+            {
+                new Message
+                {
+                    SenderUserId = user.Id,
+                    ReceiverUserId = testUserId,
+                    MessageText = $"Hello from {userName}!",
+                    Status = MessageStatus.Delivered,
+                    SentMessageAt = DateTime.UtcNow.AddMinutes(-10)
+                },
+                new Message
+                {
+                    SenderUserId = testUserId,
+                    ReceiverUserId = user.Id,
+                    MessageText = "Hi there! Welcome to the app!",
+                    Status = MessageStatus.Delivered,
+                    SentMessageAt = DateTime.UtcNow.AddMinutes(-5)
                 }
             }
+        };
 
-            await context.SaveChangesAsync();
-        }
+        context.MatchInfos.Add(matchInfo);
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedTestUserAsync(AppDbContext context, UserManager<IdentityUser> userManager)
@@ -218,7 +282,6 @@ public static class AppDbSeeder
             }
         }
     }
-
 
     private static List<string[]> interestsList = new()
     {

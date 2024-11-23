@@ -81,5 +81,28 @@ public class AppDbContext : IdentityDbContext<IdentityUser, IdentityRole, string
             .WithMany()
             .HasForeignKey(m => m.ReceiverUserId)
             .OnDelete(DeleteBehavior.Restrict); 
+        
+        
+        //INDEXES
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Gender)
+            .HasDatabaseName("IX_User_Gender");
+        
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.BirthDate)
+            .HasDatabaseName("IX_User_BirthDate");
+        
+        modelBuilder.Entity<User>()
+            .HasIndex(u => new { u.PreferredMinAge, u.PreferredMaxAge })
+            .HasDatabaseName("IX_User_PreferredAge");
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.PreferredLocationRange)
+            .HasDatabaseName("IX_User_PreferredLocation");
+        
+        modelBuilder.Entity<UserLocation>()
+            .HasIndex(ul => new { ul.Latitude, ul.Longitude })
+            .HasDatabaseName("IX_UserLocation_LatLon");
+        
     }
 }
