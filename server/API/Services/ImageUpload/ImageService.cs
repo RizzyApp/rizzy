@@ -70,10 +70,19 @@ public class ImageService : IImageService
             throw new UnauthorisedException();
         }
 
-        if (photo.CloudinaryAssetId is not null && _env.IsDevelopment())
+        /*if (photo.CloudinaryAssetId is not null)
         {
+            
             _cloudinaryService.Delete(photo.CloudinaryAssetId);
         }
+        else
+        {
+            if (!_env.IsDevelopment())
+            {
+                _logger.LogError("Photo with id {photoId} is not uploaded to Cloudinary or id is missing", photo.Id);
+            }
+        }*/
+        //TODO: Create an admin endpoint to delete images that are not linked with a user
 
         await _photoRepository.DeleteAsync(photoId);
         _logger.LogInformation("Successfully deleted photo with id {PhotoId} for userId {UserId}.", photoId, userId);
