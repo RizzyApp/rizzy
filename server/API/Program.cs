@@ -6,6 +6,7 @@ using API.Hubs;
 using API.Services;
 using API.Services.Authentication;
 using API.Services.ImageUpload;
+using API.Services.SignalR;
 using API.Utils.Configuration;
 using API.Utils.Exceptions;
 using API.Utils.Filters;
@@ -13,6 +14,7 @@ using CloudinaryDotNet;
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -95,10 +97,12 @@ void AddServices()
     builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
     builder.Services.AddScoped<IImageService, ImageService>();
     builder.Services.AddScoped<IMatchService, MatchService>();
+    builder.Services.AddScoped<IMessageService, MessageService>();
     builder.Services.Configure<RoleSettings>(builder.Configuration.GetSection("Roles"));
 
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
+    builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
     builder.Services.AddSignalR(options =>
     {
         var environment = builder.Environment;
@@ -107,6 +111,7 @@ void AddServices()
         {
             options.EnableDetailedErrors = true;
         }
+        
     });
 }
 

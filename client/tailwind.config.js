@@ -33,7 +33,9 @@ export default {
       height: {
         'card-big': '550px',
         'card-normal': '400px',
-        'card-small': '200px'
+        'card-small': '200px',
+        "11/12": '91%',
+        '10/12': '84%'
       },
       textShadow: {
         'outline': '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',

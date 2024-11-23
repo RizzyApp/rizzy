@@ -58,6 +58,10 @@ export const SignalRProvider = ({children}) => {
         };
     }, []);
 
+    const sendMessage = () => {
+
+    }
+
     return (
         <SignalRContext.Provider value={{notificationConnection, chatConnection, notifications, messages}}>
             {children}

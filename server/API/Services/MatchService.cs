@@ -52,8 +52,8 @@ public class MatchService : IMatchService
 
         var matchNotification = new MatchNotification(pfpDto, swipedUser.Name, match.Id);
 
-        await _hubContext.Clients.User(loggedInUser.AspNetUserId).ReceiveMatchNotification(matchNotification);
-        await _hubContext.Clients.User(swipedUser.AspNetUserId).ReceiveMatchNotification(matchNotification);
+        await _hubContext.Clients.User(loggedInUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
+        await _hubContext.Clients.User(swipedUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
 
         return match;
     }

@@ -27,10 +27,11 @@ public class Repository<T> : IRepository<T> where T : class
         return await _context.Set<T>().FindAsync(id);
     }
 
-    public async Task AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
-        await _context.AddAsync(entity);
+        var addedEntity = await _context.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return addedEntity.Entity;
     }
 
     public async Task UpdateAsync(T entity)

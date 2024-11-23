@@ -256,10 +256,13 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    SenderUserId = table.Column<int>(type: "int", nullable: false),
+                    ReceiverUserId = table.Column<int>(type: "int", nullable: false),
                     MessageText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     MatchInfoId = table.Column<int>(type: "int", nullable: false),
-                    SentMessageAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    SentMessageAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,11 +274,22 @@ namespace API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Messages_Users_ReceiverUserId",
+                        column: x => x.ReceiverUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_Users_SenderUserId",
+                        column: x => x.SenderUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -408,6 +422,16 @@ namespace API.Migrations
                 column: "MatchInfoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_ReceiverUserId",
+                table: "Messages",
+                column: "ReceiverUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderUserId",
+                table: "Messages",
+                column: "SenderUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_UserId",
                 table: "Messages",
                 column: "UserId");
@@ -436,7 +460,8 @@ namespace API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AspNetUserId",
                 table: "Users",
-                column: "AspNetUserId");
+                column: "AspNetUserId",
+                unique: true);
         }
 
         /// <inheritdoc />

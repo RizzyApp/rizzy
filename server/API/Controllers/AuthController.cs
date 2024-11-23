@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Contracts.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -72,7 +73,7 @@ public class AuthController : ControllerBase
     [HttpGet("auth-status")]
     public IActionResult GetAuthStatus()
     {
-        return Ok(new { IsLoggedIn = true });
+        return Ok(new { IsLoggedIn = true, Email = User.FindFirst(ClaimTypes.Email)?.Value});
     }
 }
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241120181602_InitialCreate")]
+    [Migration("20241123195042_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -79,15 +79,28 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ReceiverUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("SentMessageAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MatchInfoId");
+
+                    b.HasIndex("ReceiverUserId");
+
+                    b.HasIndex("SenderUserId");
 
                     b.HasIndex("UserId");
 
@@ -201,7 +214,8 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AspNetUserId");
+                    b.HasIndex("AspNetUserId")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -471,15 +485,27 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Data.Models.User", "User")
-                        .WithMany("Messages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("API.Data.Models.User", "ReceiverUser")
+                        .WithMany()
+                        .HasForeignKey("ReceiverUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("API.Data.Models.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("API.Data.Models.User", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("MatchInfo");
 
-                    b.Navigation("User");
+                    b.Navigation("ReceiverUser");
+
+                    b.Navigation("SenderUser");
                 });
 
             modelBuilder.Entity("API.Data.Models.Photo", b =>
@@ -515,8 +541,8 @@ namespace API.Migrations
             modelBuilder.Entity("API.Data.Models.User", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "AspNetUser")
-                        .WithMany()
-                        .HasForeignKey("AspNetUserId")
+                        .WithOne()
+                        .HasForeignKey("API.Data.Models.User", "AspNetUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

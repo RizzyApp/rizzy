@@ -38,10 +38,14 @@ public class AppDbContext : IdentityDbContext<IdentityUser, IdentityRole, string
 
         modelBuilder.Entity<User>()
             .HasOne(u => u.AspNetUser)
-            .WithMany()
-            .HasForeignKey(u => u.AspNetUserId)
+            .WithOne()
+            .HasForeignKey<User>(u => u.AspNetUserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.AspNetUserId)
+            .IsUnique();
 
         modelBuilder.Entity<User>()
             .Property(u => u.Interests)
@@ -63,5 +67,19 @@ public class AppDbContext : IdentityDbContext<IdentityUser, IdentityRole, string
             .WithMany() // No navigation property on the 'User' for 'SwipedUser'
             .HasForeignKey(s => s.SwipedUserId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // Message config for sender and receiver
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.SenderUser)
+            .WithMany()
+            .HasForeignKey(m => m.SenderUserId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
+        
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.ReceiverUser)
+            .WithMany()
+            .HasForeignKey(m => m.ReceiverUserId)
+            .OnDelete(DeleteBehavior.Restrict); 
     }
 }

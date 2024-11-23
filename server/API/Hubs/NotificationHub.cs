@@ -8,7 +8,7 @@ namespace API.Hubs;
 [Authorize]
 public class NotificationHub : Hub<INotificationHubClient>
 {
-    public async Task NotifyMatch(string userId, MatchNotification matchNotification)
+    public async Task NotifyMatchAsync(string userId, MatchNotification matchNotification)
     {
         await Clients.User(userId).ReceiveMatchNotification(matchNotification);
     }
