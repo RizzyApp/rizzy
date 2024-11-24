@@ -11,9 +11,9 @@ namespace API.Services;
 
 public class MessageService : IMessageService
 {
-    private IRepository<MatchInfo> _matchRepository;
-    private IRepository<Message> _messageRepository;
-    private IHubContext<ChatHub, IChatHubClient> _chatHubContext;
+    private readonly IRepository<MatchInfo> _matchRepository;
+    private readonly IRepository<Message> _messageRepository;
+    private readonly IHubContext<ChatHub, IChatHubClient> _chatHubContext;
     private IHubContext<NotificationHub, INotificationHubClient> _notificationHubContext;
 
 
@@ -54,6 +54,7 @@ public class MessageService : IMessageService
         var messageResponse = new MessageResponse
         {
             MessageId = addedMessage.Id,
+            ReceiverId = addedMessage.ReceiverUserId,
             Content = addedMessage.MessageText,
             SenderId = addedMessage.SenderUserId,
             TimeStamp = addedMessage.SentMessageAt
@@ -62,5 +63,35 @@ public class MessageService : IMessageService
         await _chatHubContext.Clients.User(messageRequest.ReceiverId.ToString()).ReceiveMessage(messageResponse);
 
         return messageResponse;
+    }
+
+    public async Task<MessagesBySenderResponse> GetMessagesBySender(int loggedInUserId)
+    {
+        var messages = await _messageRepository.Query()
+            .Include(m => m.MatchInfo) 
+            .Where(m => 
+                m.SenderUserId == loggedInUserId || 
+                m.ReceiverUserId == loggedInUserId) 
+            .ToListAsync();
+
+        var groupedMessages = messages
+            .GroupBy(m => m.SenderUserId == loggedInUserId ? m.ReceiverUserId : m.SenderUserId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(m => new MessageResponse
+                {
+                    MessageId = m.Id,
+                    ReceiverId = m.ReceiverUserId,
+                    SenderId = m.SenderUserId,
+                    Content = m.MessageText,
+                    TimeStamp = m.SentMessageAt
+                }).OrderBy(m => m.TimeStamp).ToList() 
+            );
+
+        return new MessagesBySenderResponse
+        {
+            Data = groupedMessages
+        };
+
     }
 }

@@ -1,10 +1,12 @@
 using API.Contracts;
 using API.Contracts.Photo;
+using API.Contracts.UserProfile;
 using API.Data.Models;
 using API.Data.Repositories;
 using API.Hubs;
 using API.Utils.Exceptions;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
 
@@ -56,5 +58,29 @@ public class MatchService : IMatchService
         await _hubContext.Clients.User(swipedUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
 
         return match;
+    }
+
+    public async Task<IEnumerable<MinimalProfileDataResponse>> GetMatchedUsersMinimalData(int loggedInUserId)
+    {
+        var matchedUsers = await _matchRepository
+            .Query()
+            .Where(m => m.Users.Any(u => u.Id == loggedInUserId))
+            .SelectMany(m => m.Users)
+            .Where(u => u.Id != loggedInUserId)
+            .Distinct()
+            .Include(u => u.Photos)
+            .ToListAsync();
+
+        var minimalUsers = matchedUsers
+            .Select(u => new MinimalProfileDataResponse(
+                u.Id,
+                u.Name,
+                u.Photos?
+                    .OrderBy(p => p.Id)
+                    .FirstOrDefault()?.Url,
+                u.LastActivityDate))
+            .ToList();
+
+        return minimalUsers;
     }
 }

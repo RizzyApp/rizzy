@@ -45,4 +45,15 @@ public class MessageController : ControllerBase
 
         return Ok(message);
     }
+
+    [Authorize]
+    [HttpGet("by-sender")]
+    public async Task<ActionResult<MessagesBySenderResponse>> GetMessagesBySender()
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+
+        var groupedMessages = await _messageService.GetMessagesBySender(loggedInUser.Id);
+
+        return Ok(groupedMessages);
+    }
 }

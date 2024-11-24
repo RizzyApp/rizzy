@@ -1,4 +1,5 @@
 using API.Contracts;
+using API.Contracts.UserProfile;
 using API.Data.Models;
 using API.Data.Repositories;
 using API.Services;
@@ -14,6 +15,7 @@ public class UsersController : ControllerBase
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserLocation> _userLocationRepository;
+    private readonly IMatchService _matchService;
     private readonly IUserService _userService;
 
     private const int MAXIMUM_LOCATION_RANGE = 100000;
@@ -27,11 +29,24 @@ public class UsersController : ControllerBase
 
 
     public UsersController(IUserService userService, IRepository<UserLocation> userLocationRepository,
-        IRepository<User> userRepository)
+        IRepository<User> userRepository, IMatchService matchService)
     {
         _userService = userService;
         _userLocationRepository = userLocationRepository;
         _userRepository = userRepository;
+        _matchService = matchService;
+    }
+
+    [Authorize]
+    [HttpGet("matches")]
+    public async Task<ActionResult<IEnumerable<MinimalProfileDataResponse>>> GetUsersForChat()
+    {
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+
+        var users = await _matchService.GetMatchedUsersMinimalData(loggedInUser.Id);
+
+        return Ok(users);
+
     }
 
     [Authorize]
@@ -64,7 +79,7 @@ public class UsersController : ControllerBase
     //[Authorize(Roles = "Admin")]
     [HttpGet("search-users-for-swipe")]
     public async Task<ActionResult<IEnumerable<UserCardDto>>> SearchUsers(
-        [FromQuery] int? preferredGender = DEFAULT_PREFERRED_GENDER,
+        [FromQuery] int preferredGender = DEFAULT_PREFERRED_GENDER,
         [FromQuery] int minAge = MINIMUM_AGE,
         [FromQuery] int maxAge = MAXIMUM_AGE,
         [FromQuery] decimal latitude = DEFAULT_LATITUDE,

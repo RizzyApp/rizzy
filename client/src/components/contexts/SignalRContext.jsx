@@ -77,20 +77,20 @@ export const SignalRProvider = ({children}) => {
         setChatConnection(connection);
     };
 
-    const addMessage = (newMessage) => {
-        const senderId = newMessage.senderId;
+    const addMessage = (newMessage, matchedUserId = null) => {
+        const groupId = matchedUserId ? matchedUserId : newMessage.senderId;
         setMessages((prevMessages) => {
-            const tempMessages = {...prevMessages};
-            if (tempMessages[senderId]) {
-                const isDuplicate = tempMessages[senderId].some((msg) => msg.id === newMessage.id);
+            const tempMessages = JSON.parse(JSON.stringify(prevMessages));
+            if (tempMessages[groupId]) {
+                const isDuplicate = tempMessages[groupId].some((msg) => msg.messageId === newMessage.messageId);
                 if (isDuplicate) {
                     console.log("Duplicate message:", newMessage);
                     return prevMessages;
                 }
-                tempMessages[senderId].push(newMessage);
+                tempMessages[groupId].push(newMessage);
                 return tempMessages;
             } else {
-                tempMessages[senderId] = [newMessage];
+                tempMessages[groupId] = [newMessage];
                 return tempMessages;
             }
         })
@@ -124,7 +124,7 @@ export const SignalRProvider = ({children}) => {
 
 
     return (
-        <SignalRContext.Provider value={{notifications, messages}}>
+        <SignalRContext.Provider value={{notifications, messages, addMessage}}>
             {children}
         </SignalRContext.Provider>
     );

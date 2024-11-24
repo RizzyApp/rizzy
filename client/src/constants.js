@@ -37,6 +37,7 @@ export const API_ENDPOINTS = {
     },
     MESSAGES: {
         GET_MESSAGES_GROUPED_BY_SENDER: `${API_BASE_URL}/api/v1/message/by-sender`,
+        SEND_MESSAGE: `${API_BASE_URL}/api/v1/message`,
     },
     LIVE:{
         NOTIFICATIONS: `${API_BASE_URL}/api/notificationHub`,

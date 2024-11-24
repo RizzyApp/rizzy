@@ -42,7 +42,7 @@ public class UserService : IUserService
     }
     
     public async Task<IEnumerable<UserCardDto>> GetFilteredUsersAsync(
-        int? userId, int? preferredGender, int minAge, int maxAge,
+        int? userId, int preferredGender, int minAge, int maxAge,
         decimal latitude, decimal longitude, int locationRange, int amount, IEnumerable<int>? excludedUserIds = null)
     {
         const double kmToDegrees = 0.009;

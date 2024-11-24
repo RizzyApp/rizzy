@@ -3,9 +3,9 @@ import Header from "../components/Header.jsx";
 
 const ChatPage = () => {
     return (
-        <div className="h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden">
             <Header/>
-            <div className="flex flex-col items-center font-poppins bg-custom-gradient h-screen overflow-hidden">
+            <div className="flex flex-col flex-grow items-center justify-center font-poppins bg-custom-gradient overflow-hidden">
                 <ChatMain/>
             </div>
         </div>

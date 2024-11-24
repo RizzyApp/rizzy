@@ -190,7 +190,6 @@ void AddAuthentication()
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.SameSite = SameSiteMode.None;
         });
-    ;
 
     builder.Services.AddAuthorization(options =>
     {
