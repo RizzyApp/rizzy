@@ -4,6 +4,7 @@ import Header from "../components/Header.jsx";
 import { useEffect, useState } from 'react';
 import GeoLocationNotAccepted from '../components/GeoLocationNotAccepted.jsx';
 import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
+import {REACT_ROUTES} from "../constants.js";
 
 const App = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const App = () => {
         <CardLoader />
       </div>
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate(REACT_ROUTES.HOME)}
         className="absolute bottom-0 right-0 text-white"
       >
         Back to HomePage

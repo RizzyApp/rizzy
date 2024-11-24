@@ -1,12 +1,13 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import Header from "../components/Header";
-import {useNavigate, useOutletContext} from "react-router-dom";
 import PhotoGallery from "../components/profile/PhotoGallery";
 import ProfileSection from "../components/profile/ProfileSection";
-import ENDPOINTS from "../endpoints.js";
+import {API_ENDPOINTS, REACT_ROUTES} from "../constants.js";
 import dataURLtoBlob from "../components/profile/utils/dataURLToBlob.js";
 import useCustomToast from "../hooks/useCustomToast.js";
-import fetchWithCredentials from "../utils/fetchWithCredentials.js";
+import {useAuth} from "../components/contexts/Authcontext.jsx";
+import {useNavigate} from "react-router-dom";
+import {useFetchWithAuth} from "../hooks/useFetchWIthCredentials.js";
 
 const createPictureChangesFormData = (initialPhotos, photoURLs) => {
 
@@ -51,13 +52,14 @@ const createPictureChangesFormData = (initialPhotos, photoURLs) => {
 const ProfilePage = () => {
     const [data, setData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useOutletContext();
-    const navigate = useNavigate();
+    const {logOut} = useAuth();
     const [newInterest, setNewInterest] = useState("");
     const [initialPhotos, setInitialPhotos] = useState(null);
     const [changedPhotoUrls, setChangedPhotoUrls] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const {showPromiseToast} = useCustomToast();
+    const navigate = useNavigate();
+    const fetchWithAuth = useFetchWithAuth();
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -66,10 +68,9 @@ const ProfilePage = () => {
         }));
     };
 
-    const handleLogout = () => {
-        fetchWithCredentials(ENDPOINTS.AUTH.LOGOUT, {method: "POST"});
-        setIsLoggedIn(false);
-        navigate("/");
+    const handleLogout = async () => {
+        await logOut();
+        navigate(REACT_ROUTES.HOME);
     };
 
 
@@ -79,7 +80,7 @@ const ProfilePage = () => {
             const {metadata, formData} = createPictureChangesFormData(initialPhotos, changedPhotoUrls);
 
             // Prepare the profile update promise
-            const profileUpdatePromise = fetchWithCredentials(ENDPOINTS.USER.PUT_PROFILE, {
+            const profileUpdatePromise = fetchWithAuth(API_ENDPOINTS.USER.PUT_PROFILE, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -99,7 +100,7 @@ const ProfilePage = () => {
             let photoUpdatePromise = null;
             console.log(metadata);
             if (metadata.some((item) => item.action !== "KEEP")) {
-                photoUpdatePromise = fetchWithCredentials(ENDPOINTS.IMAGE.POST_IMAGE_CHANGES, {
+                photoUpdatePromise = fetchWithAuth(API_ENDPOINTS.IMAGE.POST_IMAGE_CHANGES, {
                     method: "POST",
                     body: formData,
                 });
@@ -133,7 +134,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
-                const response = await fetchWithCredentials(ENDPOINTS.USER.GET_PROFILE, {
+                const response = await fetchWithAuth(API_ENDPOINTS.USER.GET_PROFILE, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

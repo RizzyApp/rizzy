@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ENDPOINTS from "../endpoints.js";
-import fetchWithCredentials from "../utils/fetchWithCredentials.js";
+import {useAuth} from "../components/contexts/Authcontext.jsx";
+import {REACT_ROUTES} from "../constants.js";
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
@@ -14,10 +14,10 @@ const RegistrationPage = () => {
   const [gender, setGender] = useState("");
   const [preferredGender, setGenderPreference] = useState("");
 
-
+  const {registerUserProfile} = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       name,
@@ -31,20 +31,10 @@ const RegistrationPage = () => {
       preferredGender
     };
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    };
-
-    async function postUser() {
-      const response = await fetchWithCredentials(ENDPOINTS.USER.POST_PROFILE, requestOptions);
-      if (response.ok) {
-        const data = await response.json();
-        navigate("/swipe-page");
-      }
+    const response = await registerUserProfile(formData)
+    if(response.ok){
+      navigate(REACT_ROUTES.SWIPE_PAGE);
     }
-    postUser();
   };
 
   return (

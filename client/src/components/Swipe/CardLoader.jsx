@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import SwipeDeck from './SwipeDeck';
-import ENDPOINTS from "../../endpoints.js";
+import {API_ENDPOINTS, REACT_ROUTES} from "../../constants.js";
 import {useNavigate} from "react-router-dom";
-import fetchWithCredentials from "../../utils/fetchWithCredentials.js";
+import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
@@ -19,14 +19,6 @@ const mergeUniqueUsersBasedOnId = (previous, current, otherIdsToExclude) => {
     return Array.from(userIds.values());
 };
 
-const deleteSwipes = async () => {
-    const options = {
-        "method": "DELETE"
-    }
-    await fetchWithCredentials(ENDPOINTS.SWIPE.DELETE_SWIPES, options);
-    window.location.reload();
-}
-
 
 function CardLoader() {
     const [users, setUsers] = useState(null);
@@ -35,22 +27,31 @@ function CardLoader() {
     const [swipedUserIds, setSwipedUserIds] = useState([]);
     const [error, setError] = useState(false); //TODO: Show actual error messages for users
     const navigate = useNavigate();
+    const fetchWithAuth = useFetchWithAuth();
 
     useEffect(() => {
         console.log("CardLoader renders!");
     });
 
     useEffect(() => {
-        if ((!users || users.length < 2)  && !loading && !noMoreUsers && !error) {
+        if ((!users || users.length < 2) && !loading && !noMoreUsers && !error) {
             fetchData();
         }
 
     }, [users, loading]);
 
+    const deleteSwipes = async () => {
+        const options = {
+            "method": "DELETE"
+        }
+        await fetchWithAuth(API_ENDPOINTS.SWIPE.DELETE_SWIPES, options);
+        window.location.reload();
+    }
+
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await fetchWithCredentials(ENDPOINTS.USERS.GET_SWIPE_USERS);
+            const response = await fetchWithAuth(API_ENDPOINTS.USERS.GET_SWIPE_USERS);
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -89,7 +90,7 @@ function CardLoader() {
 
         try {
             setSwipedUserIds(prev => [...prev, userId]);
-            const response = await fetchWithCredentials(ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
+            const response = await fetchWithAuth(API_ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
 
         } catch (error) {
             console.error('Error swiping user:', error);
@@ -103,7 +104,7 @@ function CardLoader() {
     if (users.length < 1 && noMoreUsers) {
         return <div>
             <div>We could not find any users, please change your preferences in the Profile page!</div>
-            <button className="text-white" onClick={() => navigate("/profile")}>Go to Profile</button>
+            <button className="text-white" onClick={() => navigate(REACT_ROUTES.PROFILE)}>Go to Profile</button>
             <br/>
             {IS_DEVELOPMENT && <button className="text-white mt-4" onClick={deleteSwipes}>DELETE SWIPES</button>}
         </div>
@@ -112,7 +113,8 @@ function CardLoader() {
 
     return <>
         <SwipeDeck users={users} setUsers={setUsers} deckWidth={400} onSwipe={handleSwipeOut}></SwipeDeck>
-        {IS_DEVELOPMENT && <button className=" fixed left-0 top-1/3 text-white" onClick={deleteSwipes}>DELETE SWIPES</button>}
+        {IS_DEVELOPMENT &&
+            <button className=" fixed left-0 top-1/3 text-white" onClick={deleteSwipes}>DELETE SWIPES</button>}
     </>
 }
 

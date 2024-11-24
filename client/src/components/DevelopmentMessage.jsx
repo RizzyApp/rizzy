@@ -1,5 +1,3 @@
-import React from 'react';
-
 const testEmail = "test@gmail.com";
 const testPasword = "test123";
 const otherTestEmail = "signalrtest@gmail.com";

@@ -1,6 +1,5 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import Cropper from 'react-easy-crop'
-import SwipeCardContent from "../swipe/swipeCard/SwipeCardContent.jsx";
 import getCroppedImg from "./utils/getCroppedImg.js";
 import {SWIPE_CARD_ASPECT_RATIO} from "../../constants.js";
 

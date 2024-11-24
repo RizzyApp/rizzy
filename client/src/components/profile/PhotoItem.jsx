@@ -1,5 +1,3 @@
-import React, {useState, useRef, useEffect} from "react";
-
 import pictureUpload from "../../assets/picture_upload_icon.png";
 
 const enabledClassname = "cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-300";

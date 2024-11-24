@@ -1,5 +1,4 @@
-import React from 'react';
-import ChatWindow from "../components/chat/ChatWindow.jsx";
+import ChatMain from "../components/chat/ChatMain.jsx";
 import Header from "../components/Header.jsx";
 
 const ChatPage = () => {
@@ -7,7 +6,7 @@ const ChatPage = () => {
         <div className="h-screen overflow-hidden">
             <Header/>
             <div className="flex flex-col items-center font-poppins bg-custom-gradient h-screen overflow-hidden">
-                <ChatWindow/>
+                <ChatMain/>
             </div>
         </div>
     );

@@ -13,58 +13,71 @@ import Register from './components/Register.jsx';
 import Profile from "./pages/ProfilePage.jsx";
 import RegisterData from "./pages/RegisterData.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
+import {AuthProvider} from "./components/contexts/Authcontext.jsx";
+import {REACT_ROUTES} from "./constants.js";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 
 const router = createBrowserRouter([
     {
-        path: "/", element: <App/>, children: [
+        path: REACT_ROUTES.HOME,
+        element: <App />,
+        children: [
             {
-                path: "/",
-                element: <HomePage/>,
+                path: REACT_ROUTES.HOME,
+                element: <HomePage />,
             },
             {
-                path: "/swipe-page",
-                element: <SwipePage/>,
+                path: REACT_ROUTES.CONTACT_US,
+                element: <ContactUsPage />,
             },
             {
-                path: "/contact-us",
-                element: <ContactUsPage/>,
+                path: REACT_ROUTES.ABOUT,
+                element: <AboutPage />,
             },
             {
-                path: "/about",
-                element: <AboutPage/>,
+                path: REACT_ROUTES.PRODUCTS,
+                element: <ProductsPage />,
             },
             {
-                path: "/products",
-                element: <ProductsPage/>,
+                path: REACT_ROUTES.LOGIN,
+                element: <Login />,
             },
             {
-                path: "/login",
-                element: <Login/>,
+                path: REACT_ROUTES.REGISTER,
+                element: <Register />,
             },
             {
-                path: "/register",
-                element: <Register/>,
+                path: REACT_ROUTES.REGISTER_DATA,
+                element: <RegisterData />,
             },
             {
-                path: "/profile",
-                element: <Profile/>,
+                path: "",
+                element: <ProtectedRoute />,
+                children: [
+                    {
+                        path: REACT_ROUTES.PROFILE,
+                        element: <Profile />,
+                    },
+                    {
+                        path: REACT_ROUTES.CHAT,
+                        element: <ChatPage />,
+                    },
+                    {
+                        path: REACT_ROUTES.SWIPE_PAGE,
+                        element: <SwipePage />,
+                    },
+                ],
             },
-            {
-                path: "/register/data",
-                element: <RegisterData/>,
-            },
-            {
-                path: "/chat",
-                element: <ChatPage/>
-            }
-        ]
-    }
+        ],
+    },
 ]);
 
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <RouterProvider router={router}/>
+        <AuthProvider>
+            <RouterProvider router={router}/>
+        </AuthProvider>
     </StrictMode>
 );

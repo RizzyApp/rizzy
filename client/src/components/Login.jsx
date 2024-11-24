@@ -1,39 +1,24 @@
-import React from "react";
 import Header from "./Header";
-import { useOutletContext, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import ENDPOINTS from "../endpoints.js";
+import {Link, useNavigate} from "react-router-dom";
 import DevelopmentMessage from "./DevelopmentMessage.jsx";
-import fetchWithCredentials from "../utils/fetchWithCredentials.js";
+import {useAuth} from "./contexts/Authcontext.jsx";
+import {REACT_ROUTES} from "../constants.js";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const Login = () => {
-    const [isLoggedIn, setIsLoggedIn] = useOutletContext();
+    const {login} = useAuth();
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) =>  {
         e.preventDefault();
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
 
-        const requestOptions = {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email, password}),
-            credentials: "include",
-        };
-
-        async function postUser() {
-            const response = await fetchWithCredentials(ENDPOINTS.AUTH.LOGIN, requestOptions);
-            if (response.ok) {
-                const data = await response.json();
-                setIsLoggedIn(true);
-                navigate("/swipe-page");
-            }
+        const response = await login(email, password);
+        if(response.ok){
+            navigate(REACT_ROUTES.SWIPE_PAGE)
         }
-
-        postUser();
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect} from "react";
 import PhotoItem from "./PhotoItem";
 import ImageCropper from "./ImageCropper.jsx";
 import deleteIcon from "../../assets/delete-icon.png";

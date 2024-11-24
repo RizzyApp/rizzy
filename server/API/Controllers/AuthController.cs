@@ -1,11 +1,11 @@
 using System.Security.Claims;
 using API.Contracts.Auth;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
-
 
 [ApiController]
 [Route("api/v1/[controller]")]
@@ -13,11 +13,14 @@ public class AuthController : ControllerBase
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IUserService _userService;
 
-    public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+    public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
+        IUserService userService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _userService = userService;
     }
 
     [HttpPost("Register")]
@@ -32,14 +35,16 @@ public class AuthController : ControllerBase
             {
                 ModelState.AddModelError(error.Code, error.Description);
             }
+
             return BadRequest(ModelState);
         }
+
         await _userManager.AddToRoleAsync(user, "User");
-        await _signInManager.SignInAsync(user, isPersistent: true); 
-        
+        await _signInManager.SignInAsync(user, isPersistent: true);
+
         return CreatedAtAction(nameof(Register), new RegistrationResponse(user.Email));
     }
-    
+
     [HttpPost("Login")]
     public async Task<ActionResult<AuthResponse>> Authenticate([FromBody] AuthRequest request)
     {
@@ -50,30 +55,43 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true, lockoutOnFailure: false);
+        var result =
+            await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true,
+                lockoutOnFailure: false);
 
         if (!result.Succeeded)
         {
             ModelState.AddModelError("Login", "Invalid email or password.");
             return BadRequest(ModelState);
         }
-        
-        return Ok(new AuthResponse(user.Email));
+
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+
+        return Ok(new AuthResponse(
+            user.Email,
+            loggedInUser.Id,
+            loggedInUser.Name)
+        );
     }
 
     [Authorize]
     [HttpPost("Logout")]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync(); 
+        await _signInManager.SignOutAsync();
         return Ok(new { Message = "Logged out successfully" });
     }
 
     [Authorize]
-    [HttpGet("auth-status")]
-    public IActionResult GetAuthStatus()
+    [HttpGet("logged-in-user")]
+    public async Task<ActionResult<AuthResponse>> GetAuthStatus()
     {
-        return Ok(new { IsLoggedIn = true, Email = User.FindFirst(ClaimTypes.Email)?.Value});
+        var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+
+        return Ok(new AuthResponse(
+            User.FindFirst(ClaimTypes.Email)?.Value,
+            loggedInUser.Id,
+            loggedInUser.Name)
+        );
     }
 }
-

@@ -1,12 +1,14 @@
-function fetchWithCredentials(route, options = {}) {
-
+function fetchWithCredentials(route, options = {}, onUnauthorized = null) {
     const defaultOptions = {
         ...options,
-        credentials: 'include'
+        credentials: 'include',
     };
 
     return fetch(route, defaultOptions)
         .then(response => {
+            if (response.status === 401 && onUnauthorized) {
+                onUnauthorized();
+            }
             return response;
         })
         .catch(error => {

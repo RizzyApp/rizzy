@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import logoLight from "../assets/rizzylogo.png";
 import logoDark from "../assets/logo-white.png";
+import {useAuth} from "./contexts/Authcontext.jsx";
+import {REACT_ROUTES} from "../constants.js";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useOutletContext();
+  const {isLoggedIn} = useAuth();
 
   const handleThemeChange = (isDark) => {
     setIsDarkMode(isDark);
@@ -24,19 +26,19 @@ const Header = () => {
           Rizzy
         </Link>
         <button
-          onClick={() => navigate("/about")}
+          onClick={() => navigate(REACT_ROUTES.ABOUT)}
           className="bg-transparent text-white hover:bg-buttonHover px-3 py-2 rounded"
         >
           About
         </button>
         <button
-          onClick={() => navigate("/products")}
+          onClick={() => navigate(REACT_ROUTES.PRODUCTS)}
           className="bg-transparent text-white hover:bg-buttonHover px-3 py-2 rounded"
         >
           Products
         </button>
         <button
-          onClick={() => navigate("/contact-us")}
+          onClick={() => navigate(REACT_ROUTES.CONTACT_US)}
           className="bg-transparent text-white hover:bg-buttonHover px-3 py-2 rounded"
         >
           Contact Us
@@ -46,7 +48,7 @@ const Header = () => {
         {isLoggedIn ? (
           <button
             onClick={() => {
-              navigate("/profile");
+              navigate(REACT_ROUTES.PROFILE);
             }}
             className="bg-transparent hover:bg-buttonHover px-3 py-2 rounded"
           >
@@ -55,7 +57,7 @@ const Header = () => {
         ) : (
           <button
             onClick={() => {
-              navigate("/login");
+              navigate(REACT_ROUTES.LOGIN);
             }}
             className="bg-transparent hover:bg-buttonHover px-3 py-2 rounded"
           >

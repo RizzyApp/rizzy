@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import Register from "../components/Register";
+import {REACT_ROUTES} from "../constants.js";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -15,16 +14,22 @@ function HomePage() {
             Get your rizz up
           </div>
           <button
-            onClick={() => navigate("/register")}
-            className="createAccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
+              onClick={() => navigate(REACT_ROUTES.REGISTER)}
+              className="createAccount bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
           >
             Create account
           </button>
           <button
-            onClick={() => navigate("/swipe-page")}
-            className="fixed bottom-1 right-0 text-white"
+              onClick={() => navigate(REACT_ROUTES.SWIPE_PAGE)}
+              className="fixed bottom-1 right-0 text-white"
           >
             Test SwipePage
+          </button>
+          <button
+              onClick={() => navigate(REACT_ROUTES.CHAT)}
+              className="fixed bottom-1 right-48 text-white"
+          >
+            Test ChatPage
           </button>
         </div>
       </div>
