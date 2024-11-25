@@ -6,6 +6,8 @@ import GeoLocationNotAccepted from '../components/GeoLocationNotAccepted.jsx';
 import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
 import {REACT_ROUTES} from "../constants.js";
 import { useAuth } from '../components/contexts/Authcontext.jsx';
+import { ThreeDots } from 'react-loader-spinner';
+import Loading from '../components/Loading.jsx';
 
 const App = () => {
   const { updateUserLocation } = useAuth()
@@ -41,17 +43,19 @@ const App = () => {
     );
   }
   
-  if (!geoLocationAccepted) {
-    return (
-      <GeoLocationNotAccepted/>
-    );
-  }
+  // if (!geoLocationAccepted) {
+  //   return ()
+  // }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Header />
+      {!geoLocationAccepted}
       <div className="flex flex-grow items-center bg-custom-gradient justify-center">
-        <CardLoader />
+
+        {!geoLocationAccepted ? (<Loading/>) : (<CardLoader />)}
+
+        
       </div>
       <button
         onClick={() => navigate(REACT_ROUTES.HOME)}
