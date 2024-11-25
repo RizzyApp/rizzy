@@ -3,6 +3,7 @@ import {API_ENDPOINTS} from "../../constants.js";
 import {useAuth} from "./Authcontext.jsx";
 import {ChatHubService, NotificationHubService} from "../../services/SignalRService.js";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
+import useCustomToast from "../../hooks/useCustomToast.jsx";
 
 const defaultContextValue = {
     notifications: [], messages: []
@@ -16,6 +17,7 @@ export const SignalRProvider = ({children}) => {
     const [messages, setMessages] = useState([]);
     const { isLoggedIn } = useAuth();
     const fetchWithAuth = useFetchWithAuth();
+    const {showMatchNotification} = useCustomToast();
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -34,7 +36,11 @@ export const SignalRProvider = ({children}) => {
             // Notification handler
             notificationConnection.on("ReceiveMatchNotification", (notification) => {
                 console.log("New Match Notification:", notification);
-                setNotifications((prev) => [...prev, notification]);
+
+                if(!notifications.includes(notification.matchId)) {
+                    showMatchNotification(notification);
+                    setNotifications((prev) => [...prev, notification]);
+                }
             });
             
             fetchInitialMessages();

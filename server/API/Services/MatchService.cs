@@ -31,6 +31,7 @@ public class MatchService : IMatchService
 
     public async Task<MatchInfo?> CreateMatchIfMutualAsync(User loggedInUser, User swipedUser)
     {
+        
         var swipeResult = await _swipeRepository.FindFirstAsync(s =>
             s.UserId == swipedUser.Id && s.SwipeType == "right" && s.SwipedUserId == loggedInUser.Id);
 
@@ -54,7 +55,7 @@ public class MatchService : IMatchService
         var pfp = await _photoRepository.FindFirstAsync(p => p.UserId == swipedUser.Id);
         var pfpDto = pfp is null ? null : new PhotoDto(pfp.Id, pfp.Url);
 
-        var matchNotification = new MatchNotification(pfpDto, swipedUser.Name, match.Id);
+        var matchNotification = new MatchNotification(pfpDto, swipedUser.Name, match.Id, swipedUser.Id);
 
         await _hubContext.Clients.User(loggedInUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
         await _hubContext.Clients.User(swipedUser.Id.ToString()).ReceiveMatchNotification(matchNotification);

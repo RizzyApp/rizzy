@@ -2,6 +2,7 @@
 using API.Data.Models;
 using API.Data.Repositories;
 using API.Services;
+using API.Utils.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,12 +48,21 @@ public class SwipesController : ControllerBase
         {
             return BadRequest("Can't swipe self");
         }
+        
 
         var swipedUser = await _userRepository.GetByIdAsync(swipeDto.SwipedUserId);
 
         if (swipedUser is null)
         {
             return BadRequest($"swiped user with id {swipeDto.SwipedUserId} does not exist");
+        }
+        
+        var existingSwipe = await _swipeRepository.FindFirstAsync(s =>
+            s.UserId == loggedInUser.Id && s.SwipedUserId == swipedUser.Id);
+
+        if (existingSwipe != null)
+        {
+            throw new BadRequestException("You have already swiped on this user.");
         }
 
         var swipe = new Swipes

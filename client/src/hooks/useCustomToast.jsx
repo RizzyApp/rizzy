@@ -1,4 +1,5 @@
 import {toast} from 'react-toastify';
+import MatchNotificationToast from "../components/MatchNotificationToast.jsx";
 
 
 const useCustomToast = () => {
@@ -17,7 +18,7 @@ const useCustomToast = () => {
         return response;
     }
 
-    const showSuccessToast =  (successMessage) => {
+    const showSuccessToast = (successMessage) => {
         toast.success(successMessage);
     }
 
@@ -25,8 +26,14 @@ const useCustomToast = () => {
         toast.error(errorMessage);
     }
 
+    const showMatchNotification = (notification) => {
+        toast(
+            <MatchNotificationToast notification={notification}/>
+        )
+    }
 
-    return {showPromiseToast, showSuccessToast, showErrorToast};
+
+    return {showPromiseToast, showSuccessToast, showErrorToast, showMatchNotification};
 }
 
 export default useCustomToast;

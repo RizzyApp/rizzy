@@ -6,7 +6,6 @@ import SwipeCardBio from "./SwipeCardBio";
 
 const SwipeCardContent = forwardRef(({ cardData, y, active }, ref) => {
 
-  console.log("hiya: " + JSON.stringify(cardData));
   const transformFunc = active
     ? { transform: y.to((py) => `translateY(${py}px)`) }
     : null;
