@@ -31,7 +31,7 @@ services:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: rizzy_sql_server
     ports:
-      - "1435:1433"
+      - "1433:1433"
     environment:
       SA_PASSWORD: "veryStrongRizzyPassword123"
       ACCEPT_EULA: "Y"

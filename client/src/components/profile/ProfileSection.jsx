@@ -67,6 +67,7 @@ const ProfileSection = ({
                 value={data.profile.email}
                 onChange={handleChange}
                 className={commonInputStyles}
+                disabled
               />
             ) : (
               <p>{data.profile.email}</p>

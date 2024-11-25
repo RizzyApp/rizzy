@@ -18,13 +18,13 @@ namespace API.Contracts.UserProfile
         [MaxLength(10, ErrorMessage = "Can't have more than 10 interests.")]
         string[] Interests,
 
-        [Range(18, 120, ErrorMessage = "Preferred age must be between 18 and 120.")]
+        [Range(18, 99, ErrorMessage = "Preferred age must be between 18 and 99.")]
         int PreferredMinAge,
 
-        [Range(18, 120, ErrorMessage = "Preferred age must be between 18 and 120.")]
+        [Range(18, 99, ErrorMessage = "Preferred age must be between 18 and 99.")]
         int PreferredMaxAge,
 
-        [Range(1, 1000, ErrorMessage = "Preferred location range must be between 1 and 1000.")]
+        [Range(1, 144, ErrorMessage = "Preferred location range must be between 1 and 144.")]
         int PreferredLocationRange,
 
         [Required]

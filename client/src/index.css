@@ -70,3 +70,9 @@ button {
   --buttonHover: 207, 80, 86;
   transition: background-color 1s ease, color 1s ease;
 }
+input:not(:placeholder-shown):invalid{
+  background-color: #ecaeae;
+  border: none;
+  outline: 2px solid red;
+  border-radius: 5px;
+}

@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.js";
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [bio, setBio] = useState("");
   const [interests, setInterests] = useState("");
-  const [preferredMinAge, setMinimumAge] = useState("");
+  const [preferredMinAge, setMinimumAge] = useState(18);
   const [preferredMaxAge, setMaximumAge] = useState("");
   const [preferredLocationRange, setLocationRadius] = useState("");
   const [gender, setGender] = useState("");
@@ -16,15 +17,27 @@ const RegistrationPage = () => {
 
   const {registerUserProfile, postUserLocation} = useAuth();
   const navigate = useNavigate();
+  const {showErrorToast} = useCustomToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(preferredMaxAge<preferredMinAge){
+      showErrorToast("The max. age should be greater than the min. age!")
+      return;
+    }
+    let splitInterests = interests.split(',').map(i => i.trim()).filter(m => m.length>0);
+
+    if(splitInterests.length > 20){
+      showErrorToast("Too many interests.")
+      return;
+    }
     const formData = {
       name,
       gender,
       birthdate,
       bio,
-      interests: interests.split(',').map(i => i.trim()),
+      interests: splitInterests,
       preferredMinAge,
       preferredMaxAge,
       preferredLocationRange,
@@ -40,6 +53,14 @@ const RegistrationPage = () => {
       const response = await postUserLocation(locationData)
       if(response.ok){
         navigate(REACT_ROUTES.SWIPE_PAGE);
+      }
+    }
+    else{
+      let data = await response.json();
+      if(data.errors){
+        //let msg = Object.values(data.errors).flat().join(" ");
+        //showErrorToast(msg);
+        showErrorToast(<>{Object.values(data.errors).flat().map(x => <div>{x}</div>)}</>);
       }
     }
   };
@@ -60,6 +81,7 @@ const RegistrationPage = () => {
             onChange={(e) => setName(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
+            maxLength="16"
           />
         </label>
 
@@ -69,8 +91,9 @@ const RegistrationPage = () => {
             value={gender}
             onChange={(e) => setGender(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            required
           >
-            <option value="">Select Gender</option>
+            <option value="" disabled>Select Gender</option>
             <option value="0">Female</option>
             <option value="1">Male</option>
           </select>
@@ -83,6 +106,7 @@ const RegistrationPage = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            min="1924-01-01"
             required
           />
         </label>
@@ -93,6 +117,7 @@ const RegistrationPage = () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            maxLength="500"
           />
         </label>
 
@@ -103,6 +128,7 @@ const RegistrationPage = () => {
             value={interests}
             onChange={(e) => setInterests(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            maxLength="200"
           />
         </label>
 
@@ -123,6 +149,8 @@ const RegistrationPage = () => {
             type="number"
             value={preferredMaxAge}
             onChange={(e) => setMaximumAge(e.target.value)}
+            min="18"
+            max="99"
             className="border rounded w-full p-2 text-black"
             required
           />
@@ -136,6 +164,7 @@ const RegistrationPage = () => {
             onChange={(e) => setLocationRadius(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
+            max="144"
           />
         </label>
 
@@ -145,8 +174,9 @@ const RegistrationPage = () => {
             value={preferredGender}
             onChange={(e) => setGenderPreference(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            required
           >
-            <option value="">Select Gender</option>
+            <option value="" disabled>Select Gender</option>
             <option value="0">Female</option>
             <option value="1">Male</option>
             <option value="2">Both</option>
