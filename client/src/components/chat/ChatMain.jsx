@@ -8,12 +8,14 @@ import {API_ENDPOINTS} from "../../constants.js";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 import {useAuth} from "../contexts/Authcontext.jsx";
 
-const createUsersForSideBar = (messages, profileDatas) => {
-
+const createUsersForSideBar = (messages, profileDatas, loggedInId) => {
     const users = [];
     for (const p of profileDatas) {
         const userId = p.userId.toString();
-        const latestMessage = messages[userId]?.[0];
+        let latestMessage = messages[userId]?.[messages[userId].length - 1];
+        if(latestMessage && latestMessage.senderId === loggedInId){
+            latestMessage.sideBarContent = "You: " + latestMessage.content;
+        }
         users.push({
             ...p,
             "latestMessage": latestMessage
@@ -22,9 +24,7 @@ const createUsersForSideBar = (messages, profileDatas) => {
     return users;
 }
 
-const usersIsEmpty = (users) => {
-    return Object.keys(users).length === 0;
-}
+
 
 const ChatMain = () => {
     const {messages, addMessage} = useSignalR();
@@ -81,9 +81,13 @@ const ChatMain = () => {
     useEffect(() => {
         if (!profileDatas) return;
         if (profileDatas.length > 0) {
-            setUsersForSideBar(createUsersForSideBar(messages, profileDatas));
+            setUsersForSideBar(createUsersForSideBar(messages, profileDatas, loggedInUserId));
         }
     }, [messages, profileDatas]);
+
+    const usersIsEmpty = () => {
+        return Object.keys(profileDatas).length === 0;
+    }
 
     return (
         <div className="flex h-[95%] w-11/12 p-6">
@@ -102,7 +106,7 @@ const ChatMain = () => {
                     />
                 ) : (
                     <div className="flex-1 flex items-center justify-center text-gray-500">
-                        {usersIsEmpty(profileDatas)
+                        {usersIsEmpty()
                             ? "You don't have any matches, go and make some :D"
                             : "No user selected, please pick a conversation from the sidebar"}
                     </div>

@@ -16,7 +16,7 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-topbar w-full flex justify-between items-center text-white drop-shadow-topbar p-4 overflow-hidden">
+    <div className="bg-topbar w-full flex flex-shrink-0 justify-between items-center text-white drop-shadow-topbar p-4  overflow-hidden">
       <div className="flex items-center space-x-4">
         <Link
           to="/"

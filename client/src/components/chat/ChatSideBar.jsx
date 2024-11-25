@@ -1,4 +1,3 @@
-
 //TODO: lazy loading for the messages and for the users themselves
 
 const ChatSideBar = ({setSelectedUser, users}) => {
@@ -23,7 +22,12 @@ const ChatSideBar = ({setSelectedUser, users}) => {
                             </div>
                             <div>
                                 <p className="font-medium text-gray-800">{user.name}</p>
-                                <p className="text-sm text-gray-500">{user.latestMessage?.content}</p>
+                                <p className="text-sm text-gray-500">{
+                                    user.latestMessage &&
+                                    user.latestMessage.sideBarContent
+                                        ? user.latestMessage.sideBarContent
+                                        : user.latestMessage?.content}
+                                </p>
                             </div>
                         </li>
                     ))}

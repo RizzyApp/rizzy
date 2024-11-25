@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs;
 
-public class ChatHub : Hub<IChatHubClient>
+public class ChatHub : BaseHub<IChatHubClient>
 {
+    public ChatHub(ILogger<BaseHub<IChatHubClient>> logger) : base(logger)
+    {
+    }
+
     public async Task ReceiveMessageAsync(string userId, MessageResponse message)
     {
         await Clients.User(userId).ReceiveMessage(message);
