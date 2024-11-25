@@ -117,7 +117,6 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
           dragApi.start({
             x: clampedX,
             rotateZ: (clampedX / boundary) * MAX_ROTATION,
-            scale: 1.1,
             opacity: 1,
             config: { friction: 50, tension: 800 },
           });
@@ -149,7 +148,7 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
       },
       onHover: ({ active }) => {
         if (active) {
-          dragApi.start({ scale: 1.05 })
+          dragApi.start({ scale: 1.1 })
         } else {
           dragApi.start({ scale: 1.0 })
         }
