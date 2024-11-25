@@ -1,3 +1,4 @@
+using API.Utils.Exceptions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Services.SignalR;
@@ -25,8 +26,8 @@ public class CustomUserIdProvider : IUserIdProvider
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to resolve userId for SignalR connection");
-            return null; 
+            logger.LogWarning( "Failed to resolve userId for SignalR connection");
+            throw new UnauthorisedException();
         }
     }
 }
