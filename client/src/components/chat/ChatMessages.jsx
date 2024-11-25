@@ -22,13 +22,13 @@ const ChatMessages = ({messages, otherUserId}) => {
                     }`}
                 >
                     <p
-                        className={`inline-block max-w-xs p-3 rounded-lg ${
+                        className={`inline-block max-w-xl text-lg p-3 rounded-lg ${
                             message.senderId === otherUserId
                                 ? "text-gray-700 bg-pink-100"
                                 : "text-white bg-pink-400"
                         }`}
                     >
-                        {message.content}
+                        <span className="max-w-full break-words">{message.content}</span>
                     </p>
                 </div>
             ))}

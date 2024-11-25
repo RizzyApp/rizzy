@@ -18,13 +18,14 @@ const ChatInput = ({ onSendMessage }) => {
 
     return (
         <div className="p-4 border-t flex items-center">
-            <input
+            <textarea
                 type="text"
                 placeholder="Aa"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="flex-1 p-3 border rounded-lg focus:outline-none"
+                className="flex-1 p-3 border rounded-lg focus:outline-none resize-none overflow-hidden"
+                rows={1}
             />
             <button
                 onClick={handleSendMessage}
