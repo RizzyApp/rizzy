@@ -14,7 +14,7 @@ const RegistrationPage = () => {
   const [gender, setGender] = useState("");
   const [preferredGender, setGenderPreference] = useState("");
 
-  const {registerUserProfile} = useAuth();
+  const {registerUserProfile, postUserLocation} = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -32,8 +32,16 @@ const RegistrationPage = () => {
     };
 
     const response = await registerUserProfile(formData)
+    console.log(response)
     if(response.ok){
-      navigate(REACT_ROUTES.SWIPE_PAGE);
+      const locationData= {
+        latitude: 47.54,
+        longitude: 19.06,
+      }
+      const response = await postUserLocation(locationData)
+      if(response.ok){
+        navigate(REACT_ROUTES.SWIPE_PAGE);
+      }
     }
   };
 
@@ -64,8 +72,8 @@ const RegistrationPage = () => {
             className="border rounded w-full p-2 text-black"
           >
             <option value="">Select Gender</option>
-            <option value="1">Female</option>
-            <option value="2">Male</option>
+            <option value="0">Female</option>
+            <option value="1">Male</option>
           </select>
         </label>
 
@@ -140,9 +148,9 @@ const RegistrationPage = () => {
             className="border rounded w-full p-2 text-black"
           >
             <option value="">Select Gender</option>
-            <option value="1">Female</option>
-            <option value="2">Male</option>
-            <option value="3">Both</option>
+            <option value="0">Female</option>
+            <option value="1">Male</option>
+            <option value="2">Both</option>
           </select>
         </label>
 

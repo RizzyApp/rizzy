@@ -13,6 +13,7 @@ const ProfileSection = ({
   setNewInterest, isUploading
 }) => {
   const commonInputStyles = "border rounded w-full text-black p-2 h-10";
+  const noProfilePic = './image/blank-profile-picture.webp';
 
   const gender = (value) => {
     let gender;
@@ -39,7 +40,7 @@ const ProfileSection = ({
       <div className="flex">
         <div className="w-1/3 flex flex-col items-center border-r pr-4">
           <img
-            src={data.profile.photos[0].url ?? "x"}
+            src={data.profile.photos[0]?.url ?? noProfilePic}
             alt="Profile"
             className="w-40 h-40 rounded-full mb-4"
           />

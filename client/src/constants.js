@@ -42,6 +42,11 @@ export const API_ENDPOINTS = {
     LIVE:{
         NOTIFICATIONS: `${API_BASE_URL}/api/notificationHub`,
         CHAT: `${API_BASE_URL}/api/chatHub`,
+    },
+    LOCATION: {
+        POST: `${API_BASE_URL}/api/v1/User/Location`,
+        PUT: `${API_BASE_URL}/api/v1/User/Location`,
+        GET: `${API_BASE_URL}/api/v1/User/Location`,
     }
 };
 
