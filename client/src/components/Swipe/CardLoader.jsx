@@ -3,6 +3,8 @@ import SwipeDeck from './SwipeDeck';
 import {API_ENDPOINTS, REACT_ROUTES} from "../../constants.js";
 import {useNavigate} from "react-router-dom";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
+import { ThreeDots } from 'react-loader-spinner';
+import Loading from '../Loading.jsx';
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
@@ -98,7 +100,7 @@ function CardLoader() {
     };
 
     if (!users) {
-        return <div>loading...</div>;
+        return (<Loading/>)
     }
 
     if (users.length < 1 && noMoreUsers) {

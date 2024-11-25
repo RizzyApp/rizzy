@@ -8,6 +8,7 @@ import useCustomToast from "../hooks/useCustomToast.js";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {useNavigate} from "react-router-dom";
 import {useFetchWithAuth} from "../hooks/useFetchWIthCredentials.js";
+import Loading from '../components/Loading.jsx';
 
 const createPictureChangesFormData = (initialPhotos, photoURLs) => {
 
@@ -188,7 +189,12 @@ const ProfilePage = () => {
     };
 
     if (data !== null) console.log(data);
-    if (!data) return <div>Loading...</div>;
+    if (!data) return (
+        <><Header />
+        <div className="flex flex-col font-poppins bg-custom-gradient h-screen overflow-hidden w-screen justify-center items-center">
+            <Loading />
+        </div></>
+      );
 
     return (
         <>
