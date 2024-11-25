@@ -6,7 +6,7 @@ const SwipeCardImage = forwardRef(({cardData}, ref) => {
 
     const images = cardData.photos.length === 0 ? ['./image/blank-profile-picture.webp'] : cardData.photos;
     return (
-        <div ref={ref} className={`relative flex bg-gray-200 h-card-big`}>
+        <div ref={ref} className={`relative flex  h-card-big`}>
             <img className="object-cover rounded-xl pointer-events-none w-full h-full" src={images[0]} alt=""/>
             <div className="absolute bottom-5 left-1 mb-4 pl-4">
                 <div>
