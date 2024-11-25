@@ -1,4 +1,4 @@
-﻿namespace API.Models;
+﻿namespace API.Data.Models;
 
 public class MatchInfo
 {

@@ -1,5 +1,5 @@
 ﻿
-namespace API.Models;
+namespace API.Data.Models;
 
 public class UserLocation
 {

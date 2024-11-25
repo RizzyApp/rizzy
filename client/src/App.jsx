@@ -1,40 +1,32 @@
-import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import "./App.css";
+import {Outlet} from "react-router-dom";
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {SignalRProvider} from "./components/contexts/SignalRContext.jsx";
+import {useAuth} from "./components/contexts/Authcontext.jsx";
+
 
 function App() {
+    const {checkingAuth} = useAuth();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+    if (checkingAuth) {
+        return <>AAAAAAAAAAAAAAAAAAAAAA</>
+    }
 
-  useEffect(() => {
-    (async()=>{
-      const response = await fetch("/api/v1/Auth/IsLoggedIn")
-      setIsLoggedIn(response.ok);
-      setCheckingAuth(false);
-    })()
-  }, []);
-  
-  if(checkingAuth) {
-    return <>AAAAAAAAAAAAAAAAAAAAAA</>
-  }
+    /* useEffect(() => {
+      const getData = async () =>{
+        const response = await fetch("/api/v1/users");
+        const data = await response.json();
+        console.log(data);
+      };
+      getData();
+    }, []);  */
 
-  /* useEffect(() => {
-    const getData = async () =>{
-      const response = await fetch("/api/v1/users");
-      const data = await response.json();
-      console.log(data);
-    };
-    getData();
-  }, []);  */
-
-  return (
-    <>
-      <Outlet
-        context={([isLoggedIn, setIsLoggedIn])}
-      />
-    </>
-  );
+    return (
+        <SignalRProvider>
+            <ToastContainer position="top-right"/>
+            <Outlet/>
+        </SignalRProvider>
+    );
 }
 
 export default App;

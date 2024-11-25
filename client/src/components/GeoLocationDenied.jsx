@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import {REACT_ROUTES} from "../constants.js";
 const GeoLocationDenied = ({setAskPermission}) => {
   const navigate = useNavigate();
   return (
@@ -13,7 +14,7 @@ const GeoLocationDenied = ({setAskPermission}) => {
             className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white"
             onClick={() => {
               setAskPermission((prev) => !prev);
-              navigate("/profile");
+              navigate(REACT_ROUTES.PROFILE);
             }}
           >
             Try Again

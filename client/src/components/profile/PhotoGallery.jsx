@@ -1,13 +1,19 @@
-import React, {useState, useRef} from "react";
+import {useState, useRef, useEffect} from "react";
 import PhotoItem from "./PhotoItem";
 import ImageCropper from "./ImageCropper.jsx";
 import deleteIcon from "../../assets/delete-icon.png";
+import {UPLOAD_MAX_FILE_SIZE, UPLOAD_MAX_IMAGE_NUMBER} from "../../constants.js";
+
 
 const emptyImages = [null, null, null, null, null, null];
-const maxImageCount = 6;
 
-const PhotoGallery = ({isEditing, initialImages}) => {
-    const filledInitialImages = [...initialImages, ...emptyImages].slice(0, maxImageCount);
+const  isFileSizeValid = (file) => file.size <= UPLOAD_MAX_FILE_SIZE;
+
+
+
+
+const PhotoGallery = ({isEditing, initialImages, setChangedPhotoUrls}) => {
+    const filledInitialImages = [...initialImages, ...emptyImages].slice(0, UPLOAD_MAX_IMAGE_NUMBER);
     const [images, setImages] = useState(filledInitialImages);
     const [uploadedImage, setUploadedImage] = useState(null);
     const [isCropping, setIsCropping] = useState(false);
@@ -15,9 +21,9 @@ const PhotoGallery = ({isEditing, initialImages}) => {
 
     const inputRef = useRef(null);
 
-    const updateImage = (index, newImage) => {
+    const AddImageToFirstEmptyTile = (newImage) => {
         const newImages = [...images];
-        newImages[index] = newImage;
+        newImages[firstEmptyIndex] = newImage;
         setImages(newImages);
     }
 
@@ -33,9 +39,13 @@ const PhotoGallery = ({isEditing, initialImages}) => {
         console.log("hello");
     }
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
+            if(!isFileSizeValid(file)){
+                console.error("Invalid file size");
+                return;
+            }
             const reader = new FileReader();
             reader.onload = () => {
                 setUploadedImage(reader.result);
@@ -47,28 +57,31 @@ const PhotoGallery = ({isEditing, initialImages}) => {
             reader.readAsDataURL(file);
         }
     }; //TODO: Max file size check and notify the user if file upload failed
+    //TODO: Maybe add a warning if the resolution is too small
 
     const handleCropComplete = (croppedImage) => {
         setIsCropping(false);
-        replaceFirstEmptyIndex(croppedImage);
+        AddImageToFirstEmptyTile(croppedImage);
     };
 
     const onCancelEditImage = () => {
         setIsCropping(false);
-        replaceFirstEmptyIndex(uploadedImage);
     }
 
     const deleteImage = (index) => {
-        const newImages = [...images]
-        newImages.splice(index, 1);
-        setSelectedIndex(null);
-        setImages([...newImages, ...emptyImages].slice(0, maxImageCount));
+        const deletedImage = images[index];
+        if (!deletedImage) return;
 
+        const newImages = images.filter((_, i) => i !== index);
+        setSelectedIndex(null);
+        setImages([...newImages, ...emptyImages].slice(0, UPLOAD_MAX_IMAGE_NUMBER));
     }
 
     const firstEmptyIndex = images.findIndex((image) => image === null);
 
-    const replaceFirstEmptyIndex = (image) => updateImage(firstEmptyIndex, image);
+    useEffect(() => {
+        setChangedPhotoUrls(images.filter((image) => image !== null));
+    }, [images, setChangedPhotoUrls]);
 
     return (
         <>

@@ -1,93 +1,121 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import SwipeDeck from './SwipeDeck';
+import {API_ENDPOINTS, REACT_ROUTES} from "../../constants.js";
+import {useNavigate} from "react-router-dom";
+import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 
-const db = [
-  {
-    id: 1,
-    name: 'Mr.Bean',
-    photos: [],
-    bio: 'This is a very cool bio',
-    age: 30,
-    distance: 34,
-  },
-  {
-    id: 2,
-    name: 'Mr.Bean',
-    photos: ['./image/bean-1.jpg', './image/bean-2.jpg', './image/bean-3.jpg', './image/bean-3.jpg', './image/bean-4.jpg'],
-    bio: 'This is a not so cool bio',
-    age: 30,
-    distance: 34,
-  },
-  {
-    id: 3,
-    name: 'Mr.Bean',
-    photos: [],
-    bio: 'This is an okay bio',
-    age: 30,
-    distance: 34,
-  },
-  {
-    id: 4,
-    name: 'Mr.Bean',
-    photos: ['./image/bean-1.jpg', './image/bean-2.jpg', './image/bean-3.jpg', './image/bean-3.jpg', './image/bean-4.jpg'],
-    bio: 'This is a very bad bio',
-    age: 30,
-    distance: 34,
-  },
-];
+const IS_DEVELOPMENT = import.meta.env.DEV;
+
+const mergeUniqueUsersBasedOnId = (previous, current, otherIdsToExclude) => {
+    const userIds = new Map();
+    const combined = previous ? [...previous, ...current] : current;
+    combined.forEach(user => {
+        if (!otherIdsToExclude.includes(user.id)) {
+            userIds.set(user.id, user);
+        }
+    });
+
+
+    return Array.from(userIds.values());
+};
+
 
 function CardLoader() {
-  const [users, setUsers] = useState(null);
-  const [numberOfUsers, setNumberOfUsers] = useState(0);
+    const [users, setUsers] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [noMoreUsers, setNoMoreUsers] = useState(false);
+    const [swipedUserIds, setSwipedUserIds] = useState([]);
+    const [error, setError] = useState(false); //TODO: Show actual error messages for users
+    const navigate = useNavigate();
+    const fetchWithAuth = useFetchWithAuth();
 
-  useEffect(() => {
+    useEffect(() => {
+        console.log("CardLoader renders!");
+    });
+
+    useEffect(() => {
+        if ((!users || users.length < 2) && !loading && !noMoreUsers && !error) {
+            fetchData();
+        }
+
+    }, [users, loading]);
+
+    const deleteSwipes = async () => {
+        const options = {
+            "method": "DELETE"
+        }
+        await fetchWithAuth(API_ENDPOINTS.SWIPE.DELETE_SWIPES, options);
+        window.location.reload();
+    }
+
     const fetchData = async () => {
-      const response = await fetch('/api/v1/User');
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setUsers(data);
-        // setUsers(prevUsers => {
-        //   if(prevUsers === null) {
-        //     setNumberOfUsers(data.length);
-        //     return data;
-        //   }
-        //   const newUsers = [...prevUsers];
-        //   newUsers.splice(0, prevUsers.length - 1);
-        //   const newData =  [...newUsers, ...data];
-        //   setNumberOfUsers(newData.length)
-        //   return newData;
-        // })
-      }
-    };
-    fetchData();
-    // if(numberOfUsers < 2) {
-    //   fetchData();
-    // }
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(API_ENDPOINTS.USERS.GET_SWIPE_USERS);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                if (data.length < 2) {
+                    setNoMoreUsers(true);
+                }
+                setUsers(prevUsers => {
+                    const newUsers = mergeUniqueUsersBasedOnId(prevUsers, data, swipedUserIds);
+                    return newUsers;
+                });
 
-  }, []);
-
-  const handleSwipeOut = (userId, direction) => {
-    const swipeData = {
-      swipedUserId: userId,
-      swipeType: direction === 1 ? 'right' : 'left',
+            } else {
+                console.error('Failed to fetch users', response.status);
+                setError(true);
+            }
+        } catch (error) {
+            setError(true);
+            console.error('Error fetching users:', error);
+        }
+        setLoading(false);
     };
 
-    const fetchOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(swipeData),
+    const handleSwipeOut = async (userId, direction) => {
+        const swipeData = {
+            swipedUserId: userId,
+            swipeType: direction === 1 ? 'right' : 'left',
+        };
+
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(swipeData),
+        };
+
+        try {
+            setSwipedUserIds(prev => [...prev, userId]);
+            const response = await fetchWithAuth(API_ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
+
+        } catch (error) {
+            console.error('Error swiping user:', error);
+        }
     };
 
-    const response = fetch('api/v1/Swipe', fetchOptions)
-  };
-  if (!users) {
-    return <div>loading...</div>;
-  }
+    if (!users) {
+        return <div>loading...</div>;
+    }
 
-  return <SwipeDeck initialCards={users} deckWidth={400} onSwipe={handleSwipeOut} setNumberOfUsers={setNumberOfUsers}></SwipeDeck>;
+    if (users.length < 1 && noMoreUsers) {
+        return <div>
+            <div>We could not find any users, please change your preferences in the Profile page!</div>
+            <button className="text-white" onClick={() => navigate(REACT_ROUTES.PROFILE)}>Go to Profile</button>
+            <br/>
+            {IS_DEVELOPMENT && <button className="text-white mt-4" onClick={deleteSwipes}>DELETE SWIPES</button>}
+        </div>
+    }
+
+
+    return <>
+        <SwipeDeck users={users} setUsers={setUsers} deckWidth={400} onSwipe={handleSwipeOut}></SwipeDeck>
+        {IS_DEVELOPMENT &&
+            <button className=" fixed left-0 top-1/3 text-white" onClick={deleteSwipes}>DELETE SWIPES</button>}
+    </>
 }
 
 export default CardLoader;

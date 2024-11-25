@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace API.Authentication;
+namespace API.Services.Authentication;
 
 public class AuthenticationSeeder
 {
