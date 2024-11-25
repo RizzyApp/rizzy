@@ -2,6 +2,8 @@
 
 import {useState} from "react";
 import dateConverter from "./utils/dateConverter.js";
+const placeholderPic = "./image/blank-profile-picture.webp";
+
 
 const ChatSideBar = ({setSelectedUser, users}) => {
     // State to store the search query and the sorting preference
@@ -13,7 +15,10 @@ const ChatSideBar = ({setSelectedUser, users}) => {
         if (sortBy === 'matchDate') {
             return new Date(b.matchDate) - new Date(a.matchDate); // sort by matchDate (newest first)
         } else if (sortBy === 'messageDate') {
-            return new Date(b.latestMessage?.timeStamp) - new Date(a.latestMessage?.timeStamp); // sort by message date (newest first)
+            return (
+                (b.latestMessage?.timeStamp ? new Date(b.latestMessage.timeStamp) : -Infinity) -
+                (a.latestMessage?.timeStamp ? new Date(a.latestMessage.timeStamp) : -Infinity)
+            ); // sort by message date (newest first)
         }
         return 0;
     });
@@ -24,65 +29,68 @@ const ChatSideBar = ({setSelectedUser, users}) => {
     );
 
     return (
-        <div className="w-1/5 bg-white rounded-l-lg shadow-md p-4">
-            <div className="flex justify-between mb-4 border-b border-gray-300 pb-2">
-                <button
-                    onClick={() => setSortBy('matchDate')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition ${
-                        sortBy === 'matchDate'
-                            ? 'bg-pink-500 text-white shadow'
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                    }`}
-                >
-                    Sort by Match Date
-                </button>
-                <button
-                    onClick={() => setSortBy('messageDate')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition ${
-                        sortBy === 'messageDate'
-                            ? 'bg-pink-500 text-white shadow'
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                    }`}
-                >
-                    Sort by Message Date
-                </button>
+        <div className="flex flex-col w-1/5 h-full bg-chat-backgroundPrimary rounded-l-lg shadow-md p-4">
+            <div>
+                <div className="flex justify-between mb-4 border-b border-b-border-primary pb-2">
+                    <button
+                        onClick={() => setSortBy('matchDate')}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition ${
+                            sortBy === 'matchDate'
+                                ? 'bg-accent-primary text-text-contrast shadow'
+                                : 'bg-button-turnedOff text-text-secondary hover:bg-button-turnedOffHover'
+                        }`}
+                    >
+                        Sort by Match Date
+                    </button>
+                    <button
+                        onClick={() => setSortBy('messageDate')}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition ${
+                            sortBy === 'messageDate'
+                                ? 'bg-accent-primary text-text-contrast shadow'
+                                : 'bg-button-turnedOff text-text-secondary hover:bg-button-turnedOffHover'
+                        }`}
+                    >
+                        Sort by Message Date
+                    </button>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search for matches"
+                    className="w-full p-2 mb-4 bg-input-background text-input-text placeholder-input-placeholder border border-border-secondary rounded-lg focus:outline-none"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
+            <div className="overflow-scroll">
+                {filteredUsers.length > 0 ? (
+                    <ul>
+                        {filteredUsers.map((user, index) => (
+                            <li
+                                key={index}
+                                className="flex items-center gap-4 p-2 mb-2 transition-all bg-chat-backgroundSecondary hover:bg-chat-card-hover rounded-lg cursor-pointer"
+                                onClick={() => setSelectedUser(user)}
+                            >
+                                <div className="w-10 h-10 rounded-full">
+                                    <img className="object-cover rounded-full" src={user?.profilePic ?? placeholderPic} alt={user.name}/>
+                                </div>
+                                <div className="h-14">
+                                    <p className="font-medium text-text-primary">{user.name}</p>
+                                    <p className="text-sm text-text-secondary max-w-36 text-ellipsis line-clamp-2">{
+                                        user.latestMessage ?
+                                            user.latestMessage.sideBarContent
+                                                ? user.latestMessage.sideBarContent
+                                                : user.latestMessage?.content
+                                            : dateConverter(user.matchDate, "matched ")}
+                                    </p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-center text-text-secondary">No matches found.</p>
+                )}
             </div>
 
-            <input
-                type="text"
-                placeholder="Search for matches"
-                className="w-full p-2 mb-4 text-gray-600 border rounded-lg focus:outline-none"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            {filteredUsers.length > 0 ? (
-                <ul>
-                    {filteredUsers.map((user, index) => (
-                        <li
-                            key={index}
-                            className="flex items-center gap-4 p-2 mb-2 transition-all bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer"
-                            onClick={() => setSelectedUser(user)}
-                        >
-                            <div className="w-10 h-10 rounded-full">
-                                <img className="object-cover rounded-full" src={user.profilePic} alt={user.name}/>
-                            </div>
-                            <div className="h-14">
-                                <p className="font-medium text-gray-800">{user.name}</p>
-                                <p className="text-sm text-gray-500 max-w-36 text-ellipsis line-clamp-2">{
-                                    user.latestMessage ?
-                                        user.latestMessage.sideBarContent
-                                            ? user.latestMessage.sideBarContent
-                                            : user.latestMessage?.content
-                                        : dateConverter(user.matchDate)}
-                                </p>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p className="text-center text-gray-500">No matches found.</p>
-            )}
         </div>
     );
 };

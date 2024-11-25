@@ -111,19 +111,19 @@ const ChatMain = () => {
         <div className="flex h-[95%] w-11/12 p-6">
             <ChatSideBar setSelectedUser={handleUserSelection} users={usersForSideBar}/>
             {/* Chat Area */}
-            <div className="flex-1 bg-white rounded-r-lg shadow-md flex flex-col">
+            <div className="flex-1 bg-chat-backgroundPrimary rounded-r-lg shadow-md flex flex-col">
                 {/* Chat Header */}
                 {selectedUser && (
                     <ChatHeader selectedUser={selectedUser}/>
                 )}
                 {/* Chat Messages */}
-                {selectedUser && messages[selectedUser.userId] ? (
+                {selectedUser ? (
                     <ChatMessages
                         messages={messages[selectedUser.userId]}
-                        otherUserId={selectedUser.userId}
+                        selectedUser={selectedUser}
                     />
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-500">
+                    <div className="flex-1 flex items-center justify-center text-text-secondary">
                         {usersIsEmpty()
                             ? "You don't have any matches, go and make some :D"
                             : "No user selected, please pick a conversation from the sidebar"}
