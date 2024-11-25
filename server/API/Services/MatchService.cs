@@ -15,15 +15,17 @@ public class MatchService : IMatchService
     private readonly IRepository<Swipes> _swipeRepository;
     private readonly IRepository<MatchInfo> _matchRepository;
     private readonly IRepository<Photo> _photoRepository;
+    private readonly IRepository<User> _userRepository;
     private readonly IHubContext<NotificationHub, INotificationHubClient> _hubContext;
 
     public MatchService(IRepository<MatchInfo> matchRepository, IRepository<Swipes> swipeRepository,
-        IHubContext<NotificationHub, INotificationHubClient> hubContext, IRepository<Photo> photoRepository)
+        IHubContext<NotificationHub, INotificationHubClient> hubContext, IRepository<Photo> photoRepository, IRepository<User> userRepository)
     {
         _matchRepository = matchRepository;
         _swipeRepository = swipeRepository;
         _hubContext = hubContext;
         _photoRepository = photoRepository;
+        _userRepository = userRepository;
     }
 
 
@@ -65,20 +67,37 @@ public class MatchService : IMatchService
         var matchedUsers = await _matchRepository
             .Query()
             .Where(m => m.Users.Any(u => u.Id == loggedInUserId))
-            .SelectMany(m => m.Users)
-            .Where(u => u.Id != loggedInUserId)
+            .SelectMany(m => m.Users
+                .Where(u => u.Id != loggedInUserId)
+                .Select(u => new
+                {
+                    User = u,
+                    MatchDate = m.CreatedAt
+                }))
             .Distinct()
-            .Include(u => u.Photos)
+            .ToListAsync();
+        
+        var userIds = matchedUsers.Select(u => u.User.Id).ToList();
+        
+        var userPhotos = await _userRepository
+            .Query()
+            .Where(u => userIds.Contains(u.Id))
+            .Where(u => u.Photos != null)
+            .Select(u => new
+            {
+                u.Id,
+                PhotoUrl = u.Photos.OrderBy(p => p.Id).FirstOrDefault().Url
+            })
             .ToListAsync();
 
+        
         var minimalUsers = matchedUsers
             .Select(u => new MinimalProfileDataResponse(
-                u.Id,
-                u.Name,
-                u.Photos?
-                    .OrderBy(p => p.Id)
-                    .FirstOrDefault()?.Url,
-                u.LastActivityDate))
+                u.User.Id,
+                u.User.Name,
+                userPhotos.FirstOrDefault(p => p.Id == u.User.Id)?.PhotoUrl,
+                u.MatchDate,
+                u.User.LastActivityDate))
             .ToList();
 
         return minimalUsers;
