@@ -32,7 +32,6 @@ const RegistrationPage = () => {
     };
 
     const response = await registerUserProfile(formData)
-    console.log(response)
     if(response.ok){
       const locationData= {
         latitude: 47.54,

@@ -99,13 +99,28 @@ export const AuthProvider = ({children}) => {
         return response;
     }
 
+    const updateUserLocation = async (locationData) => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(locationData)
+        }
+
+        const response = await fetchWithCredentials(API_ENDPOINTS.LOCATION.PUT, requestOptions);
+        console.log(response);
+        if(!response.ok) {
+            console.error("error updating location");
+        }
+        return response;
+    }
+
     useEffect(() => {
         fetchAuthStatus();
     }, []);
 
     return (
         <AuthContext.Provider
-            value={{checkingAuth, loggedInUserId, isLoggedIn, login, logOut, register, registerUserProfile, clearLoginDetails, postUserLocation}}>
+            value={{checkingAuth, loggedInUserId, isLoggedIn, login, logOut, register, registerUserProfile, clearLoginDetails, postUserLocation, updateUserLocation}}>
             {children}
         </AuthContext.Provider>
     );

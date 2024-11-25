@@ -5,18 +5,25 @@ import { useEffect, useState } from 'react';
 import GeoLocationNotAccepted from '../components/GeoLocationNotAccepted.jsx';
 import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
 import {REACT_ROUTES} from "../constants.js";
+import { useAuth } from '../components/contexts/Authcontext.jsx';
 
 const App = () => {
+  const { updateUserLocation } = useAuth()
   const navigate = useNavigate();
-  const [coords, setCoords] = useState(null);
+  // const [coords, setCoords] = useState(null);
   const [geoLocationAccepted, setGeoLocationAccepted] = useState(false);
   const [geoLocationDenied, setGeoLocationDenied] = useState(false);
   const [askPermission, setAskPermission] = useState(false);
 
-  const success = (position) => {
-    setCoords(position);
-    setGeoLocationAccepted(true); // Set accepted to true
-    console.log(position);
+  const success = async (position) => {
+    const coord = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    }
+    const response = await updateUserLocation(coord);
+    if(response.ok){
+      setGeoLocationAccepted(true); // Set accepted to true
+    }
   };
 
   const failed = (error) => {
@@ -24,21 +31,21 @@ const App = () => {
     setGeoLocationDenied(true); // Set denied to true
   };
 
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition(success, failed);
-  // }, [askPermission]);
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(success, failed);
+  }, [askPermission]);
 
-  // if (geoLocationDenied) {
-  //   return (
-  //     <GeoLocationDenied setAskPermission={setAskPermission}/>
-  //   );
-  // }
-  //
-  // if (!geoLocationAccepted) {
-  //   return (
-  //     <GeoLocationNotAccepted/>
-  //   );
-  // }
+  if (geoLocationDenied) {
+    return (
+      <GeoLocationDenied setAskPermission={setAskPermission}/>
+    );
+  }
+  
+  if (!geoLocationAccepted) {
+    return (
+      <GeoLocationNotAccepted/>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
