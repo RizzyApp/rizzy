@@ -28,7 +28,7 @@ namespace API.Contracts.UserProfile
         int PreferredLocationRange,
 
         [Required]
-        [Range(0, 2, ErrorMessage = "Preferred gender must be 0 or 1.")]
+        [Range(0, 2, ErrorMessage = "Preferred gender must be between 0 and 2.")]
         int PreferredGender
     );
 }

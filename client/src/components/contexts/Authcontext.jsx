@@ -80,6 +80,36 @@ export const AuthProvider = ({children}) => {
         const response = await fetchWithCredentials(API_ENDPOINTS.USER.POST_PROFILE, requestOptions);
         if (response.ok) {
             const data = await response.json();
+            setIsLoggedIn(true);
+        }
+        return response;
+    }
+
+    const postUserLocation = async (locationData) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(locationData)
+        }
+
+        const response = await fetchWithCredentials(API_ENDPOINTS.USER.POST_LOCATION, requestOptions);
+        if(!response.ok) {
+            console.error("error posting location");
+        }
+        return response;
+    }
+
+    const updateUserLocation = async (locationData) => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(locationData)
+        }
+
+        const response = await fetchWithCredentials(API_ENDPOINTS.LOCATION.PUT, requestOptions);
+        console.log(response);
+        if(!response.ok) {
+            console.error("error updating location");
         }
         return response;
     }
@@ -90,7 +120,7 @@ export const AuthProvider = ({children}) => {
 
     return (
         <AuthContext.Provider
-            value={{checkingAuth, loggedInUserId, isLoggedIn, login, logOut, register, registerUserProfile, clearLoginDetails}}>
+            value={{checkingAuth, loggedInUserId, isLoggedIn, login, logOut, register, registerUserProfile, clearLoginDetails, postUserLocation, updateUserLocation}}>
             {children}
         </AuthContext.Provider>
     );
