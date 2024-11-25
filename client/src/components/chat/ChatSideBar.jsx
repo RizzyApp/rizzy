@@ -20,9 +20,9 @@ const ChatSideBar = ({setSelectedUser, users}) => {
                             <div className="w-10 h-10  rounded-full">
                                 <img className="object-cover rounded-full" src={user.profilePic}/>
                             </div>
-                            <div>
+                            <div className="h-14">
                                 <p className="font-medium text-gray-800">{user.name}</p>
-                                <p className="text-sm text-gray-500">{
+                                <p className="text-sm text-gray-500 max-w-36 text-ellipsis line-clamp-2">{
                                     user.latestMessage &&
                                     user.latestMessage.sideBarContent
                                         ? user.latestMessage.sideBarContent
