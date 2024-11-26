@@ -33,7 +33,10 @@ public class AuthController : ControllerBase
         {
             foreach (var error in identityResult.Errors)
             {
-                ModelState.AddModelError(error.Code, error.Description);
+                if(error.Code != "DuplicateUserName")
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
             }
 
             return BadRequest(ModelState);

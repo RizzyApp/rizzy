@@ -18,6 +18,7 @@
     "react-dropzone": "^14.2.10",
     "react-easy-crop": "^5.1.0",
     "react-loader-spinner": "^6.1.6",
+    "react-range-slider-input": "^3.0.7",
     "react-router-dom": "^6.26.2",
     "react-toastify": "^10.0.6"
   },
