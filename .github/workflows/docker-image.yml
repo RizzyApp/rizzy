@@ -47,7 +47,7 @@ jobs:
           push: true  
           tags:  hegedus-mark/rizzy-app/frontend:latest  
 
-      # Optional: Tag images with a unique tag based on the commit hash
+      # Tag images with a unique tag based on the commit hash
       - name: Tag images with commit hash
         run: |
           IMAGE1_TAG=hegedus-mark/rizzy-app/api:${{ github.sha }}
