@@ -1,13 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import CardLoader from "../components/Swipe/CardLoader.jsx";
+import CardLoader from "../components/swipe/CardLoader.jsx";
 import Header from "../components/Header.jsx";
 import { useEffect, useState } from 'react';
-import GeoLocationNotAccepted from '../components/GeoLocationNotAccepted.jsx';
 import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
-import {REACT_ROUTES} from "../constants.js";
 import { useAuth } from '../components/contexts/Authcontext.jsx';
-import { ThreeDots } from 'react-loader-spinner';
 import Loading from '../components/Loading.jsx';
+import {useNavigate} from 'react-router-dom';
 
 const App = () => {
   const { updateUserLocation } = useAuth()
