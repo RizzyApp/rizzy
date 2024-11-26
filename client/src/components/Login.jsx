@@ -3,21 +3,30 @@ import {Link, useNavigate} from "react-router-dom";
 import DevelopmentMessage from "./DevelopmentMessage.jsx";
 import {useAuth} from "./contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.js";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const Login = () => {
     const {login} = useAuth();
     const navigate = useNavigate();
+    const {showErrorToast} = useCustomToast();
 
     const handleSubmit = async (e) =>  {
         e.preventDefault();
+
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
 
         const response = await login(email, password);
         if(response.ok){
             navigate(REACT_ROUTES.SWIPE_PAGE)
+        }
+        else{
+            let data = await response.json();
+            if(data.Login){
+                showErrorToast(<>{Object.values(data.Login)}</>)
+            }
         }
     }
 

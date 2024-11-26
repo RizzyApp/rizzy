@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import {REACT_ROUTES} from "../constants.js";
+import {useAuth} from "../components/contexts/Authcontext.jsx";
+import {Navigate, } from "react-router-dom";
 
 function HomePage() {
   const navigate = useNavigate();
+  const {isLoggedIn} = useAuth();
 
   return (
     <div className=" h-screen overflow-hidden">

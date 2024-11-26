@@ -84,6 +84,7 @@ public class UserController : ControllerBase
 
         var userProfileResponse = new UserProfileResponse(
             loggedInUser.Name,
+            User.FindFirstValue(ClaimTypes.Email)!,
             loggedInUser.Gender,
             GetAge(loggedInUser.BirthDate),
             loggedInUser.BirthDate,

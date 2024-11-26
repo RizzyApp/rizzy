@@ -2,29 +2,41 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.js";
+import deleteIcon from "../assets/delete-icon.png";
+
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [bio, setBio] = useState("");
-  const [interests, setInterests] = useState("");
-  const [preferredMinAge, setMinimumAge] = useState("");
+  const [interests, setInterests] = useState([]);
+  const [interestInput, setInterestInput] = useState("");
+  const [preferredMinAge, setMinimumAge] = useState(18);
   const [preferredMaxAge, setMaximumAge] = useState("");
-  const [preferredLocationRange, setLocationRadius] = useState("");
+  const [preferredLocationRange, setLocationRadius] = useState("72");
   const [gender, setGender] = useState("");
   const [preferredGender, setGenderPreference] = useState("");
 
   const {registerUserProfile, postUserLocation} = useAuth();
   const navigate = useNavigate();
+  const {showErrorToast} = useCustomToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(preferredMaxAge<preferredMinAge){
+      showErrorToast("The max. age should be greater than the min. age!")
+      return;
+    }
+
+
     const formData = {
       name,
       gender,
       birthdate,
       bio,
-      interests: interests.split(',').map(i => i.trim()),
+      interests,
       preferredMinAge,
       preferredMaxAge,
       preferredLocationRange,
@@ -42,7 +54,33 @@ const RegistrationPage = () => {
         navigate(REACT_ROUTES.SWIPE_PAGE);
       }
     }
+    else{
+      let data = await response.json();
+      if(data.errors){
+        showErrorToast(<>{Object.values(data.errors).flat().map(x => <div>{x}</div>)}</>);
+      }
+    }
   };
+
+  const handleAddInterest = () => {
+    if(interests.length > 10){
+      showErrorToast("Too many interests.")
+      return;
+    }
+
+    const trimmedInput = interestInput.trim();
+    if (trimmedInput !== "") {
+        setInterests([...interests, trimmedInput]);
+        setInterestInput("");
+    }
+  };
+
+  const handleDeleteInterest = (index) => {
+    let copyInterest = [...interests]
+    copyInterest.splice(index,1)
+    setInterests(copyInterest)
+  };
+
 
   return (
     <div className="flex flex-col items-center bg-custom-gradient h-screen overflow-auto">
@@ -60,6 +98,7 @@ const RegistrationPage = () => {
             onChange={(e) => setName(e.target.value)}
             className="border rounded w-full p-2 text-black"
             required
+            maxLength="16"
           />
         </label>
 
@@ -69,8 +108,9 @@ const RegistrationPage = () => {
             value={gender}
             onChange={(e) => setGender(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            required
           >
-            <option value="">Select Gender</option>
+            <option value="" disabled>Select Gender</option>
             <option value="0">Female</option>
             <option value="1">Male</option>
           </select>
@@ -83,6 +123,7 @@ const RegistrationPage = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            min="1924-01-01"
             required
           />
         </label>
@@ -93,17 +134,51 @@ const RegistrationPage = () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            maxLength="500"
           />
         </label>
 
         <label className="mb-2">
           Interests (comma separated):
-          <input
-            type="text"
-            value={interests}
-            onChange={(e) => setInterests(e.target.value)}
-            className="border rounded w-full p-2 text-black"
-          />
+
+          <>
+            <div>
+              <input
+                type="text"
+                value={interestInput}
+                onChange={(e) => setInterestInput(e.target.value)}
+                className="border rounded w-full text-black p-2 h-10"
+                placeholder="Enter a new interest"
+              />
+              <button
+                onClick={handleAddInterest}
+                className="mt-3 px-6 py-3 ml-2 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
+              >
+                Add Interest
+              </button>
+            </div>
+
+            <ul className="list-disc pl-5 mt-3">
+              {interests.map((interest, index) => (
+                <li
+                  key={index}
+                  className="flex justify-between items-center"
+                >
+                  <span>{interest}</span>
+                  <button
+                    onClick={() => handleDeleteInterest(index)}
+                    className="bg-transparent"
+                  >
+                    <img
+                      src={deleteIcon}
+                      alt="🗑️"
+                      className="w-5 h-5 inline-block cursor-pointer"
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
         </label>
 
         <h3 className="text-lg font-semibold mb-2">Preferences:</h3>
@@ -123,6 +198,8 @@ const RegistrationPage = () => {
             type="number"
             value={preferredMaxAge}
             onChange={(e) => setMaximumAge(e.target.value)}
+            min="18"
+            max="99"
             className="border rounded w-full p-2 text-black"
             required
           />
@@ -130,14 +207,23 @@ const RegistrationPage = () => {
 
         <label className="mb-2">
           Location Radius (kilometer):
-          <input
-            type="number"
-            value={preferredLocationRange || ""}
-            onChange={(e) => setLocationRadius(e.target.value)}
+
+          <input 
+            type="range" 
+            min={1} 
+            max={144} 
+            step={1} 
+            value={preferredLocationRange}
+            onInput={(e) => setLocationRadius(Number(e.target.value))}
             className="border rounded w-full p-2 text-black"
             required
-          />
+            />
+
+          <div className="mb-4">
+            Selected Radius: {preferredLocationRange || "72"} km
+          </div>
         </label>
+
 
         <label className="mb-2">
           Gender Preference:
@@ -145,8 +231,9 @@ const RegistrationPage = () => {
             value={preferredGender}
             onChange={(e) => setGenderPreference(e.target.value)}
             className="border rounded w-full p-2 text-black"
+            required
           >
-            <option value="">Select Gender</option>
+            <option value="" disabled>Select Gender</option>
             <option value="0">Female</option>
             <option value="1">Male</option>
             <option value="2">Both</option>

@@ -2,20 +2,28 @@ import Header from "./Header.jsx";
 import {useAuth} from "./contexts/Authcontext.jsx";
 import {useNavigate} from "react-router-dom";
 import {REACT_ROUTES} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.js";
 
 
 const RegisterPage = () => {
     const {register} = useAuth();
     const navigate = useNavigate();
+    const {showErrorToast} = useCustomToast();
 
     async function handleSubmit(e) {
         e.preventDefault();
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
 
+        console.log("email:", email);
         const response = await register(email, password);
         if(response.ok){
             navigate(REACT_ROUTES.REGISTER_DATA);
+        }
+        else{
+            let error = await response.json();
+            let msg = Object.values(error).flat().join("\n");
+            showErrorToast(msg);
         }
     }
 
@@ -39,6 +47,7 @@ const RegisterPage = () => {
                                     name="email"
                                     className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
                                     placeholder="Enter your email"
+                                    required
                                 />
                             </div>
                             <div>
@@ -50,8 +59,10 @@ const RegisterPage = () => {
                                     name="password"
                                     className="border bg-white text-black border-gray-300 p-2 w-full rounded-lg"
                                     placeholder="Enter your password"
+                                    required
                                 />
                             </div>
+                            
                             <div className="flex justify-center mt-4">
                                 <button
                                     className="bg-transparent text-white px-6 py-3 rounded-full hover:bg-buttonHover border-white">

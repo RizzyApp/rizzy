@@ -5,6 +5,7 @@ namespace API.Contracts.UserProfile;
 public record UserProfileResponse
 (
     string Name,
+    string Email,
     int Gender,
     int Age,
     DateTime BirthDate,
