@@ -41,8 +41,6 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("CorsPolicy");
-    
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.UseDeveloperExceptionPage();
@@ -62,10 +60,8 @@ if (app.Environment.IsDevelopment())
         authenticationSeeder.AddAdmin();
     }
 }
-else
-{
-    app.UseCors("CorsPolicy");
-}
+
+app.UseCors("CorsPolicy");
 
 
 app.UseAuthentication();
@@ -217,7 +213,8 @@ void AddIdentity()
 void AddCors()
 {
     var corsSettings = builder.Configuration.GetSection("CorsSettings").Get<CorsSettings>();
-
+    
+    Console.WriteLine("CorsSetting: " + corsSettings.AllowedOrigin);
     if (corsSettings is null)
     {
         throw new InvalidOperationException("Cors settings is missing from appsettings");
