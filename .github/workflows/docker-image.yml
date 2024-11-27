@@ -45,7 +45,9 @@ jobs:
           context: ./client 
           file: Dockerfile  
           push: true  
-          tags:  hegedus-mark/rizzy-app/frontend:latest  
+          tags:  hegedus-mark/rizzy-app/frontend:latest
+          build-args: |
+            VITE_API_BASE_URL=https://rizzy-app-api-v1.onrender.com
 
       # Tag images with a unique tag based on the commit hash
       - name: Tag images with commit hash
