@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import DevelopmentMessage from "../components/DevelopmentMessage.jsx";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 

@@ -2,7 +2,7 @@ import Header from "../components/Header.jsx";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {useNavigate} from "react-router-dom";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.js";
+import useCustomToast from "../hooks/useCustomToast.jsx"
 
 
 const RegisterPage = () => {
