@@ -2,22 +2,28 @@
 using API.Data;
 using API.Data.Models;
 using API.Data.Repositories;
+using API.Hubs;
 using API.Services;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace API.Tests.ServiceTests;
 
 [TestFixture]
-public class UserServiceTest
+public class MatchServiceTests
 {
     private AppDbContext _dbContext;
-    private IUserService _userService;
-    private IRepository<User> _repository;
-    private ILogger<UserService> _logger;
+    private IRepository<Swipes> _swipeRepository;
+    private IRepository<MatchInfo> _matchRepository;
+    private IRepository<Photo> _photoRepository;
+    private IRepository<User> _userRepository;
+    private ILogger<BaseHub<INotificationHubClient>> _logger;
+    private IHubContext<NotificationHub, INotificationHubClient> _hubContext;
+    private MatchService _matchService;
 
     [SetUp]
     public void SetUp()
@@ -28,9 +34,15 @@ public class UserServiceTest
             .Options;
 
         _dbContext = new AppDbContext(options);
-        _repository = new Repository<User>(_dbContext);
-        _logger = A.Fake<ILogger<UserService>>();
-        _userService = new UserService(_repository, _logger);
+        _swipeRepository = new Repository<Swipes>(_dbContext);
+        _matchRepository = new Repository<MatchInfo>(_dbContext);
+        _photoRepository = new Repository<Photo>(_dbContext);
+        _userRepository = new Repository<User>(_dbContext);
+        _logger = A.Fake<ILogger<BaseHub<INotificationHubClient>>>();
+        new NotificationHub(_logger);
+        _hubContext = A.Fake<IHubContext<NotificationHub, INotificationHubClient>>();
+        _matchService = new MatchService(_matchRepository, _swipeRepository, _hubContext, _photoRepository,
+            _userRepository);
 
         SeedDatabase();
     }
@@ -43,101 +55,92 @@ public class UserServiceTest
     }
 
     [Test]
-    public async Task UserService_GetFilteredUsersAsync_preferredGenderBoth_ReturnsListThreeElements()
+    public async Task MatchService_CreateMatchIfMutual_CreatesMatch()
     {
-        //Arrange
-        const int userId = 4;
-        const int preferredGender = 2;
-        const int minAge = 18;
-        const int maxAge = 70;
-        const decimal latitude = 47.909036m;
-        const decimal longitude = 20.370068m;
-        const int locationRange = 100;
-        const int amount = 10;
+        var loggedInUser = _dbContext.Users.First(u => u.Id == 1);
+        var swipedUser = _dbContext.Users.First(u => u.Id == 2);
 
-        //Act
-        var result =  await _userService.GetFilteredUsersAsync(userId, preferredGender, minAge, maxAge, latitude, longitude,
-            locationRange, amount);
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = loggedInUser.Id,
+            SwipedUserId = swipedUser.Id,
+            SwipeType = "right"
+        });
+        await _dbContext.SaveChangesAsync();
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = swipedUser.Id,
+            SwipedUserId = loggedInUser.Id,
+            SwipeType = "right"
+        });
+        await _dbContext.SaveChangesAsync();
 
-        //Act
-        var userCardDtos = result as UserCardDto[] ?? result.ToArray();
-        userCardDtos.Should().NotBeNull(); 
-        userCardDtos.Should().HaveCount(3);
+
+        var result = await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
+
+        
+
+        result.Should().NotBeNull();
+        _dbContext.MatchInfos.Count().Should().Be(1);
     }
 
     [Test]
-    public async Task UserService_GetFilteredUsersAsync_PreferredGenderOne_ReturnsListOneELements()
+    public async Task MatchService_CreateMatchIfMutual_ReturnsNull()
     {
-        //Arrange
-        const int userId = 4;
-        const int preferredGender = 1;
-        const int minAge = 18;
-        const int maxAge = 70;
-        const decimal latitude = 47.909036m;
-        const decimal longitude = 20.370068m;
-        const int locationRange = 100;
-        const int amount = 10;
+        var loggedInUser = _dbContext.Users.First(u => u.Id == 1);
+        var swipedUser = _dbContext.Users.First(u => u.Id == 2);
 
-        //Act
-        var result = await _userService.GetFilteredUsersAsync(userId, preferredGender, minAge, maxAge, latitude, longitude,
-            locationRange, amount);
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = loggedInUser.Id,
+            SwipedUserId = swipedUser.Id,
+            SwipeType = "left"
+        });
+        await _dbContext.SaveChangesAsync();
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = swipedUser.Id,
+            SwipedUserId = loggedInUser.Id,
+            SwipeType = "left"
+        });
+        await _dbContext.SaveChangesAsync();
 
-        //Act
-        var userCardDtos = result as UserCardDto[] ?? result.ToArray();
-        userCardDtos.Should().NotBeNull();
-        userCardDtos.Should().HaveCount(1);
 
+        var result = await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
+
+
+
+        result.Should().BeNull();
+        _dbContext.MatchInfos.Count().Should().Be(0);
     }
 
     [Test]
-    public async Task UserService_GetFilteredUsersAsync_LocationRangeOne_ListZeroElement()
+    public async Task MatchService_GetMatchedUsersMinimalData_ReturnsListOfUsers()
     {
-        // Arrange
-        const int userId = 4;
-        const int preferredGender = 2;
-        const int minAge = 18;
-        const int maxAge = 70;
-        const decimal latitude = 47.909036m;
-        const decimal longitude = 20.370068m;
-        const int locationRange = 1;
-        const int amount = 10;
+        var loggedInUser = _dbContext.Users.First(u => u.Id == 1);
+        var swipedUser = _dbContext.Users.First(u => u.Id == 2);
 
-        //Act
-        var result = await _userService.GetFilteredUsersAsync(userId, preferredGender, minAge, maxAge, latitude, longitude,
-            locationRange, amount);
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = loggedInUser.Id,
+            SwipedUserId = swipedUser.Id,
+            SwipeType = "right"
+        });
+        await _dbContext.SaveChangesAsync();
+        _dbContext.Swipes.Add(new Swipes
+        {
+            UserId = swipedUser.Id,
+            SwipedUserId = loggedInUser.Id,
+            SwipeType = "right"
+        });
+        await _dbContext.SaveChangesAsync();
 
-        //Act
-        var userCardDtos = result as UserCardDto[] ?? result.ToArray();
-        userCardDtos.Should().NotBeNull();
-        userCardDtos.Should().BeEmpty();
-        userCardDtos.Should().HaveCount(0);
+        await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
+        var userDataResult = await _matchService.GetMatchedUsersMinimalData(1);
 
+        userDataResult.Should().NotBeNull();
+        userDataResult.Count().Should().Be(1, "Connected to only one user");
     }
-
-    [Test]
-    public async Task UserService_GetFilteredUsersAsync_MaxAge30_ListOneElement()
-    {
-        //Arrange
-        const int userId = 4;
-        const int preferredGender = 2;
-        const int minAge = 18;
-        const int maxAge = 30;
-        const decimal latitude = 47.909036m;
-        const decimal longitude = 20.370068m;
-        const int locationRange = 100;
-        const int amount = 10;
-
-        //Act
-        var result = await _userService.GetFilteredUsersAsync(userId, preferredGender, minAge, maxAge, latitude, longitude,
-            locationRange, amount);
-
-        //Act
-        var userCardDtos = result as UserCardDto[] ?? result.ToArray();
-        userCardDtos.Should().NotBeNull();
-        userCardDtos.Should().HaveCount(1);
-
-    }
-
 
     private void SeedDatabase()
     {
