@@ -74,6 +74,7 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", () => "Healthy");
 app.MapHub<NotificationHub>("api/notificationHub");
 app.MapHub<ChatHub>("api/chatHub");
 app.MapControllers();
