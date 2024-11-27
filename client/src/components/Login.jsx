@@ -3,14 +3,14 @@ import {Link, useNavigate} from "react-router-dom";
 import DevelopmentMessage from "./DevelopmentMessage.jsx";
 import {useAuth} from "./contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const Login = () => {
     const {login} = useAuth();
     const navigate = useNavigate();
-    const {showErrorToast} = useCustomToast();
+    const {showAPIErrorToast} = useCustomToast();
 
     const handleSubmit = async (e) =>  {
         e.preventDefault();
@@ -24,9 +24,7 @@ const Login = () => {
         }
         else{
             let data = await response.json();
-            if(data.Login){
-                showErrorToast(<>{Object.values(data.Login)}</>)
-            }
+            showAPIErrorToast(data)
         }
     }
 
