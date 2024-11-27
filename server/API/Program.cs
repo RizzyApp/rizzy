@@ -33,6 +33,7 @@ AddDbContexts();
 AddAuthentication();
 AddIdentity();
 AddCors();
+ExposePort();
 
 
 var app = builder.Build();
@@ -233,5 +234,14 @@ void AddCors()
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
+    });
+}
+
+void ExposePort()
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(int.Parse(port));
     });
 }
