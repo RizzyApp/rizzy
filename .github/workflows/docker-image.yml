@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./server  
-          file: Dockerfile
+          file: ./server/Dockerfile
           push: true  
           tags: hegedus-mark/rizzy-app/api:latest  
 
@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./client 
-          file: Dockerfile  
+          file: ./client/Dockerfile  
           push: true  
           tags:  hegedus-mark/rizzy-app/frontend:latest
           build-args: |
