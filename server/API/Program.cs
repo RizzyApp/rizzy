@@ -40,11 +40,6 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    .Replace("{ServerName}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost")
-    .Replace("{UserName}", Environment.GetEnvironmentVariable("DB_USER") ?? "sa")
-    .Replace("{Password}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "veryStrongRizzyPassword123");
-Console.WriteLine($"Connection String: {connectionString}");
 
 if (app.Environment.IsDevelopment())
 {
@@ -170,9 +165,17 @@ void ConfigureSwagger()
 
 void AddDbContexts()
 {
+    
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        .Replace("{ServerName}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost")
+        .Replace("{UserName}", Environment.GetEnvironmentVariable("DB_USER") ?? "sa")
+        .Replace("{Password}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "veryStrongRizzyPassword123");
+    
+    Console.WriteLine($"Connection String: {connectionString}");
+    
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        options.UseSqlServer(connectionString);
     });
 }
 
