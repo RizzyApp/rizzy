@@ -31,15 +31,14 @@ const useCustomToast = () => {
         let errorMessage = "";
         if (errorResponse.errors) {
             // {errors: [{ValamiError:["a", "b"]}]}
-            errorMessage = Object.values(errorResponse.errors).flat().map(x => <div>{x}</div>)
+            errorMessage = <>{Object.values(errorResponse.errors).flat().map(x => <div>{x}</div>)}</>
         } else if (errorResponse.title) {
             // {"title":"An unexpected error occured.","status":500,"instance":"/api/v1/Auth/Register"}
             errorMessage = errorResponse.title;
         } else {
             // {ValamiError:["a", "b"], ValamiMasError:["asdf"]}
-            errorMessage = Object.values(errorResponse).flat().map(x => <div>{x}</div>);
+            errorMessage = <>{Object.values(errorResponse).flat().map(x => <div>{x}</div>)}</>;
         }
-        console.log(errorMessage)
         toast.error(errorMessage);
     }
 

@@ -57,6 +57,8 @@ const RegistrationPage = () => {
     else{
       let data = await response.json();
       showAPIErrorToast(data);
+      console.log(data.errors.BirthDate[0]);
+      showErrorToast(data.errors.BirthDate[0]);
     }
   };
 
