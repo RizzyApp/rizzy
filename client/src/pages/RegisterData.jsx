@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.jsx";
+import useCustomToast from "../hooks/useCustomToast.jsx"
 import deleteIcon from "../assets/delete-icon.png";
 
 
@@ -56,7 +56,7 @@ const RegistrationPage = () => {
     }
     else{
       let data = await response.json();
-        showAPIErrorToast(data);
+      showAPIErrorToast(data);
     }
   };
 

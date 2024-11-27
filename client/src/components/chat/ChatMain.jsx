@@ -7,13 +7,16 @@ import {useSignalR} from "../contexts/SignalRContext.jsx";
 import {API_ENDPOINTS} from "../../constants.js";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 import {useAuth} from "../contexts/Authcontext.jsx";
+import {useSearchParams} from "react-router-dom";
 
-const createUsersForSideBar = (messages, profileDatas) => {
-
+const createUsersForSideBar = (messages, profileDatas, loggedInId) => {
     const users = [];
     for (const p of profileDatas) {
         const userId = p.userId.toString();
-        const latestMessage = messages[userId]?.[0];
+        let latestMessage = messages[userId]?.[messages[userId].length - 1];
+        if (latestMessage && latestMessage.senderId === loggedInId) {
+            latestMessage.sideBarContent = "You: " + latestMessage.content;
+        }
         users.push({
             ...p,
             "latestMessage": latestMessage
@@ -22,35 +25,36 @@ const createUsersForSideBar = (messages, profileDatas) => {
     return users;
 }
 
-const usersIsEmpty = (users) => {
-    return Object.keys(users).length === 0;
-}
 
 const ChatMain = () => {
     const {messages, addMessage} = useSignalR();
     const [profileDatas, setProfileDatas] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(null);
     const [usersForSideBar, setUsersForSideBar] = useState([]);
     const [matchesLoading, setMatchesLoading] = useState(false);
     const fetchWithAuth = useFetchWithAuth();
     const {loggedInUserId} = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const selectedUserIdFromQuery = searchParams.get("userId"); // Read userId from query string
+    const [selectedUser, setSelectedUser] = useState(null);
 
     const sendMessage = async (message) => {
+        if (!selectedUser) return;
         const newMessage = {
-            receiverId : selectedUser.userId,
+            receiverId: selectedUser.userId,
             content: message,
             timeStamp: new Date().toISOString(),
         }
         const requestOptions = {
             method: "POST",
-            headers:{
+            headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(newMessage)
         }
 
         const response = await fetchWithAuth(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestOptions);
-        if(response.ok) {
+        if (response.ok) {
             const data = await response.json();
             console.log("message was sent, got back: " + data);
             addMessage(data, selectedUser.userId);
@@ -81,28 +85,46 @@ const ChatMain = () => {
     useEffect(() => {
         if (!profileDatas) return;
         if (profileDatas.length > 0) {
-            setUsersForSideBar(createUsersForSideBar(messages, profileDatas));
+            setUsersForSideBar(createUsersForSideBar(messages, profileDatas, loggedInUserId));
         }
     }, [messages, profileDatas]);
 
+    useEffect(() => {
+        if (selectedUserIdFromQuery && profileDatas.length > 0) {
+            const user = profileDatas.find(user => user.userId.toString() === selectedUserIdFromQuery);
+            if (user) {
+                setSelectedUser(user);
+            }
+        }
+    }, [selectedUserIdFromQuery, profileDatas]);
+
+    const handleUserSelection = (user) => {
+        setSelectedUser(user);
+        setSearchParams({userId: user.userId}); // Update the query string
+    };
+
+    const usersIsEmpty = () => {
+        return Object.keys(profileDatas).length === 0;
+    }
+
     return (
         <div className="flex h-[95%] w-11/12 p-6">
-            <ChatSideBar setSelectedUser={setSelectedUser} users={usersForSideBar}/>
+            <ChatSideBar setSelectedUser={handleUserSelection} users={usersForSideBar}/>
             {/* Chat Area */}
-            <div className="flex-1 bg-white rounded-r-lg shadow-md flex flex-col">
+            <div className="flex-1 bg-chat-backgroundPrimary rounded-r-lg shadow-md flex flex-col">
                 {/* Chat Header */}
                 {selectedUser && (
                     <ChatHeader selectedUser={selectedUser}/>
                 )}
                 {/* Chat Messages */}
-                {selectedUser && messages[selectedUser.userId] ? (
+                {selectedUser ? (
                     <ChatMessages
                         messages={messages[selectedUser.userId]}
-                        otherUserId={selectedUser.userId}
+                        selectedUser={selectedUser}
                     />
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-500">
-                        {usersIsEmpty(profileDatas)
+                    <div className="flex-1 flex items-center justify-center text-text-secondary">
+                        {usersIsEmpty()
                             ? "You don't have any matches, go and make some :D"
                             : "No user selected, please pick a conversation from the sidebar"}
                     </div>

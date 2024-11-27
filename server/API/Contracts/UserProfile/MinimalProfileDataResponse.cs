@@ -4,5 +4,6 @@ public record MinimalProfileDataResponse(
     int UserId,
     string Name,
     string? ProfilePic,
+    DateTime MatchDate,
     DateTime? LastActive
     );

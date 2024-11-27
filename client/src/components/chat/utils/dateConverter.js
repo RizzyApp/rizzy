@@ -4,11 +4,10 @@ const hour = 60 * minute;
 const day = 24 * hour;
 
 
-const dateConverter = (lastActiveTimestamp) => {
+const dateConverter = (lastActiveTimestamp, prefix) => {
     const now = new Date();
     const elapsed = now - new Date(lastActiveTimestamp);
 
-    const prefix = "last active "
     let addedTime;
 
     if (elapsed < second * 5) {

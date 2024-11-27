@@ -61,4 +61,5 @@ export const REACT_ROUTES = {
     PROFILE: "/profile",
     REGISTER_DATA: "/register/data",
     CHAT: "/chat",
+    CHAR_BY_USER : (userId) => `/chat?userId=${userId}`
 }

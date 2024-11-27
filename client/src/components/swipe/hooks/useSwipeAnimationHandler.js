@@ -7,8 +7,6 @@ const MAX_ROTATION = 20;
 const FLY_RANGE = 500;
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
-//Not sure which one would annoy the user most
-//Currently if it reaches the boundary and the cursor is moved back a little it will not trigger a fly out!
 
 const shouldTriggerFlyOut = (vx, mx, dir, boundary, reversedDirection) => {
 
@@ -119,7 +117,6 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
           dragApi.start({
             x: clampedX,
             rotateZ: (clampedX / boundary) * MAX_ROTATION,
-            scale: 1.1,
             opacity: 1,
             config: { friction: 50, tension: 800 },
           });
@@ -139,45 +136,35 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
           dragApi.start({ x: 0, rotateZ: 0, scale: 1, opacity: 1, config: { friction: 50, tension: 800 } });
         }
       },
-      // onWheel: ({ movement: [, my], memo = y.get() }) => {
-      //   console.log(memo);
-      //   const scrollHeight = cardImageRef.current.scrollHeight;
-      //   const nextY = Math.max(Math.min(memo + my, 0), -scrollHeight);
-      //   scrollApi.start({ y: nextY, config: config.slow });
-      //   return memo;
-      // },
-
 
       onWheelEnd: ({ direction: [_, yDir] }) => {
         const scrollHeight = cardImageRef.current.clientHeight;
-        if (yDir === -1) {
+        if (yDir === 1) {
           scrollApi.start({ y: -scrollHeight, config: { friction: 60 } },
           );
-        } else if (yDir === 1) {
+        } else if (yDir === -1) {
           scrollApi.start({ y: 0, config: { friction: 60 } });
         }
       },
       onHover: ({ active }) => {
         if (active) {
-          dragApi.start({ scale: 1.05 })
+          dragApi.start({ scale: 1.1 })
         } else {
           dragApi.start({ scale: 1.0 })
         }
       }
     },
-    { drag: { preventScroll: true } } // Optional configuration for drag gesture
+    { drag: { preventScroll: true } }
   );
 
 
   const reset = () => {
-    // For debugging purposes
     dragApi.set({ x: 0, rotateZ: 0, scale: 1, opacity: 1 });
     scrollApi.set({ y: 0 })
     prevMxRef.current = 0;
     reversedDirectionRef.current = false;
   };
 
-  // Combine all animated styles into one object
   const animatedStyles = { x, rotateZ, scale, opacity };
 
   return {
