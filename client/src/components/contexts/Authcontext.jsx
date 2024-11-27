@@ -17,7 +17,9 @@ export const AuthProvider = ({children}) => {
                 const data = await response.json();
                 setIsLoggedInUserId(data.userId);
             }
-            setIsLoggedIn(response.ok);
+            if (!response.ok) {
+                clearLoginDetails();
+            }
         } catch (error) {
             console.error('Error checking auth status:', error);
         } finally {

@@ -1,13 +1,13 @@
-import Header from "./Header";
+import Header from "../components/Header.jsx";
 import {Link, useNavigate} from "react-router-dom";
-import DevelopmentMessage from "./DevelopmentMessage.jsx";
-import {useAuth} from "./contexts/Authcontext.jsx";
+import DevelopmentMessage from "../components/DevelopmentMessage.jsx";
+import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
-const Login = () => {
+const LoginPage = () => {
     const {login} = useAuth();
     const navigate = useNavigate();
     const {showErrorToast} = useCustomToast();
@@ -84,4 +84,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;

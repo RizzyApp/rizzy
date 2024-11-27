@@ -40,6 +40,18 @@ public class UserService : IUserService
 
         return user;
     }
+
+    public async Task UpdateLastActivity(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user is null)
+        {
+            throw new InvalidOperationException($"user with id: {userId} not found.");
+        }
+        
+        user.LastActivityDate = DateTime.Now;
+        await _userRepository.UpdateAsync(user);
+    }
     
     public async Task<IEnumerable<UserCardDto>> GetFilteredUsersAsync(
         int? userId, int preferredGender, int minAge, int maxAge,

@@ -4,7 +4,7 @@ import PhotoGallery from "../components/profile/PhotoGallery";
 import ProfileSection from "../components/profile/ProfileSection";
 import {API_ENDPOINTS, REACT_ROUTES} from "../constants.js";
 import dataURLtoBlob from "../components/profile/utils/dataURLToBlob.js";
-import useCustomToast from "../hooks/useCustomToast.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {useNavigate} from "react-router-dom";
 import {useFetchWithAuth} from "../hooks/useFetchWIthCredentials.js";

@@ -2,10 +2,10 @@
 
 services:
   api:
-    image: api
+    image: hegedusmark/rizzy-app:api-v1
     build:
       context: ./server
-      dockerfile: API/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     depends_on:
@@ -14,12 +14,16 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000;
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=rizzyDb;User Id=sa;Password=veryStrongRizzyPassword123;Encrypt=false;
+      - CorsSettings__AllowedOrigin=http://localhost:3000
     networks:
       - app-network
     
   frontend:
+    image: hegedusmark/rizzy-app:frontend-v1
     build:
       context: ./client
+      args:
+        VITE_API_BASE_URL: "http://localhost:5000"
     ports:
       - "3000:80"
     depends_on:

@@ -56,6 +56,28 @@ button {
     rgba(144, 75, 137, 1) 72%
   );
   --buttonHover: 236, 72, 153;
+
+  --text-primary: 31, 41, 55;
+  --text-secondary: 107, 114, 128;
+  --text-contrast: 255, 255, 255;
+  --chat-background-primary: 255, 255, 255;
+  --chat-background-secondary: 249, 250, 251;
+  --chat-card-hover: 243, 244, 246;
+  --accent-primary: 236, 72, 153;
+  --accent-secondary: #ff4081;
+  --chat-bubble-sent: 244, 114,182;
+  --chat-bubble-received: 252,231, 243 ;
+  --chat-text-sent: 255, 255, 255;
+  --chat-text-received: 55, 65, 81;
+  --button-background: 236, 72, 153;
+  --button-hover: 219, 39, 119;
+  --button-turned-off: 229, 231, 235;
+  --button-turned-off-hover: 209, 213, 219;
+  --input-background: 255, 255, 255;
+  --input-text: 75, 85, 99;
+  --input-placeholder: 156, 163, 175;
+  --border-primary-color: 209, 213, 219;
+  --border-secondary-color: 229, 231, 235;
   transition: background-color 1s ease, color 1s ease;
 }
 
@@ -68,6 +90,28 @@ button {
     rgba(34, 31, 39, 1) 93%
   );
   --buttonHover: 207, 80, 86;
+
+  --chat-background-primary: 30, 30, 47;
+  --chat-background-secondary: 42, 42, 59;
+  --chat-card-hover: 70, 70, 70;
+  --text-primary: 255, 255, 255;
+  --text-secondary: 176, 176, 195;
+  --text-contrast: 30, 30, 30;
+  --accent-primary: 153, 27, 27;
+  --accent-secondary: 153, 27, 27;
+  --chat-bubble-sent: 153, 27, 27;
+  --chat-bubble-received: 76, 5, 25;
+  --chat-text-sent: 255, 255, 255;
+  --chat-text-received: 255, 255, 255;
+  --button-background: 255, 111, 145;
+  --button-hover: 255, 64, 129;
+  --button-turned-off: 112, 105, 103;
+  --button-turned-off-hover: 145, 126, 126;
+  --input-background: 42, 42, 59;
+  --input-text: 255, 255, 255;
+  --input-placeholder: 176, 176, 195;
+  --border-primary-color: 60, 60, 82;
+  --border-secondary-color: 74, 74, 100;
   transition: background-color 1s ease, color 1s ease;
 }
 input:not(:placeholder-shown):invalid{

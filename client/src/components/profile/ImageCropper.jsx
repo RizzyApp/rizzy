@@ -2,31 +2,35 @@ import {useState} from 'react'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from "./utils/getCroppedImg.js";
 import {SWIPE_CARD_ASPECT_RATIO} from "../../constants.js";
+import SwipeCardContent from "../swipe/swipeCard/SwipeCardContent.jsx";
 
-const cardData = {
-    id: 1,
-    name: "Mr.Bean",
-    src: "./image/bean-1.jpg",
-    bio: "This is a very cool bio",
-};
 
+
+const createPlaceHolderData =  (croppedImage) => {
+    return {
+        name: "You",
+        photos: [croppedImage]
+    }
+}
 
 function ImageCropper({imageSrc, onCropComplete, onCancel}) {
     const [crop, setCrop] = useState({x: 0, y: 0})
     const [zoom, setZoom] = useState(1);
     const [rotation, setRotation] = useState(0);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
+    const [previewCardData, setPreviewCardData] = useState(createPlaceHolderData(imageSrc))
 
-    const handleCropComplete = (croppedArea, croppedAreaPixels) => {
+    const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
-        getCroppedImg(imageSrc, croppedAreaPixels, rotation, zoom)
-            .then((croppedImage) => cardData.src = croppedImage);
+        const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
+        setPreviewCardData(createPlaceHolderData(croppedImage));
     };
 
     const onCropSave = async () => {
         const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
         onCropComplete(croppedImage);
     }
+
 
 
     return (
@@ -45,10 +49,10 @@ function ImageCropper({imageSrc, onCropComplete, onCancel}) {
                     onCropComplete={handleCropComplete}
                     objectFit="contain"
                 />
-                {/*   <div className="fixed right-0">
+                {<div className="fixed right-0">
                     <h2 className="text-xl text-white font-bold">Preview on Card</h2>
-                    <SwipeCardContent cardData={cardData}></SwipeCardContent>
-                </div>*/}
+                    <SwipeCardContent cardData={previewCardData}></SwipeCardContent>
+                </div>}
                 {/*TODO: fix this swipeCard preview */}
 
             </div>

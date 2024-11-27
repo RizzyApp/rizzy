@@ -7,19 +7,27 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        var problemDetails = new ProblemDetails();
-        problemDetails.Instance = httpContext.Request.Path;
-        if (exception is BaseException e)
+        var problemDetails = new ProblemDetails
         {
-            httpContext.Response.StatusCode = (int)e.StatusCode;
-            problemDetails.Title = e.Message;
+            Instance = httpContext.Request.Path,
+            Status = httpContext.Response.StatusCode
+        };
+
+        if (exception is BaseException baseException)
+        {
+            httpContext.Response.StatusCode = (int)baseException.StatusCode;
+            problemDetails.Title = baseException.Message;
+            
+            logger.LogWarning("Handled BaseException: {Message}", baseException.Message);
         }
         else
         {
-            problemDetails.Title = exception.Message;
+            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            problemDetails.Title = "An unexpected error occurred.";
+            
+            logger.LogError(exception, "Unhandled exception occurred.");
         }
-        logger.LogError("{ProblemDetailsTitle}", problemDetails.Title);
-        problemDetails.Status = httpContext.Response.StatusCode;
+
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
         return true;
     }

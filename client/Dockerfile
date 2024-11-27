@@ -10,13 +10,17 @@ RUN npm install
 
 # Copy the rest of the React app code
 COPY . .
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Build the React app
 RUN npm run build
 
 # Use an Nginx image to serve the build
 FROM nginx:alpine
-COPY --from=build /app/dist  /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose port 80 to serve the static content
 EXPOSE 80
 
 # Start Nginx server

@@ -5,6 +5,39 @@ export default {
   theme: {
     extend: {
       colors: {
+        chat: {
+          backgroundPrimary: "rgba(var(--chat-background-primary), <alpha-value>)",
+          backgroundSecondary: "rgba(var(--chat-background-secondary), <alpha-value>)",
+          bubbleSent: "rgba(var(--chat-bubble-sent), <alpha-value>)",
+          bubbleReceived: "rgba(var(--chat-bubble-received), <alpha-value>)",
+          textSent: "rgba(var(--chat-text-sent), <alpha-value>)",
+          textReceived: "rgba(var(--chat-text-received), <alpha-value>)",
+          "card-hover": "rgba(var(--chat-card-hover), <alpha-value>)",
+        },
+        text: {
+          primary: "rgba(var(--text-primary), <alpha-value>)",
+          secondary: "rgba(var(--text-secondary), <alpha-value>)",
+          contrast: "rgba(var(--text-contrast), <alpha-value>)",
+        },
+        accent: {
+          primary: "rgba(var(--accent-primary), <alpha-value>)",
+          secondary: "rgba(var(--accent-secondary), <alpha-value>)",
+        },
+        button: {
+          background: "rgba(var(--button-background), <alpha-value>)",
+          hover: "rgba(var(--button-hover), <alpha-value>)",
+          turnedOff: "rgba(var(--button-turned-off), <alpha-value>)",
+          turnedOffHover: "rgba(var(--button-turned-off-hover), <alpha-value>)"
+        },
+        input: {
+          background: "rgba(var(--input-background), <alpha-value>)",
+          text: "rgba(var(--input-text), <alpha-value>)",
+          placeholder: "rgba(var(--input-placeholder), <alpha-value>)",
+        },
+        border:{
+          primary: "rgba(var(--border-primary-color),<alpha-value>)",
+          secondary: "rgba(var(--border-secondary-color),<alpha-value>)",
+        },
         topbar: "rgba(var(--topbar))",
         buttonHover: "rgba(var(--buttonHover))",
       },
@@ -24,7 +57,7 @@ export default {
         "custom-gradient": "var(--custom-gradient)",
       },
       backgroundColor: {
-        "glassy": "rgba(255, 255, 255, 0.5)"
+        "glassy": "rgba(255, 255, 255, 0.5)",
       },
       dropShadow: {
         slogan: "8px -8px 5px rgba(0, 0, 0, 0.6)",
