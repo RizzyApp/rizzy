@@ -67,6 +67,18 @@ if (app.Environment.IsDevelopment())
         authenticationSeeder.AddAdmin();
     }
 }
+else
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
+    }
+}
 
 app.UseCors("CorsPolicy");
 
