@@ -40,7 +40,10 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    .Replace("{ServerName}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost")
+    .Replace("{UserName}", Environment.GetEnvironmentVariable("DB_USER") ?? "sa")
+    .Replace("{Password}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "veryStrongRizzyPassword123");
 Console.WriteLine($"Connection String: {connectionString}");
 
 if (app.Environment.IsDevelopment())
