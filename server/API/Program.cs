@@ -40,14 +40,15 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Connection String: {connectionString}");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.UseDeveloperExceptionPage();
-
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"Connection String: {connectionString}");
+    
 
     using (var scope = app.Services.CreateScope())
     {
