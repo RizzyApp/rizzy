@@ -83,7 +83,7 @@ public class MatchService : IMatchService
         var userPhotos = await _userRepository
             .Query()
             .Where(u => userIds.Contains(u.Id))
-            .Where(u => u.Photos != null)
+            .Where(u => u.Photos.Any())
             .Select(u => new
             {
                 u.Id,
