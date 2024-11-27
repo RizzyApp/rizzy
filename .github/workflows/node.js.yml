@@ -1,0 +1,39 @@
+name: Build React App
+
+on:
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Specify your Node.js version
+
+        # Install dependencies in the client folder
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm install
+
+      # Run the build in the client folder
+      - name: Build the React app
+        working-directory: ./client
+        run: npm run build
+
+      # Upload build artifacts
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: ./client/dist
