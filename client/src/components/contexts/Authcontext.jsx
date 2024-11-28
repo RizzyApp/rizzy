@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     };
     const response = await fetchWithCredentials(API_ENDPOINTS.AUTH.LOGIN, requestOptions);
     if (response.ok) {
-      if (!response.hasProfile) {
+      if (response.hasProfile === false) {
         setIsLoggedIn(false);
         setIsLoggedInUserId(null);
         setCheckingAuth(false);

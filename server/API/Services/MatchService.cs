@@ -54,11 +54,17 @@ public class MatchService : IMatchService
 
         var pfp = await _photoRepository.FindFirstAsync(p => p.UserId == swipedUser.Id);
         var pfpDto = pfp is null ? null : new PhotoDto(pfp.Id, pfp.Url);
+        
+        var userPfp = await _photoRepository.FindFirstAsync(p => p.UserId == swipedUser.Id);
+        var userpfpDto = userPfp is null ? null : new PhotoDto(userPfp.Id, userPfp.Url);
 
-        var matchNotification = new MatchNotification(pfpDto, swipedUser.Name, match.Id, swipedUser.Id);
+        var loggedInUserMatchNotification = new MatchNotification(pfpDto, swipedUser.Name, match.Id, swipedUser.Id);
 
-        await _hubContext.Clients.User(loggedInUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
-        await _hubContext.Clients.User(swipedUser.Id.ToString()).ReceiveMatchNotification(matchNotification);
+        var otherUserMatchNotification =
+            new MatchNotification(userpfpDto, loggedInUser.Name, match.Id, loggedInUser.Id);
+
+        await _hubContext.Clients.User(loggedInUser.Id.ToString()).ReceiveMatchNotification(loggedInUserMatchNotification);
+        await _hubContext.Clients.User(swipedUser.Id.ToString()).ReceiveMatchNotification(otherUserMatchNotification);
 
         return match;
     }

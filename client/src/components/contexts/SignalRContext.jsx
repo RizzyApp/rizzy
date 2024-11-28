@@ -38,7 +38,6 @@ export const SignalRProvider = ({children}) => {
 
             // Notification handler
             notificationConnection.on("ReceiveMatchNotification", (notification) => {
-
                 if (!notifications.includes(notification.matchId)) {
                     showMatchNotification(notification);
                     setNotifications((prev) => [...prev, notification]);
