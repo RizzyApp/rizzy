@@ -131,8 +131,8 @@ const ProfilePage = () => {
 
             const results = await showFetchPromiseToast(Promise.all(promises), "Uploaded successfully",
                 "uploading...")
-            
-            
+
+
         } catch (error) {
             console.error("Error updating profile or photos:", error);
         } finally {
@@ -191,7 +191,7 @@ const ProfilePage = () => {
             },
         }));
     };
-    
+
     if (!data) return (
         <><Header/>
             <div
@@ -200,7 +200,8 @@ const ProfilePage = () => {
             </div>
         </>
     );
-
+    
+    
     return (
         <>
             <Header/>
@@ -222,10 +223,11 @@ const ProfilePage = () => {
                     showErrorToast={showErrorToast}
                     showSuccessToast={showSuccessToast}
                 />
-                <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
-                    <PhotoGallery isEditing={isEditing} initialImages={initialPhotos.map(p => p.url)}
-                                  setChangedPhotoUrls={setChangedPhotoUrls}/>
-                </div>
+                {((initialPhotos && initialPhotos.length >=  1) || isEditing) &&
+                    <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
+                        <PhotoGallery isEditing={isEditing} initialImages={initialPhotos.map(p => p.url)}
+                                      setChangedPhotoUrls={setChangedPhotoUrls}/>
+                    </div>}
             </div>
         </>
     );

@@ -29,9 +29,9 @@ const PhotoGallery = ({isEditing, initialImages, setChangedPhotoUrls}) => {
     }
 
     useEffect(() => {
-         setImages(fillUpImagesWithNull(initialImages));
+        setImages(fillUpImagesWithNull(initialImages));
     }, [isEditing])
-    
+
     const handleSelection = (index) => {
         if (index === firstEmptyIndex) {
             inputRef.current.click();
@@ -59,7 +59,7 @@ const PhotoGallery = ({isEditing, initialImages, setChangedPhotoUrls}) => {
             }
             reader.readAsDataURL(file);
         }
-    }; 
+    };
 
     const handleCropComplete = (croppedImage) => {
         setIsCropping(false);
@@ -90,7 +90,7 @@ const PhotoGallery = ({isEditing, initialImages, setChangedPhotoUrls}) => {
     }, [images, setChangedPhotoUrls]);
 
     return (
-        <>{(images.length > 0 || isEditing) &&
+        <>
             <div
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full px-4 bg-custom-gradient rounded-lg mt-5">
                 {images.map((image, index) => {
@@ -127,8 +127,6 @@ const PhotoGallery = ({isEditing, initialImages, setChangedPhotoUrls}) => {
                     onChange={(e) => handleImageUpload(e)}
                 />
             </div>
-        }
-
             {isCropping && <ImageCropper imageSrc={uploadedImage} onCropComplete={handleCropComplete}
                                          onCancel={onCancelEditImage}/>}
 
