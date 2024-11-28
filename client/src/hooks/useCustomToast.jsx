@@ -23,7 +23,7 @@ const translateErrorResponse = async (errorResponse) => {
         try {
             errorData = await errorResponse.text();
         } catch {
-            errorData = "Oops something happened, try again later";
+            errorData = errorResponse;
         }
     }
 

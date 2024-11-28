@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
                     _logger.LogWarning("Registration failed for {Email}: {Error}", request.Email, error.Description);
                 }
             }
-            return BadRequest(ModelState);
+            return BadRequest(new {message = "You're already registered!"});
         }
 
         await _userManager.AddToRoleAsync(user, "User");
@@ -69,8 +69,7 @@ public class AuthController : ControllerBase
         if (user == null)
         {
             _logger.LogWarning("Login failed: User with email {Email} not found.", request.Email);
-            ModelState.AddModelError("Login", "Invalid email or password.");
-            return BadRequest(ModelState);
+            return BadRequest(new {message = $"You're not registered! "});
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true, lockoutOnFailure: false);
@@ -92,8 +91,7 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
         {
             _logger.LogWarning("Login failed for {Email}: Invalid credentials.", request.Email);
-            ModelState.AddModelError("Login", "Invalid email or password.");
-            return BadRequest(ModelState);
+            return BadRequest(new {message = "Wrong email or password"});
         }
 
         _logger.LogInformation("User logged in successfully: {Email}", user.Email);
