@@ -7,6 +7,7 @@ export const UPLOAD_MAX_WIDTH = 1920;
 export const UPLOAD_MAX_HEIGHT = 1080;
 
 export const LOCATION_CACHE_TIME = 24 * 60 * 60 * 1000; //one day
+export const SIGNALR_CONNECTION_RETRY_TIME = 60000; // 1 minute
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -73,5 +74,5 @@ export const REACT_ROUTES = {
   REGISTER_DATA: "/register/data",
   ADMIN_PAGE: "/admin",
   CHAT: "/chat",
-  CHAR_BY_USER: (userId) => `/chat?userId=${userId}`,
+  CHAT_BY_USER: (userId) => `/chat?userId=${userId}`,
 };

@@ -5,6 +5,7 @@ import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
 import {useAuth} from '../components/contexts/Authcontext.jsx';
 import Loading from '../components/Loading.jsx';
 import {LOCATION_CACHE_TIME} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
 
 const SwipePage = () => {
@@ -12,6 +13,7 @@ const SwipePage = () => {
   const [geoLocationAccepted, setGeoLocationAccepted] = useState(false);
   const [geoLocationDenied, setGeoLocationDenied] = useState(false);
   const [askPermission, setAskPermission] = useState(false);
+  const {showAPIErrorToast} = useCustomToast();
 
   const saveLocationToLocalStorage = (coords) => {
     const currentTime = new Date().getTime();
@@ -34,7 +36,7 @@ const SwipePage = () => {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
     };
-    saveLocationToLocalStorage(coords); // Cache the location
+    saveLocationToLocalStorage(coords); 
     const response = await updateUserLocation(coords);
     if (response.ok) {
       setGeoLocationAccepted(true);
@@ -42,7 +44,7 @@ const SwipePage = () => {
   };
 
   const failed = (error) => {
-    console.error("error: ", error);
+    showAPIErrorToast(error);
     setGeoLocationDenied(true);
   };
 

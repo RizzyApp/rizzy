@@ -22,18 +22,6 @@ function HomePage() {
           >
             Create account
           </button>
-          <button
-              onClick={() => navigate(REACT_ROUTES.SWIPE_PAGE)}
-              className="fixed bottom-1 right-0 text-white"
-          >
-            Test SwipePage
-          </button>
-          <button
-              onClick={() => navigate(REACT_ROUTES.CHAT)}
-              className="fixed bottom-1 right-48 text-white"
-          >
-            Test ChatPage
-          </button>
         </div>
       </div>
     </div>

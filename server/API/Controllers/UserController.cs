@@ -115,7 +115,11 @@ public class UserController : ControllerBase
             _logger.LogWarning(
                 "Update failed: Preferred min age can't be bigger than preferred max age. Min: {Min}, Max: {Max}",
                 requestDto.PreferredMinAge, requestDto.PreferredMaxAge);
-            return BadRequest("Preferred min age can't be bigger than preferred max age");
+            return BadRequest(new
+            {
+                Message =
+                    "Preferred min age can't be bigger than preferred max age"
+            });
         }
 
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
