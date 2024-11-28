@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using API.Contracts.Auth;
+using API.Data.Models;
 using API.Services;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -68,12 +70,23 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        var roles = await _userManager.GetRolesAsync(user);
+        if (user.UserName == "admin")
+        {
+            return Ok(new AuthResponse(
+                user.Email,
+                0,
+                user.UserName,
+                roles));
+        }
+        
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
-
+        
         return Ok(new AuthResponse(
             user.Email,
-            loggedInUser.Id,
-            loggedInUser.Name)
+            loggedInUser?.Id ?? 0,
+            loggedInUser?.Name ?? user.UserName,
+            roles)
         );
     }
 
@@ -89,12 +102,53 @@ public class AuthController : ControllerBase
     [HttpGet("logged-in-user")]
     public async Task<ActionResult<AuthResponse>> GetAuthStatus()
     {
+        var identityUser = await _userManager.GetUserAsync(User);
+        if (identityUser == null)
+        {
+            return Unauthorized(new { Error = "User not found." });
+        }
+
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        var roles = await _userManager.GetRolesAsync(identityUser);
 
         return Ok(new AuthResponse(
-            User.FindFirst(ClaimTypes.Email)?.Value,
-            loggedInUser.Id,
-            loggedInUser.Name)
-        );
+            Email: User.FindFirst(ClaimTypes.Email)?.Value,
+            UserId: loggedInUser?.Id ?? 0, 
+            Name: loggedInUser?.Name ?? identityUser.UserName,
+            Roles: roles
+        ));
+    }
+    
+    [Authorize]
+    [HttpGet("roles")]
+    public async Task<ActionResult<object>> GetUserRoles()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(new { Error = "User not found." });
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new { Email = user.Email, Roles = roles });
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(new { Error = "User not found!" });
+        }
+     
+        var userWithNewPassword = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+        if (!userWithNewPassword.Succeeded)
+        {
+            return BadRequest(new { Error = "Failed to change password!" });
+        }
+        
+        return Ok(new { Message = "Password is changed successfully." });
     }
 }

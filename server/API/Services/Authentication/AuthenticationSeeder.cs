@@ -54,7 +54,7 @@ public class AuthenticationSeeder
         if (adminInDb == null)
         {
             var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
-            var adminCreated = await userManager.CreateAsync(admin, "strongrizz");
+            var adminCreated = await userManager.CreateAsync(admin, "StrongRizz69");
 
             if (adminCreated.Succeeded)
             {

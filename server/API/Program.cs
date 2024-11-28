@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -52,11 +53,12 @@ if (app.Environment.IsDevelopment())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        dbContext.Database.Migrate();
-        await AppDbSeeder.SeedDataAsync(dbContext, userManager);
-
         var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        var appDBSeeder = scope.ServiceProvider.GetRequiredService<AppDbSeeder>();
+        dbContext.Database.Migrate();
         authenticationSeeder.AddRoles();
+        await appDBSeeder.SeedDataAsync(dbContext, userManager);
+
         authenticationSeeder.AddAdmin();
     }
 }
@@ -82,6 +84,7 @@ void AddServices()
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuthenticationSeeder>();
+    builder.Services.AddScoped<AppDbSeeder>();
     builder.Services.AddScoped<ICloudinaryService, CloudinaryService>(provider =>
     {
         var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL")
