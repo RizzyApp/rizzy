@@ -15,18 +15,13 @@ const SwipeDeck = ({users, setUsers, deckWidth, onSwipe}) => {
 
     const onSwipeOut = (direction) => {
         setUsers((prevCards) => {
-            console.log("BEFORE THE SWIPE!");
-            console.log(prevCards);
             onSwipe(prevCards[0].id,direction);
             return prevCards.slice(1)
         });
     };
 
     const { bind, swipeDebugInfo, reset: resetAnimation, animatedStyles, y } = useSwipeAnimationHandler(deckWidth, onSwipeOut, cardImageRef);
-
-    useEffect(() => {
-        console.log("Component rendered or re-rendered");
-    });
+    
 
     useEffect(() => {
         resetAnimation();

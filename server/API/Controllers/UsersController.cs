@@ -14,7 +14,6 @@ namespace API.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IRepository<User> _userRepository;
-    private readonly IRepository<UserLocation> _userLocationRepository;
     private readonly IMatchService _matchService;
     private readonly IUserService _userService;
 
@@ -25,16 +24,16 @@ public class UsersController : ControllerBase
     private const decimal DEFAULT_LONGITUDE = 19.0402m; //Budapest
     private const int DEFAULT_PREFERRED_GENDER = 2; //Both male and female
     private const int AMOUNT_TO_FETCH = 10;
-    
 
+    private readonly ILogger<UsersController> _logger;
 
-    public UsersController(IUserService userService, IRepository<UserLocation> userLocationRepository,
-        IRepository<User> userRepository, IMatchService matchService)
+    public UsersController(IUserService userService,
+        IRepository<User> userRepository, IMatchService matchService, ILogger<UsersController> logger)
     {
         _userService = userService;
-        _userLocationRepository = userLocationRepository;
         _userRepository = userRepository;
         _matchService = matchService;
+        _logger = logger;
     }
 
     [Authorize]
@@ -43,10 +42,21 @@ public class UsersController : ControllerBase
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
 
+        _logger.LogInformation("Fetching matched users for user {UserId}.", loggedInUser.Id);
+
         var users = await _matchService.GetMatchedUsersMinimalData(loggedInUser.Id);
 
-        return Ok(users);
+        if (users == null || !users.Any())
+        {
+            _logger.LogInformation("No matched users found for user {UserId}.", loggedInUser.Id);
+        }
+        else
+        {
+            _logger.LogInformation("{MatchedUserCount} matched users found for user {UserId}.", users.Count(),
+                loggedInUser.Id);
+        }
 
+        return Ok(users);
     }
 
     [Authorize]
@@ -54,14 +64,21 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserCardDto>>> GetSwipeUsers()
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        _logger.LogInformation("Fetching swipe users for user {UserId}.", loggedInUser.Id);
+
         loggedInUser = await _userRepository.Query()
             .Include(u => u.Swipes)
             .Include(u => u.UserLocation)
             .FirstOrDefaultAsync(u => u.Id == loggedInUser.Id);
-        
+
+        if (loggedInUser == null)
+        {
+            _logger.LogError("User {UserId} not found while fetching swipe users.", loggedInUser.Id);
+            return NotFound("User not found");
+        }
 
         var filteredUsers = await _userService.GetFilteredUsersAsync(
-            loggedInUser!.Id,
+            loggedInUser.Id,
             loggedInUser.PreferredGender,
             loggedInUser.PreferredMinAge,
             loggedInUser.PreferredMaxAge,
@@ -72,11 +89,13 @@ public class UsersController : ControllerBase
             loggedInUser.Swipes?.Select(s => s.SwipedUserId)
         );
 
+        _logger.LogInformation("Fetched {SwipeUserCount} swipe users for user {UserId}.", filteredUsers.Count(),
+            loggedInUser.Id);
+
         return Ok(filteredUsers);
     }
-    
-    //TODO: Don'T forget to uncomment this part!
-    //[Authorize(Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpGet("search-users-for-swipe")]
     public async Task<ActionResult<IEnumerable<UserCardDto>>> SearchUsers(
         [FromQuery] int preferredGender = DEFAULT_PREFERRED_GENDER,
@@ -88,9 +107,13 @@ public class UsersController : ControllerBase
         [FromQuery] int amount = AMOUNT_TO_FETCH,
         [FromQuery] IEnumerable<int>? excludedUserIds = null)
     {
+        _logger.LogInformation(
+            "Searching for users with preferred gender {PreferredGender}, age range {MinAge}-{MaxAge}, location ({Latitude}, {Longitude}), range {LocationRange} and excluding users {ExcludedUserIdsCount}.",
+            preferredGender, minAge, maxAge, latitude, longitude, locationRange, excludedUserIds?.Count() ?? 0);
+
         var filteredUsers = await _userService.GetFilteredUsersAsync(
             null,
-            preferredGender, 
+            preferredGender,
             minAge,
             maxAge,
             latitude,
@@ -100,8 +123,8 @@ public class UsersController : ControllerBase
             excludedUserIds
         );
 
+        _logger.LogInformation("Search returned {FilteredUserCount} users.", filteredUsers.Count());
+
         return Ok(filteredUsers);
     }
-    
-    
 }

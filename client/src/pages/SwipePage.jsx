@@ -1,46 +1,67 @@
 import CardLoader from "../components/swipe/CardLoader.jsx";
 import Header from "../components/Header.jsx";
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import GeoLocationDenied from '../components/GeoLocationDenied.jsx';
-import { useAuth } from '../components/contexts/Authcontext.jsx';
+import {useAuth} from '../components/contexts/Authcontext.jsx';
 import Loading from '../components/Loading.jsx';
-import {useNavigate} from 'react-router-dom';
+import {LOCATION_CACHE_TIME} from "../constants.js";
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
-const App = () => {
+
+const SwipePage = () => {
   const { updateUserLocation } = useAuth()
   const [geoLocationAccepted, setGeoLocationAccepted] = useState(false);
   const [geoLocationDenied, setGeoLocationDenied] = useState(false);
   const [askPermission, setAskPermission] = useState(false);
+  const {showAPIErrorToast} = useCustomToast();
+
+  const saveLocationToLocalStorage = (coords) => {
+    const currentTime = new Date().getTime();
+    localStorage.setItem("userLocation", JSON.stringify({ coords, time: currentTime }));
+  };
+
+  const getCachedLocation = () => {
+    const savedLocation = localStorage.getItem("userLocation");
+    if (savedLocation) {
+      const { coords, time } = JSON.parse(savedLocation);
+      if (new Date().getTime() - time < LOCATION_CACHE_TIME) {
+        return coords;
+      }
+    }
+    return null;
+  };
 
   const success = async (position) => {
-    const coord = {
+    const coords = {
       latitude: position.coords.latitude,
-      longitude: position.coords.longitude
-    }
-    const response = await updateUserLocation(coord);
-    if(response.ok){
-      setGeoLocationAccepted(true); // Set accepted to true
+      longitude: position.coords.longitude,
+    };
+    saveLocationToLocalStorage(coords); 
+    const response = await updateUserLocation(coords);
+    if (response.ok) {
+      setGeoLocationAccepted(true);
     }
   };
 
   const failed = (error) => {
-    console.error("error: ", error);
-    setGeoLocationDenied(true); // Set denied to true
+    showAPIErrorToast(error);
+    setGeoLocationDenied(true);
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(success, failed);
+    const cachedLocation = getCachedLocation();
+    if (cachedLocation) {
+      setGeoLocationAccepted(true);
+      updateUserLocation(cachedLocation);
+    } else {
+      navigator.geolocation.getCurrentPosition(success, failed);
+    }
   }, [askPermission]);
 
   if (geoLocationDenied) {
-    return (
-      <GeoLocationDenied setAskPermission={setAskPermission}/>
-    );
+    return <GeoLocationDenied setAskPermission={setAskPermission} />;
   }
   
-  // if (!geoLocationAccepted) {
-  //   return ()
-  // }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -52,4 +73,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default SwipePage;

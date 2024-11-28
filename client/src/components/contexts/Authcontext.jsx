@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setIsLoggedInUserId(data.userId);
       setUserRoles(data.roles || []);
-      console.log("data", data);
       setCheckingAuth(false);
       arr = [response, data];
     } else {
@@ -82,10 +81,6 @@ export const AuthProvider = ({ children }) => {
       API_ENDPOINTS.AUTH.REGISTER,
       requestOptions
     );
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-    }
     return response;
   };
 
@@ -101,7 +96,6 @@ export const AuthProvider = ({ children }) => {
       requestOptions
     );
     if (response.ok) {
-      const data = await response.json();
       setIsLoggedIn(true);
     }
     return response;
@@ -118,9 +112,10 @@ export const AuthProvider = ({ children }) => {
       API_ENDPOINTS.USER.POST_LOCATION,
       requestOptions
     );
-    if (!response.ok) {
-      console.error("error posting location");
+    if(response.status === 401){
+      clearLoginDetails();
     }
+    
     return response;
   };
 
@@ -135,10 +130,6 @@ export const AuthProvider = ({ children }) => {
       API_ENDPOINTS.LOCATION.PUT,
       requestOptions
     );
-    console.log(response);
-    if (!response.ok) {
-      console.error("error updating location");
-    }
     return response;
   };
 

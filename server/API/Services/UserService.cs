@@ -24,6 +24,7 @@ public class UserService : IUserService
 
         if (identityUserId is null)
         {
+            _logger.LogWarning("User identification failed for logged in user");
             throw new MissingClaimException();
         }
 

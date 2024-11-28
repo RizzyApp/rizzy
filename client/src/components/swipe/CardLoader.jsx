@@ -4,6 +4,7 @@ import {API_ENDPOINTS, REACT_ROUTES} from "../../constants.js";
 import {useNavigate} from "react-router-dom";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 import Loading from '../Loading.jsx';
+import useCustomToast from "../../hooks/useCustomToast.jsx";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
@@ -29,10 +30,8 @@ function CardLoader() {
     const [error, setError] = useState(false); //TODO: Show actual error messages for users
     const navigate = useNavigate();
     const fetchWithAuth = useFetchWithAuth();
+    const {showAPIErrorToast} = useCustomToast();
 
-    useEffect(() => {
-        console.log("CardLoader renders!");
-    });
 
     useEffect(() => {
         if ((!users || users.length < 2) && !loading && !noMoreUsers && !error) {
@@ -55,7 +54,6 @@ function CardLoader() {
             const response = await fetchWithAuth(API_ENDPOINTS.USERS.GET_SWIPE_USERS);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 if (data.length < 2) {
                     setNoMoreUsers(true);
                 }
@@ -65,12 +63,12 @@ function CardLoader() {
                 });
 
             } else {
-                console.error('Failed to fetch users', response.status);
+                showAPIErrorToast();
                 setError(true);
             }
         } catch (error) {
             setError(true);
-            console.error('Error fetching users:', error);
+            showAPIErrorToast();
         }
         setLoading(false);
     };
@@ -88,14 +86,14 @@ function CardLoader() {
             },
             body: JSON.stringify(swipeData),
         };
+        
+        setSwipedUserIds(prev => [...prev, userId]);
+        const response = await fetchWithAuth(API_ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
 
-        try {
-            setSwipedUserIds(prev => [...prev, userId]);
-            const response = await fetchWithAuth(API_ENDPOINTS.SWIPE.POST_SWIPE, fetchOptions);
-
-        } catch (error) {
-            console.error('Error swiping user:', error);
+        if (!response.ok) {
+            showAPIErrorToast(response);
         }
+
     };
 
     if (!users) {

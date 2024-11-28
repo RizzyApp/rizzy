@@ -8,6 +8,7 @@ import {API_ENDPOINTS} from "../../constants.js";
 import {useFetchWithAuth} from "../../hooks/useFetchWIthCredentials.js";
 import {useAuth} from "../contexts/Authcontext.jsx";
 import {useSearchParams} from "react-router-dom";
+import useCustomToast from "../../hooks/useCustomToast.jsx";
 
 const createUsersForSideBar = (messages, profileDatas, loggedInId) => {
     const users = [];
@@ -33,6 +34,7 @@ const ChatMain = () => {
     const [matchesLoading, setMatchesLoading] = useState(false);
     const fetchWithAuth = useFetchWithAuth();
     const {loggedInUserId} = useAuth();
+    const {showAPIErrorToast} = useCustomToast()
     const [searchParams, setSearchParams] = useSearchParams();
 
     const selectedUserIdFromQuery = searchParams.get("userId"); // Read userId from query string
@@ -56,7 +58,6 @@ const ChatMain = () => {
         const response = await fetchWithAuth(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestOptions);
         if (response.ok) {
             const data = await response.json();
-            console.log("message was sent, got back: " + data);
             addMessage(data, selectedUser.userId);
         }
     }
@@ -70,7 +71,7 @@ const ChatMain = () => {
                     const data = await result.json();
                     setProfileDatas(data);
                 } else {
-                    console.error("Error while fetching minimal profile data");
+                    showAPIErrorToast(result);
                 }
             } catch (error) {
                 console.error(error);
@@ -100,7 +101,7 @@ const ChatMain = () => {
 
     const handleUserSelection = (user) => {
         setSelectedUser(user);
-        setSearchParams({userId: user.userId}); // Update the query string
+        setSearchParams({userId: user.userId}); 
     };
 
     const usersIsEmpty = () => {

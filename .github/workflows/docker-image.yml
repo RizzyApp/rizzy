@@ -26,6 +26,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}  
           password: ${{ secrets.DOCKER_PASSWORD }}  
+          
+      - name: Debug Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} || echo "Login failed"
 
       # Step 3: Build and push backend image
       - name: Build and push Backend image
@@ -33,9 +36,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./server  
-          file: Dockerfile
+          file: ./server/Dockerfile
           push: true  
-          tags: hegedus-mark/rizzy-app/api:latest  
+          tags: ${{ secrets.DOCKER_USERNAME }}/rizzy-app:api-latest  
 
       # Step 4: Build and push Docker frontend image
       - name: Build and push Docker image 2
@@ -43,18 +46,18 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./client 
-          file: Dockerfile  
+          file: ./client/Dockerfile  
           push: true  
-          tags:  hegedus-mark/rizzy-app/frontend:latest
+          tags:  ${{ secrets.DOCKER_USERNAME }}/rizzy-app:frontend-latest
           build-args: |
-            VITE_API_BASE_URL=https://rizzy-app-api-v1.onrender.com
+            VITE_API_BASE_URL=https://rizzy-api-cnddgqa8asebbadk.westeurope-01.azurewebsites.net
 
       # Tag images with a unique tag based on the commit hash
       - name: Tag images with commit hash
         run: |
-          IMAGE1_TAG=hegedus-mark/rizzy-app/api:${{ github.sha }}
-          IMAGE2_TAG=hegedus-mark/rizzy-app/frontend:${{ github.sha }}
-          docker tag hegedus-mark/rizzy-app/api:latest $IMAGE1_TAG
-          docker tag hegedus-mark/rizzy-app/frontend:latest $IMAGE2_TAG
+          IMAGE1_TAG=${{ secrets.DOCKER_USERNAME }}/rizzy-app:api-${{ github.sha }}
+          IMAGE2_TAG=${{ secrets.DOCKER_USERNAME }}/rizzy-app:frontend-${{ github.sha }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/rizzy-app:api-latest $IMAGE1_TAG
+          docker tag ${{ secrets.DOCKER_USERNAME }}/rizzy-app:frontend-latest $IMAGE2_TAG
           docker push $IMAGE1_TAG
           docker push $IMAGE2_TAG

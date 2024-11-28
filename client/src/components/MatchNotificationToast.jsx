@@ -7,7 +7,7 @@ const MatchNotificationToast = ({notification}) => {
 
     return (
         <div className="flex items-center cursor-pointer"
-        onClick={() => navigate(REACT_ROUTES.CHAR_BY_USER(notification.userId))}>
+        onClick={() => navigate(REACT_ROUTES.CHAT_BY_USER(notification.userId))}>
             <img
                 src={notification.profilePic.url}
                 alt={notification.name}

@@ -1,9 +1,10 @@
 name: Build React App
 
 on:
+  push:
+    branches: [ "development", "main" ]
   pull_request:
-    branches:
-      - development
+    branches: [ "development", "main" ]
 
 jobs:
   build:

@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -40,14 +39,13 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.UseDeveloperExceptionPage();
-
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"Connection String: {connectionString}");
+    
 
     using (var scope = app.Services.CreateScope())
     {
@@ -62,6 +60,18 @@ if (app.Environment.IsDevelopment())
         authenticationSeeder.AddAdmin();
     }
 }
+else
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+
+        var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+        authenticationSeeder.AddRoles();
+        authenticationSeeder.AddAdmin();
+    }
+}
 
 app.UseCors("CorsPolicy");
 
@@ -69,6 +79,11 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", (ILogger<Program> logger) => 
+{
+    logger.LogInformation("Hello from Azure App!");
+    return "Hello, World!";
+});
 app.MapHub<NotificationHub>("api/notificationHub");
 app.MapHub<ChatHub>("api/chatHub");
 app.MapControllers();
@@ -149,9 +164,17 @@ void ConfigureSwagger()
 
 void AddDbContexts()
 {
+    
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        .Replace("{ServerName}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost")
+        .Replace("{UserName}", Environment.GetEnvironmentVariable("DB_USER") ?? "sa")
+        .Replace("{Password}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "veryStrongRizzyPassword123");
+    
+    Console.WriteLine($"Connection String: {connectionString}");
+    
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        options.UseSqlServer(connectionString);
     });
 }
 
@@ -234,3 +257,4 @@ void AddCors()
         });
     });
 }
+
