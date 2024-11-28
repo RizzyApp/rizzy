@@ -100,6 +100,30 @@ We welcome contributions! To contribute:
 2. Create a feature branch:
    ```bash
    git checkout -b feature-name
+   ```
 
 3. Commit your changes and push the branch.
 4. Submit a pull request.
+
+
+---
+
+## Credits
+
+Rizzy was made possible by the contributions of the following developers:
+
+- **[hegedus-mark](https://github.com/hegedus-mark)**  
+  **[LinkedIn Profile](https://www.linkedin.com/in/m%C3%A1rk-heged%C5%B1s-2a88332ba/)**
+
+- **[kristofNyikes](https://github.com/kristofNyikes)**  
+  **[LinkedIn Profile](https://www.linkedin.com/in/krist%C3%B3f-nyikes-31121133a/)**
+
+- **[prvics](https://github.com/prvics)**  
+  **[LinkedIn Profile](https://www.linkedin.com/in/pr%C3%A1vics-p%C3%A9ter-760265330/)**
+
+- **[pixhy](https://github.com/pixhy)**  
+  **[LinkedIn Profile](https://www.linkedin.com/in/tunde-bak/)**
+
+We sincerely thank them for their hard work and dedication to this project. 🎉
+
+---
