@@ -68,6 +68,15 @@ const ProfilePage = () => {
     }));
   };
 
+    const handleLogout = async () => {
+        await logOut();
+        navigate(REACT_ROUTES.HOME);
+    };
+    
+    const handleCancelChanges = async () => {
+        setIsEditing(false);
+        await fetchProfileData()
+    }
   const handleChangePassword = async (currentPassword, newPassword) => {
     const response = await fetchWithAuth(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
       method: "POST",
@@ -82,11 +91,6 @@ const ProfilePage = () => {
       showErrorToast("Password change failed");
       throw new Error(errorData.message || "Password change failed");
     }
-  };
-
-  const handleLogout = async () => {
-    await logOut();
-    navigate(REACT_ROUTES.HOME);
   };
 
   const handleSaveChanges = async () => {
@@ -135,12 +139,9 @@ const ProfilePage = () => {
         promises.push(photoUpdatePromise);
       }
 
-      const results = await showPromiseToast(
-        Promise.all(promises),
-        "yay nice",
-        "oops",
-        "loading..."
-      );
+            const results = await showPromiseToast(Promise.all(promises), "Uploaded successfully",
+                "uploading...")
+
 
       const profileResponse = results[0];
       const photoResponse = results[1];
@@ -158,37 +159,37 @@ const ProfilePage = () => {
     }
   };
 
-  useEffect(() => {
     const fetchProfileData = async () => {
-      try {
-        const response = await fetchWithAuth(API_ENDPOINTS.USER.GET_PROFILE, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        try {
+            const response = await fetchWithAuth(API_ENDPOINTS.USER.GET_PROFILE, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-        if (response.ok) {
-          const profileData = await response.json();
-          console.log("pd ", profileData);
+            if (response.ok) {
+                const profileData = await response.json();
+                console.log("pd ", profileData);
 
-          setData({ profile: profileData });
-          setInitialPhotos(profileData.photos);
-          setChangedPhotoUrls(null);
+                setData({profile: profileData});
+                setInitialPhotos(profileData.photos);
+                setChangedPhotoUrls(null);
 
-          console.log("photos ", profileData.photos);
-        } else {
-          console.error("Failed to fetch profile data.");
+                console.log("photos ", profileData.photos);
+            } else {
+                console.error("Failed to fetch profile data.");
+            }
+        } catch (error) {
+            console.error("Error fetching profile data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-      }
     };
-
-    if (!isUploading) {
-      fetchProfileData();
-    }
-  }, [isUploading]);
+    
+    useEffect(() => {
+        if (!isUploading) {
+            fetchProfileData();
+        }
+    }, [isUploading]);
 
   const handleAddInterest = () => {
     if (newInterest.trim() !== "") {
@@ -225,36 +226,34 @@ const ProfilePage = () => {
       </>
     );
 
-  return (
-    <>
-      <Header />
-      <div className="flex flex-col items-center font-poppins bg-custom-gradient text-white min-h-screen ">
-        <ProfileSection
-          data={data}
-          edit={isEditing}
-          handleChange={handleChange}
-          handleLogout={handleLogout}
-          setEdit={setIsEditing}
-          onSave={handleSaveChanges}
-          handleAddInterest={handleAddInterest}
-          handleDeleteInterest={handleDeleteInterest}
-          newInterest={newInterest}
-          setNewInterest={setNewInterest}
-          isUploading={isUploading}
-          handleChangePassword={handleChangePassword}
-          showErrorToast={showErrorToast}
-          showSuccessToast={showSuccessToast}
-        />
-        <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
-          <PhotoGallery
-            isEditing={isEditing}
-            initialImages={initialPhotos.map((p) => p.url)}
-            setChangedPhotoUrls={setChangedPhotoUrls}
-          />
-        </div>
-      </div>
-    </>
-  );
+    return (
+        <>
+            <Header/>
+            <div className="flex flex-col items-center font-poppins bg-custom-gradient text-white min-h-screen ">
+                <ProfileSection
+                    data={data}
+                    edit={isEditing}
+                    handleChange={handleChange}
+                    handleLogout={handleLogout}
+                    setEdit={setIsEditing}
+                    onSave={handleSaveChanges}
+                    handleAddInterest={handleAddInterest}
+                    handleDeleteInterest={handleDeleteInterest}
+                    newInterest={newInterest}
+                    setNewInterest={setNewInterest}
+                    isUploading={isUploading}
+                    onCancelChanges={handleCancelChanges}
+                    handleChangePassword={handleChangePassword}
+                    showErrorToast={showErrorToast}
+                    showSuccessToast={showSuccessToast}
+                />
+                <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
+                    <PhotoGallery isEditing={isEditing} initialImages={initialPhotos.map(p => p.url)}
+                                  setChangedPhotoUrls={setChangedPhotoUrls}/>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default ProfilePage;

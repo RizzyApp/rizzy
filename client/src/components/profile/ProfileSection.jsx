@@ -16,41 +16,41 @@ const ProfileSection = ({
   isUploading,
   handleChangePassword,
   showErrorToast,
-  showSuccessToast,
+  showSuccessToast, onCancelChanges
 }) => {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const commonInputStyles = "border rounded w-full text-black p-2 h-10";
   const noProfilePic = "./image/blank-profile-picture.webp";
 
-  const gender = (value) => {
-    let gender;
+    const gender = (value) => {
+        let gender;
 
-    switch (+value) {
-      case 0:
-        gender = "Female";
-        break;
-      case 1:
-        gender = "Male";
-        break;
-      case 2:
-        gender = "Both";
-        break;
-      default:
-        gender = "Unknown";
+        switch (+value) {
+            case 0:
+                gender = "Female";
+                break;
+            case 1:
+                gender = "Male";
+                break;
+            case 2:
+                gender = "Both";
+                break;
+            default:
+                gender = "Unknown";
+        }
+
+        return gender;
     }
-
-    return gender;
-  };
-
-  const handlePasswordChangeSubmit = async (currentPassword, newPassword) => {
-    try {
-      await handleChangePassword(currentPassword, newPassword);
-      setShowChangePasswordModal(false);
-      showSuccessToast("Password changed successfully!");
-    } catch (error) {
-      showErrorToast("Failed to change password: " + error.message);
-    }
-  };
+    
+    const handlePasswordChangeSubmit = async (currentPassword, newPassword) => {
+        try {
+            await handleChangePassword(currentPassword, newPassword);
+            setShowChangePasswordModal(false);
+            showSuccessToast("Password changed successfully!");
+        } catch (error) {
+            showErrorToast("Failed to change password: " + error.message);
+        }
+    };
 
   return (
     <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
@@ -72,13 +72,12 @@ const ProfileSection = ({
           >
             Logout
           </button>
-
-          <button
-            onClick={() => setShowChangePasswordModal(true)}
-            className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
-          >
-            Change Password
-          </button>
+            <button
+                onClick={() => setShowChangePasswordModal(true)}
+                className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
+            >
+                Change Password
+            </button>
         </div>
 
         <div className="w-2/3 pl-8 flex flex-col gap-4">
@@ -235,29 +234,32 @@ const ProfileSection = ({
             )}
           </div>
 
-          <button
-            onClick={() => {
-              if (isUploading) {
-                //we don't want them to make changes
-                return;
-              }
-              if (edit) onSave();
-              setEdit(!edit);
-            }}
-            className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${
-              isUploading ? "disabled" : ""
-            }`}
-          >
-            {edit ? "Save Changes" : "Edit Profile"}
-          </button>
+            <div>
+                <button
+                    onClick={() => {
+                        if (isUploading) { //we don't want them to make changes
+                            return;
+                        }
+                        if (edit) onSave();
+                        setEdit(!edit);
+                    }}
+                    className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${isUploading ? "disabled" : ""}`}
+                >
+                    {edit ? "Save Changes" : "Edit Profile"}</button>
+                {edit && <button
+                    onClick={onCancelChanges}
+                    className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${isUploading ? "disabled" : ""}`}
+                >
+                    Cancel Changes</button>}
+            </div>
         </div>
       </div>
-      {showChangePasswordModal && (
-        <ChangePasswordModal
-          onClose={() => setShowChangePasswordModal(false)}
-          onSubmit={handlePasswordChangeSubmit}
-        />
-      )}
+        {showChangePasswordModal && (
+            <ChangePasswordModal
+                onClose={() => setShowChangePasswordModal(false)}
+                onSubmit={handlePasswordChangeSubmit}
+            />
+        )}
     </div>
   );
 };

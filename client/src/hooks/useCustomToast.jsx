@@ -5,13 +5,15 @@ import MatchNotificationToast from "../components/MatchNotificationToast.jsx";
 const useCustomToast = () => {
 
     //TODO: Write an error message if the request failed
-    const showPromiseToast = async (promise, successMessage, errorMessage, loadingMessage) => {
+    const showPromiseToast = async (promise, successMessage, loadingMessage) => {
         const response = await toast.promise(
             promise,
             {
                 pending: loadingMessage,
                 success: successMessage,
-                error: errorMessage
+                error: ({data}) => {
+                    showAPIErrorToast(data);
+                }
             }
         )
         console.log(response);
@@ -35,9 +37,11 @@ const useCustomToast = () => {
         } else if (errorResponse.title) {
             // {"title":"An unexpected error occured.","status":500,"instance":"/api/v1/Auth/Register"}
             errorMessage = errorResponse.title;
-        } else {
+        } else if (Object.values(errorResponse)){
             // {ValamiError:["a", "b"], ValamiMasError:["asdf"]}
             errorMessage = <>{Object.values(errorResponse).flat().map(x => <div>{x}</div>)}</>;
+        } else {
+            errorMessage = "Oops something happened, try again later"
         }
         toast.error(errorMessage);
     }
