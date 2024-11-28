@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { API_ENDPOINTS, REACT_ROUTES } from "../../constants.js";
-import fetchWithCredentials from "../../utils/fetchWithCredentials.js";
+import { createContext, useContext, useState, useEffect } from 'react';
+import { API_ENDPOINTS, REACT_ROUTES } from '../../constants.js';
+import fetchWithCredentials from '../../utils/fetchWithCredentials.js';
 
 const AuthContext = createContext();
 
@@ -12,9 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchAuthStatus = async () => {
     try {
-      const response = await fetchWithCredentials(
-        API_ENDPOINTS.AUTH.AUTH_STATUS
-      );
+      const response = await fetchWithCredentials(API_ENDPOINTS.AUTH.AUTH_STATUS);
       if (response.ok) {
         setIsLoggedIn(true);
         const data = await response.json();
@@ -24,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         clearLoginDetails();
       }
     } catch (error) {
-      console.error("Error checking auth status:", error);
+      console.error('Error checking auth status:', error);
     } finally {
       setCheckingAuth(false);
     }
@@ -33,21 +31,26 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     let arr = [];
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     };
-    const response = await fetchWithCredentials(
-      API_ENDPOINTS.AUTH.LOGIN,
-      requestOptions
-    );
+    const response = await fetchWithCredentials(API_ENDPOINTS.AUTH.LOGIN, requestOptions);
     if (response.ok) {
-      const data = await response.json();
-      setIsLoggedIn(true);
-      setIsLoggedInUserId(data.userId);
-      setUserRoles(data.roles || []);
-      setCheckingAuth(false);
-      arr = [response, data];
+      if (!response.hasProfile) {
+        setIsLoggedIn(false);
+        setIsLoggedInUserId(null);
+        setCheckingAuth(false);
+        setUserRoles([]);
+        arr = [response];
+      } else {
+        const data = await response.json();
+        setIsLoggedIn(true);
+        setIsLoggedInUserId(data.userId);
+        setUserRoles(data.roles || []);
+        setCheckingAuth(false);
+        arr = [response, data];
+      }
     } else {
       arr.push(response);
     }
@@ -63,38 +66,32 @@ export const AuthProvider = ({ children }) => {
   const logOut = async () => {
     try {
       const response = await fetchWithCredentials(API_ENDPOINTS.AUTH.LOGOUT, {
-        method: "POST",
+        method: 'POST',
       });
       clearLoginDetails();
     } catch (err) {
-      console.error("Error logOut:", err);
+      console.error('Error logOut:', err);
     }
   };
 
   const register = async (email, password) => {
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     };
-    const response = await fetchWithCredentials(
-      API_ENDPOINTS.AUTH.REGISTER,
-      requestOptions
-    );
+    const response = await fetchWithCredentials(API_ENDPOINTS.AUTH.REGISTER, requestOptions);
     return response;
   };
 
   const registerUserProfile = async (registerFormData) => {
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(registerFormData),
     };
 
-    const response = await fetchWithCredentials(
-      API_ENDPOINTS.USER.POST_PROFILE,
-      requestOptions
-    );
+    const response = await fetchWithCredentials(API_ENDPOINTS.USER.POST_PROFILE, requestOptions);
     if (response.ok) {
       setIsLoggedIn(true);
     }
@@ -103,33 +100,27 @@ export const AuthProvider = ({ children }) => {
 
   const postUserLocation = async (locationData) => {
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(locationData),
     };
 
-    const response = await fetchWithCredentials(
-      API_ENDPOINTS.USER.POST_LOCATION,
-      requestOptions
-    );
-    if(response.status === 401){
+    const response = await fetchWithCredentials(API_ENDPOINTS.USER.POST_LOCATION, requestOptions);
+    if (response.status === 401) {
       clearLoginDetails();
     }
-    
+
     return response;
   };
 
   const updateUserLocation = async (locationData) => {
     const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(locationData),
     };
 
-    const response = await fetchWithCredentials(
-      API_ENDPOINTS.LOCATION.PUT,
-      requestOptions
-    );
+    const response = await fetchWithCredentials(API_ENDPOINTS.LOCATION.PUT, requestOptions);
     return response;
   };
 

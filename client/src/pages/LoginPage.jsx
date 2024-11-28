@@ -19,6 +19,9 @@ const LoginPage = () => {
     const password = e.target.elements.password.value;
 
         const response = await login(email, password);
+        if(!response[0].hasProfile) {
+            navigate(REACT_ROUTES.REGISTER_DATA);
+        }
         if (response[0].ok) {
             if (response[1].roles.includes("Admin")) {
                 navigate(REACT_ROUTES.ADMIN_PAGE);
