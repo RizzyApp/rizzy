@@ -9,53 +9,49 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const { showSuccessToast, showErrorToast } = useCustomToast();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetchWithCredentials(
-          API_ENDPOINTS.ADMIN.GET_USERS
-        );
-        if (response.ok) {
-          const data = await response.json();
-          console.table(data);
-          console.log(data);
+  const fetchUsers = async () => {
+    try {
+      const response = await fetchWithCredentials(
+        API_ENDPOINTS.ADMIN.GET_USERS
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.table(data);
+        console.log(data);
 
-          setUsers(data);
-        } else {
-          console.error("Failed to fetch users: ", response.statusText);
-          showErrorToast("Failed to fetch users: ", response.statusText);
-        }
-      } catch (error) {
-        showErrorToast("Error fetching users: ", error);
-        throw new Error("Error fetching users: ", error);
+        setUsers(data);
+      } else {
+        console.error("Failed to fetch users: ", response.statusText);
+        showErrorToast("Failed to fetch users: ", response.statusText);
       }
-    };
-
+    } catch (error) {
+      showErrorToast("Error fetching users: ", error);
+      throw new Error("Error fetching users: ", error);
+    }
+  };
+  useEffect(() => {
     fetchUsers();
   }, []);
 
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = async (userId, days) => {
     console.log("Deleting user:", userId);
+    console.log("Deleting user:", typeof days);
+
     try {
       const response = await fetchWithCredentials(
-        API_ENDPOINTS.ADMIN.BAN_USER / userId,
+        `${API_ENDPOINTS.ADMIN.BAN_USER}/${userId}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(days),
         }
       );
 
       if (response.ok) {
-        showSuccessToast("User banned successfully");
-        const updatedResponse = await fetchWithCredentials(
-          API_ENDPOINTS.ADMIN.GET_USERS
-        );
-        if (updatedResponse.ok) {
-          const updatedData = await updatedResponse.json();
-          setUsers(updatedData);
-        } else {
-          console.error("Failed to ban user: ", response.statusText);
-          showErrorToast("Failed to ban user: ", response.statusText);
-        }
+        showSuccessToast(`User banned for ${days} days successfully`);
+        fetchUsers();
       }
     } catch (error) {
       showErrorToast("Error banning user: ", error);
@@ -63,18 +59,71 @@ const AdminPage = () => {
     }
   };
 
+  const handleUnbanUser = async (userId) => {
+    try {
+      const response = await fetchWithCredentials(
+        `${API_ENDPOINTS.ADMIN.UNBAN_USER}/${userId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        showSuccessToast("User unbanned successfully");
+        fetchUsers();
+      } else {
+        showErrorToast("Failed to unban user.");
+      }
+    } catch (error) {
+      showErrorToast("Error unbanning user:", error);
+    }
+  };
+
   const handleResetPassword = async (userId) => {
     console.log("Resetting password for user:", userId);
-    await fetchWithCredentials(API_ENDPOINTS.ADMIN.RESET_PASSWORD / userId, {
-      method: "POST",
-    });
+    try {
+      const response = await fetchWithCredentials(
+        `${API_ENDPOINTS.ADMIN.RESET_PASSWORD}/${userId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        showSuccessToast("Password reset successfully");
+      } else {
+        showErrorToast("Failed to reset password");
+      }
+    } catch (error) {
+      showErrorToast("Error resetting password: ", error.message);
+    }
   };
 
   const handleToggleRole = async (userId) => {
     console.log("Toggling role for user:", userId);
-    await fetchWithCredentials(API_ENDPOINTS.ADMIN.TOGGLE_ROLE / userId, {
-      method: "POST",
-    });
+    try {
+      const response = await fetchWithCredentials(
+        `${API_ENDPOINTS.ADMIN.TOGGLE_ROLE}/${userId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        showSuccessToast("Role toggled successfully");
+        const updatedResponse = await fetchWithCredentials(
+          API_ENDPOINTS.ADMIN.GET_USERS
+        );
+        if (updatedResponse.ok) {
+          const updatedData = await updatedResponse.json();
+          setUsers(updatedData);
+        }
+      } else {
+        showErrorToast("Failed to toggle role");
+      }
+    } catch (error) {
+      showErrorToast("Error toggling role: ", error.message);
+    }
   };
 
   return (
@@ -85,6 +134,9 @@ const AdminPage = () => {
         handleDeleteUser={handleDeleteUser}
         handleResetPassword={handleResetPassword}
         handleToggleRole={handleToggleRole}
+        showErrorToast={showErrorToast}
+        showSuccessToast={showSuccessToast}
+        handleUnbanUser={handleUnbanUser}
       />
     </div>
   );

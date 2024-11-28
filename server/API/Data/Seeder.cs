@@ -14,7 +14,7 @@ public class AppDbSeeder
     private const int TESTUSER_ID = 1;
     private const int USERS_TO_RIGHT_SWIPE_TEST_USER = 10;
     private const int USERS_TO_MATCH_TEST_USER = 5;
-    private  IOptions<RoleSettings> _roleSettings;
+    private IOptions<RoleSettings> _roleSettings;
 
     public AppDbSeeder(IOptions<RoleSettings> roleSettings)
     {
@@ -82,7 +82,7 @@ public class AppDbSeeder
                 });
             }
 
-            await SeedTestUserAsync(context, userManager); //this must be the first one always!!!
+            await SeedTestUserAsync(context, userManager, _roleSettings); //this must be the first one always!!!
 
             var swipesLeft = USERS_TO_RIGHT_SWIPE_TEST_USER;
             var matchesLeft = USERS_TO_MATCH_TEST_USER;
@@ -188,7 +188,7 @@ public class AppDbSeeder
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedTestUserAsync(AppDbContext context, UserManager<IdentityUser> userManager)
+    private static async Task SeedTestUserAsync(AppDbContext context, UserManager<IdentityUser> userManager, IOptions<RoleSettings> roleSettings)
     {
         var testEmail = "test@gmail.com";
         var signalREmail = "signalrtest@gmail.com";
@@ -204,6 +204,8 @@ public class AppDbSeeder
         var result = await userManager.CreateAsync(testUser, "TesT123456");
         if (result.Succeeded)
         {
+
+            await userManager.AddToRoleAsync(testUser, roleSettings.Value.User);
             var testAppUser = new User
             {
                 Name = "Test User",
@@ -255,6 +257,7 @@ public class AppDbSeeder
             var signalRResult = await userManager.CreateAsync(signalRTestUser, "TesT123456");
             if (signalRResult.Succeeded)
             {
+                await userManager.AddToRoleAsync(signalRTestUser, roleSettings.Value.User);
                 var signalRTestAppUser = new User
                 {
                     Name = "SignalR Test User",

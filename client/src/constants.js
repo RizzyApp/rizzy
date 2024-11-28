@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
   ADMIN: {
     GET_USERS: `${API_BASE_URL}/api/v1/Admin/users`,
     BAN_USER: `${API_BASE_URL}/api/v1/Admin/ban-user`,
+    UNBAN_USER: `${API_BASE_URL}/api/v1/Admin/unban-user`,
     TOGGLE_ROLE: `${API_BASE_URL}/api/v1/Admin/toggle-role`,
     RESET_PASSWORD: `${API_BASE_URL}/api/v1/Admin/reset-password`,
   },
