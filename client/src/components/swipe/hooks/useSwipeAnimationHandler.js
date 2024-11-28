@@ -118,6 +118,7 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
             x: clampedX,
             rotateZ: (clampedX / boundary) * MAX_ROTATION,
             opacity: 1,
+            scale: 1.1,
             config: { friction: 50, tension: 800 },
           });
         } else if (!active && trigger) {
@@ -127,7 +128,6 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
             rotateZ: (clampedX / boundary) * MAX_ROTATION,
             opacity: 0,
             onRest: () => {
-              console.log("onRest has ran!");
               onSwipeOut(mx > 0 ? 1 : -1)
             }, // Callback when the fallout animation finishes
           });
@@ -148,7 +148,7 @@ const useSwipeAnimationHandler = (deckWidth, onSwipeOut, cardImageRef) => {
       },
       onHover: ({ active }) => {
         if (active) {
-          dragApi.start({ scale: 1.1 })
+          dragApi.start({ scale: 1.05 })
         } else {
           dragApi.start({ scale: 1.0 })
         }

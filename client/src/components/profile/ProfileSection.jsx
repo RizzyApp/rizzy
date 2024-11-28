@@ -1,6 +1,7 @@
 import { useState } from "react";
 import deleteIcon from "../../assets/delete-icon.png";
 import ChangePasswordModal from "./ChangePasswordModal";
+import useCustomToast from "../../hooks/useCustomToast.jsx";
 
 const ProfileSection = ({
   data,
@@ -14,13 +15,12 @@ const ProfileSection = ({
   newInterest,
   setNewInterest,
   isUploading,
-  handleChangePassword,
-  showErrorToast,
-  showSuccessToast, onCancelChanges
+  handleChangePassword, onCancelChanges
 }) => {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const commonInputStyles = "border rounded w-full text-black p-2 h-10";
   const noProfilePic = "./image/blank-profile-picture.webp";
+  const {showSuccessToast, showErrorToast} = useCustomToast();
 
     const gender = (value) => {
         let gender;

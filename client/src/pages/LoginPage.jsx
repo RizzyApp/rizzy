@@ -20,7 +20,7 @@ const LoginPage = () => {
         const password = e.target.elements.password.value;
 
         const response = await login(email, password);
-        if(!response[0].hasProfile) {
+        if(response[0].hasProfile === false) {
             navigate(REACT_ROUTES.REGISTER_DATA);
         }
         if (response[0].ok) {

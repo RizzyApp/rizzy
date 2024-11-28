@@ -33,6 +33,18 @@ const router = createBrowserRouter([
             path: REACT_ROUTES.HOME,
             element: <HomePage />,
           },
+          {
+            path: REACT_ROUTES.LOGIN,
+            element: <LoginPage />,
+          },
+          {
+            path: REACT_ROUTES.REGISTER,
+            element: <Register />,
+          },
+          {
+            path: REACT_ROUTES.REGISTER_DATA,
+            element: <RegisterData />,
+          },
         ],
       },
       {
@@ -47,18 +59,7 @@ const router = createBrowserRouter([
         path: REACT_ROUTES.PRODUCTS,
         element: <ProductsPage />,
       },
-      {
-        path: REACT_ROUTES.LOGIN,
-        element: <LoginPage />,
-      },
-      {
-        path: REACT_ROUTES.REGISTER,
-        element: <Register />,
-      },
-      {
-        path: REACT_ROUTES.REGISTER_DATA,
-        element: <RegisterData />,
-      },
+      
       {
         path: "",
         element: <ProtectedRoute />,

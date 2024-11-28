@@ -56,8 +56,7 @@ const ProfilePage = () => {
   const [initialPhotos, setInitialPhotos] = useState(null);
   const [changedPhotoUrls, setChangedPhotoUrls] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { showFetchPromiseToast, showErrorToast, showAPIErrorToast, showSuccessToast } =
-    useCustomToast();
+  const { showFetchPromiseToast, showErrorToast } = useCustomToast();
   const navigate = useNavigate();
   const fetchWithAuth = useFetchWithAuth();
 
@@ -220,8 +219,6 @@ const ProfilePage = () => {
                     isUploading={isUploading}
                     onCancelChanges={handleCancelChanges}
                     handleChangePassword={handleChangePassword}
-                    showErrorToast={showErrorToast}
-                    showSuccessToast={showSuccessToast}
                 />
                 {((initialPhotos && initialPhotos.length >=  1) || isEditing) &&
                     <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
