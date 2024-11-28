@@ -2,7 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.table-auto th,
+.table-auto td {
+  text-align: center;
+  vertical-align: middle;
+  height: 3rem; /* Fixed height */
+}
 
+.table-auto th {
+  font-weight: bold;
+}
 
 .aboutPage::-webkit-scrollbar {
   display: hidden; /* Chrome */
@@ -18,7 +27,6 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 
 body {
   display: flex;
@@ -65,8 +73,8 @@ button {
   --chat-card-hover: 243, 244, 246;
   --accent-primary: 236, 72, 153;
   --accent-secondary: #ff4081;
-  --chat-bubble-sent: 244, 114,182;
-  --chat-bubble-received: 252,231, 243 ;
+  --chat-bubble-sent: 244, 114, 182;
+  --chat-bubble-received: 252, 231, 243;
   --chat-text-sent: 255, 255, 255;
   --chat-text-received: 55, 65, 81;
   --button-background: 236, 72, 153;
@@ -114,7 +122,7 @@ button {
   --border-secondary-color: 74, 74, 100;
   transition: background-color 1s ease, color 1s ease;
 }
-input:not(:placeholder-shown):invalid{
+input:not(:placeholder-shown):invalid {
   background-color: #ecaeae;
   border: none;
   outline: 2px solid red;

@@ -3,6 +3,7 @@ using API.Contracts.Auth;
 using API.Data.Models;
 using API.Services;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -64,6 +65,20 @@ public class AuthController : ControllerBase
             await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true,
                 lockoutOnFailure: false);
 
+        if (result.IsLockedOut)
+        {
+            var lockoutEndDate = await _userManager.GetLockoutEndDateAsync(user);
+            var formattedDate = lockoutEndDate?.UtcDateTime.ToString("yyyy.MM.dd HH:mm:ss");
+            return StatusCode(StatusCodes.Status403Forbidden, new AuthResponse(
+                user.Email,
+                0,
+                user.UserName,
+                new List<string>(),
+                $"Your account is banned until {formattedDate}."));
+
+
+        }
+        
         if (!result.Succeeded)
         {
             ModelState.AddModelError("Login", "Invalid email or password.");
@@ -77,7 +92,8 @@ public class AuthController : ControllerBase
                 user.Email,
                 0,
                 user.UserName,
-                roles));
+                roles,
+                ""));
         }
         
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
@@ -86,7 +102,8 @@ public class AuthController : ControllerBase
             user.Email,
             loggedInUser?.Id ?? 0,
             loggedInUser?.Name ?? user.UserName,
-            roles)
+            roles,
+            "")
         );
     }
 
@@ -115,7 +132,8 @@ public class AuthController : ControllerBase
             Email: User.FindFirst(ClaimTypes.Email)?.Value,
             UserId: loggedInUser?.Id ?? 0, 
             Name: loggedInUser?.Name ?? identityUser.UserName,
-            Roles: roles
+            Roles: roles,
+            Message: ""
         ));
     }
     
