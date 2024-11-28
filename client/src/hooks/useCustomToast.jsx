@@ -2,7 +2,18 @@ import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
 import MatchNotificationToast from "../components/MatchNotificationToast.jsx";
 
+const baseOptions = {
+    autoClose: 6000,
+    isLoading: false,
+    pauseOnHover: true,
+    closeOnClick: true,
+    closeButton: true,
+};
 
+const getBaseOptions = (colorMode) => ({
+    ...baseOptions,
+    theme: colorMode
+});
 const translateErrorResponse = async (errorResponse) => {
     let errorData;
 
@@ -59,21 +70,21 @@ const translateErrorResponse = async (errorResponse) => {
 const getIsDarkmode = () => {
     const savedTheme = localStorage.getItem("theme");
     if (!savedTheme) {
-        return false;
+        return "light";
     }
     return savedTheme;
 };
 
 const useCustomToast = () => {
-    const [isDarkMode, SetIsDarkMode] = useState(false);
-    
-    
+    const [colorMode, SetColorMode] = useState("light");
+
     useEffect(() => {
-        
-    }, );
-    
+        SetColorMode(getIsDarkmode());
+    });
+
+    // Function to show a loading toast with promise handling
     const showFetchPromiseToast = async (promises, successMessage, loadingMessage) => {
-        const toastId = toast.loading(loadingMessage);
+        const toastId = toast.loading(loadingMessage, getBaseOptions(colorMode));
 
         try {
             const responses = await promises;
@@ -90,22 +101,13 @@ const useCustomToast = () => {
                         </div>
                     ),
                     type: "error",
-                    isLoading: false,
-                    autoClose: 5000,
-                    pauseOnHover: true,
-                    closeOnClick:true,
-                    closeButton:true
-                    
+                    ...getBaseOptions(colorMode) 
                 });
             } else {
                 toast.update(toastId, {
                     render: successMessage,
                     type: "success",
-                    isLoading: false,
-                    autoClose: 5000,
-                    pauseOnHover: true,
-                    closeOnClick:true,
-                    closeButton:true
+                    ...getBaseOptions(colorMode)  
                 });
             }
 
@@ -115,44 +117,40 @@ const useCustomToast = () => {
             toast.update(toastId, {
                 render: networkErrorMessage,
                 type: "error",
-                isLoading: false,
-                autoClose: 5000,
-                pauseOnHover: true,
-                closeOnClick:true,
-                closeButton:true
+                ...getBaseOptions(colorMode)  
             });
             throw error;
         }
     };
 
-
+    // Show success toast with theme
     const showSuccessToast = (successMessage) => {
-        toast.success(successMessage);
-    }
+        toast.success(successMessage, getBaseOptions(colorMode));
+    };
 
+    // Show error toast with theme
     const showErrorToast = (errorMessage) => {
-        toast.error(errorMessage);
-    }
+        toast.error(errorMessage, getBaseOptions(colorMode));
+    };
+
+    // Show API error toast with theme
     const showAPIErrorToast = async (errorResponse) => {
-
         const errorMessage = await translateErrorResponse(errorResponse);
-        toast.error(errorMessage);
-    }
+        toast.error(errorMessage, getBaseOptions(colorMode));
+    };
 
+    // Show match notification toast with theme
     const showMatchNotification = (notification) => {
-        toast(
-            <MatchNotificationToast notification={notification}/>
-        )
-    }
-
+        toast(<MatchNotificationToast notification={notification} />, getBaseOptions(colorMode));
+    };
 
     return {
         showFetchPromiseToast,
         showSuccessToast,
         showErrorToast,
         showAPIErrorToast,
-        showMatchNotification
+        showMatchNotification,
     };
-}
+};
 
 export default useCustomToast;
