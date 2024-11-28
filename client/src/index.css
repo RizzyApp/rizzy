@@ -2,41 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.table-auto th,
+.table-auto td {
+  text-align: center;
+  vertical-align: middle;
+  height: 3rem; /* Fixed height */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+.table-auto th {
+  font-weight: bold;
 }
-a:hover {
-  color: #535bf2;
+
+.aboutPage::-webkit-scrollbar {
+  display: hidden; /* Chrome */
+}
+
+.aboutPage {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  height: 100vh;
+  overflow: auto;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.ffgh {
+  position: absolute;
+  color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 button {
@@ -50,23 +55,76 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+.light {
+  --topbar: 190, 70, 124;
+  --custom-gradient: linear-gradient(
+    180deg,
+    rgba(237, 65, 112, 1),
+    rgba(144, 75, 137, 1) 72%
+  );
+  --buttonHover: 236, 72, 153;
+
+  --text-primary: 31, 41, 55;
+  --text-secondary: 107, 114, 128;
+  --text-contrast: 255, 255, 255;
+  --chat-background-primary: 255, 255, 255;
+  --chat-background-secondary: 249, 250, 251;
+  --chat-card-hover: 243, 244, 246;
+  --accent-primary: 236, 72, 153;
+  --accent-secondary: #ff4081;
+  --chat-bubble-sent: 244, 114, 182;
+  --chat-bubble-received: 252, 231, 243;
+  --chat-text-sent: 255, 255, 255;
+  --chat-text-received: 55, 65, 81;
+  --button-background: 236, 72, 153;
+  --button-hover: 219, 39, 119;
+  --button-turned-off: 229, 231, 235;
+  --button-turned-off-hover: 209, 213, 219;
+  --input-background: 255, 255, 255;
+  --input-text: 75, 85, 99;
+  --input-placeholder: 156, 163, 175;
+  --border-primary-color: 209, 213, 219;
+  --border-secondary-color: 229, 231, 235;
+  transition: background-color 1s ease, color 1s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.dark {
+  --topbar: 115, 51, 56;
+  --custom-gradient: linear-gradient(
+    180deg,
+    rgba(207, 80, 86, 1),
+    rgba(105, 41, 44, 1),
+    rgba(34, 31, 39, 1) 93%
+  );
+  --buttonHover: 207, 80, 86;
+
+  --chat-background-primary: 30, 30, 47;
+  --chat-background-secondary: 42, 42, 59;
+  --chat-card-hover: 70, 70, 70;
+  --text-primary: 255, 255, 255;
+  --text-secondary: 176, 176, 195;
+  --text-contrast: 30, 30, 30;
+  --accent-primary: 153, 27, 27;
+  --accent-secondary: 153, 27, 27;
+  --chat-bubble-sent: 153, 27, 27;
+  --chat-bubble-received: 76, 5, 25;
+  --chat-text-sent: 255, 255, 255;
+  --chat-text-received: 255, 255, 255;
+  --button-background: 255, 111, 145;
+  --button-hover: 255, 64, 129;
+  --button-turned-off: 112, 105, 103;
+  --button-turned-off-hover: 145, 126, 126;
+  --input-background: 42, 42, 59;
+  --input-text: 255, 255, 255;
+  --input-placeholder: 176, 176, 195;
+  --border-primary-color: 60, 60, 82;
+  --border-secondary-color: 74, 74, 100;
+  transition: background-color 1s ease, color 1s ease;
+}
+input:not(:placeholder-shown):invalid {
+  background-color: #ecaeae;
+  border: none;
+  outline: 2px solid red;
+  border-radius: 5px;
 }

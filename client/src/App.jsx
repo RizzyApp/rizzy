@@ -1,44 +1,28 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {Outlet} from 'react-router-dom';
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {SignalRProvider} from './components/contexts/SignalRContext.jsx';
+import {useAuth} from './components/contexts/Authcontext.jsx';
+import Loading from './components/Loading.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const {checkingAuth} = useAuth();
 
-  useEffect(() => {
-    const getData = async () =>{
-      const response = await fetch("/api/v1/WeatherForecast");
-      const data = await response.json();
-      console.log(data)
+    if (checkingAuth) {
+        return (
+            <div
+                className="flex flex-col font-poppins bg-custom-gradient h-screen overflow-hidden w-screen justify-center items-center">
+                <Loading/>
+            </div>
+        );
     }
-    getData();
-  }, []);  
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <SignalRProvider>
+            <ToastContainer position="top-right"/>
+            <Outlet/>
+        </SignalRProvider>
+    );
 }
 
-export default App
+export default App;

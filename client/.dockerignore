@@ -1,0 +1,20 @@
+### react template
+.DS_*
+*.log
+.idea
+.env
+SAMPLE.env
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+dist
+bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
+

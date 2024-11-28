@@ -1,0 +1,53 @@
+﻿name: rizzy_app
+
+services:
+  api:
+    image: hegedusmark/rizzy-app:api-v1
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mssql
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=rizzyDb;User Id=sa;Password=veryStrongRizzyPassword123;Encrypt=false;
+      - CorsSettings__AllowedOrigin=http://localhost:3000
+    networks:
+      - app-network
+    
+  frontend:
+    image: hegedusmark/rizzy-app:frontend-v1
+    build:
+      context: ./client
+      args:
+        VITE_API_BASE_URL: "http://localhost:5000"
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - app-network
+    
+  mssql:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: rizzy_sql_server
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "veryStrongRizzyPassword123"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - app-network
+    
+  
+volumes:
+  mssql_data:
+    
+networks:
+  app-network:
+    driver: bridge
