@@ -42,6 +42,7 @@ export const API_ENDPOINTS = {
     LOGOUT: `${API_BASE_URL}/api/v1/Auth/Logout`,
     AUTH_STATUS: `${API_BASE_URL}/api/v1/Auth/logged-in-user`,
     ROLES: `${API_BASE_URL}/api/v1/Auth/roles`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/api/v1/Auth/change-password`,
   },
   MESSAGES: {
     GET_MESSAGES_GROUPED_BY_SENDER: `${API_BASE_URL}/api/v1/message/by-sender`,

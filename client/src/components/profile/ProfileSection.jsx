@@ -1,4 +1,6 @@
+import { useState } from "react";
 import deleteIcon from "../../assets/delete-icon.png";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const ProfileSection = ({
   data,
@@ -10,10 +12,15 @@ const ProfileSection = ({
   handleAddInterest,
   handleDeleteInterest,
   newInterest,
-  setNewInterest, isUploading
+  setNewInterest,
+  isUploading,
+  handleChangePassword,
+  showErrorToast,
+  showSuccessToast,
 }) => {
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const commonInputStyles = "border rounded w-full text-black p-2 h-10";
-  const noProfilePic = './image/blank-profile-picture.webp';
+  const noProfilePic = "./image/blank-profile-picture.webp";
 
   const gender = (value) => {
     let gender;
@@ -35,6 +42,16 @@ const ProfileSection = ({
     return gender;
   };
 
+  const handlePasswordChangeSubmit = async (currentPassword, newPassword) => {
+    try {
+      await handleChangePassword(currentPassword, newPassword);
+      setShowChangePasswordModal(false);
+      showSuccessToast("Password changed successfully!");
+    } catch (error) {
+      showErrorToast("Failed to change password: " + error.message);
+    }
+  };
+
   return (
     <div className="w-3/4 bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
       <div className="flex">
@@ -54,6 +71,13 @@ const ProfileSection = ({
             className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
           >
             Logout
+          </button>
+
+          <button
+            onClick={() => setShowChangePasswordModal(true)}
+            className="mt-3 px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover"
+          >
+            Change Password
           </button>
         </div>
 
@@ -204,18 +228,27 @@ const ProfileSection = ({
 
           <button
             onClick={() => {
-              if(isUploading){ //we don't want them to make changes
+              if (isUploading) {
+                //we don't want them to make changes
                 return;
               }
               if (edit) onSave();
               setEdit(!edit);
             }}
-            className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${isUploading ? "disabled" : ""}`}
+            className={`px-6 py-3 text-center bg-transparent text-white border-white rounded-full hover:bg-buttonHover ${
+              isUploading ? "disabled" : ""
+            }`}
           >
             {edit ? "Save Changes" : "Edit Profile"}
           </button>
         </div>
       </div>
+      {showChangePasswordModal && (
+        <ChangePasswordModal
+          onClose={() => setShowChangePasswordModal(false)}
+          onSubmit={handlePasswordChangeSubmit}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using API.Contracts.Auth;
+using API.Data.Models;
 using API.Services;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -129,5 +131,24 @@ public class AuthController : ControllerBase
 
         var roles = await _userManager.GetRolesAsync(user);
         return Ok(new { Email = user.Email, Roles = roles });
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(new { Error = "User not found!" });
+        }
+     
+        var userWithNewPassword = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+        if (!userWithNewPassword.Succeeded)
+        {
+            return BadRequest(new { Error = "Failed to change password!" });
+        }
+        
+        return Ok(new { Message = "Password is changed successfully." });
     }
 }

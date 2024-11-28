@@ -84,6 +84,29 @@ public class AdminController : ControllerBase
     }
     
     //Todo ResetPassword
+    [HttpPost("reset-password/{userId}")]
+    public async Task<IActionResult> ResetPassword(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new
+            {
+                Error = "User not found"
+            });
+        }
+
+        string basicPassword = "basicPassword123";
+        await _userManager.RemovePasswordAsync(user);
+        var result = await _userManager.AddPasswordAsync(user, basicPassword);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(new { Error = result.Errors });
+        }
+
+        return Ok(new { Message = "Password reset successfully.", basicPassword });
+    }
     
     //Todo Toggle role between user or vip
     [HttpPost("toggle-role/{userId}")]
