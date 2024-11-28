@@ -139,7 +139,7 @@ const RegistrationPage = () => {
         </label>
 
         <label className="mb-2">
-          Interests (comma separated):
+          Interests:
 
           <>
             <div>
