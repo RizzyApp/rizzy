@@ -33,7 +33,6 @@
 ### Additional Technologies
 - **Authentication**: Identity Framework
 - **Real-Time Communication**: SignalR for chat
-- **Hosting**: Azure
 
 ---
 
