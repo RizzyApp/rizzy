@@ -18,7 +18,8 @@ public class SwipesController : ControllerBase
     private readonly IMatchService _matchService;
     private readonly IUserService _userService;
 
-    public SwipesController(IRepository<Swipes> swipeRepository, IMatchService matchService, IRepository<User> userRepository, IUserService userService)
+    public SwipesController(IRepository<Swipes> swipeRepository, IMatchService matchService,
+        IRepository<User> userRepository, IUserService userService)
     {
         _swipeRepository = swipeRepository;
         _userRepository = userRepository;
@@ -48,7 +49,6 @@ public class SwipesController : ControllerBase
         {
             return BadRequest("Can't swipe self");
         }
-        
 
         var swipedUser = await _userRepository.GetByIdAsync(swipeDto.SwipedUserId);
 
@@ -56,7 +56,7 @@ public class SwipesController : ControllerBase
         {
             return BadRequest($"swiped user with id {swipeDto.SwipedUserId} does not exist");
         }
-        
+
         var existingSwipe = await _swipeRepository.FindFirstAsync(s =>
             s.UserId == loggedInUser.Id && s.SwipedUserId == swipedUser.Id);
 
@@ -68,17 +68,20 @@ public class SwipesController : ControllerBase
         var swipe = new Swipes
         {
             UserId = loggedInUser.Id,
-            User = loggedInUser,
             SwipedUserId = swipedUser.Id,
             SwipeType = swipeDto.SwipeType,
             CreatedAt = DateTime.Now
         };
 
         await _swipeRepository.AddAsync(swipe);
-        await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
+        if (swipe.SwipeType == "right")
+        {
+            await _matchService.CreateMatchIfMutualAsync(loggedInUser, swipedUser);
+        }
+
         return Ok();
     }
-    
+
     [Authorize]
     [HttpDelete]
     [Route("/api/v1/user/swipes/all")]
@@ -99,5 +102,4 @@ public class SwipesController : ControllerBase
 
         return NoContent();
     }
-
 }
