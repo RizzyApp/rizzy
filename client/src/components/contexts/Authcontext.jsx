@@ -118,9 +118,13 @@ export const AuthProvider = ({ children }) => {
       API_ENDPOINTS.USER.POST_LOCATION,
       requestOptions
     );
+    if(response.status === 401){
+      clearLoginDetails();
+    }
     if (!response.ok) {
       console.error("error posting location");
     }
+   
     return response;
   };
 
