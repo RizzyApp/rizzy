@@ -10,7 +10,7 @@ const IS_DEVELOPMENT = import.meta.env.DEV;
 const LoginPage = () => {
     const {login} = useAuth();
     const navigate = useNavigate();
-    const {showErrorToast} = useCustomToast();
+    const {showAPIErrorToast} = useCustomToast();
 
     const handleSubmit = async (e) =>  {
         e.preventDefault();
@@ -24,9 +24,7 @@ const LoginPage = () => {
         }
         else{
             let data = await response.json();
-            if(data.Login){
-                showErrorToast(<>{Object.values(data.Login)}</>)
-            }
+            showAPIErrorToast(data)
         }
     }
 
