@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
                     _logger.LogWarning("Registration failed for {Email}: {Error}", request.Email, error.Description);
                 }
             }
-            return BadRequest(new {message = "You're already registered!"});
+            return BadRequest(ModelState);
         }
 
         await _userManager.AddToRoleAsync(user, "User");
