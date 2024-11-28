@@ -452,10 +452,35 @@ namespace API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserLocation_LatLon",
+                table: "UserLocations",
+                columns: new[] { "Latitude", "Longitude" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserLocations_UserId",
                 table: "UserLocations",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_BirthDate",
+                table: "Users",
+                column: "BirthDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Gender",
+                table: "Users",
+                column: "Gender");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_PreferredAge",
+                table: "Users",
+                columns: new[] { "PreferredMinAge", "PreferredMaxAge" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_PreferredLocation",
+                table: "Users",
+                column: "PreferredLocationRange");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AspNetUserId",

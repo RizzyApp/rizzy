@@ -1,19 +1,27 @@
 using API.Data.Enums;
 using API.Data.Models;
+using API.Services.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace API.Data;
 
-public static class AppDbSeeder
+public class AppDbSeeder
 {
     private static readonly Random Random = new Random(50);
     private const double LOCATION_DEVIATION = 2;
     private const int TESTUSER_ID = 1;
     private const int USERS_TO_RIGHT_SWIPE_TEST_USER = 10;
     private const int USERS_TO_MATCH_TEST_USER = 5;
+    private  IOptions<RoleSettings> _roleSettings;
 
-    public static async Task SeedDataAsync(AppDbContext context, UserManager<IdentityUser> userManager)
+    public AppDbSeeder(IOptions<RoleSettings> roleSettings)
+    {
+        _roleSettings = roleSettings;
+    }
+    
+    public  async Task SeedDataAsync(AppDbContext context, UserManager<IdentityUser> userManager)
     {
         if (!await context.Users.AnyAsync())
         {
@@ -23,15 +31,16 @@ public static class AppDbSeeder
             for (int i = 1; i <= 100; i++)
             {
                 var email = $"user{i}@example.com";
+                var userName = $"user{i}";
 
                 // Create IdentityUser
                 identityUsers.Add(new IdentityUser
                 {
-                    UserName = email,
+                    UserName = userName,
                     Email = email,
                     EmailConfirmed = true
                 });
-
+                
                 // Create App User with random data
                 var birthYear = Random.Next(1980, 2005); // Random birth year between 1980 and 2005
                 var birthMonth = Random.Next(1, 13); // Random month
@@ -87,6 +96,10 @@ public static class AppDbSeeder
                 var result = await userManager.CreateAsync(identityUser, "Password123!");
                 if (result.Succeeded)
                 {
+                    // Add random roles (User or VIP)
+                    var assignedRole = i % 10 == 0 ?  _roleSettings.Value.VIP : _roleSettings.Value.User; // Every 10th user is VIP
+                    await userManager.AddToRoleAsync(identityUser, assignedRole);
+                    
                     appUser.AspNetUserId = identityUser.Id;
                     var added = context.Users.Add(appUser);
                     await context.SaveChangesAsync();
@@ -188,7 +201,7 @@ public static class AppDbSeeder
             EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(testUser, "test123");
+        var result = await userManager.CreateAsync(testUser, "TesT123456");
         if (result.Succeeded)
         {
             var testAppUser = new User
@@ -239,7 +252,7 @@ public static class AppDbSeeder
                 EmailConfirmed = true
             };
 
-            var signalRResult = await userManager.CreateAsync(signalRTestUser, "test123");
+            var signalRResult = await userManager.CreateAsync(signalRTestUser, "TesT123456");
             if (signalRResult.Succeeded)
             {
                 var signalRTestAppUser = new User
