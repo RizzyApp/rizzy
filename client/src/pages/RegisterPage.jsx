@@ -2,13 +2,13 @@ import Header from "../components/Header.jsx";
 import {useAuth} from "../components/contexts/Authcontext.jsx";
 import {useNavigate} from "react-router-dom";
 import {REACT_ROUTES} from "../constants.js";
-import useCustomToast from "../hooks/useCustomToast.jsx"
+import useCustomToast from "../hooks/useCustomToast.jsx";
 
 
 const RegisterPage = () => {
     const {register} = useAuth();
     const navigate = useNavigate();
-    const {showErrorToast} = useCustomToast();
+    const {showErrorToast, showAPIErrorToast} = useCustomToast();
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -22,8 +22,7 @@ const RegisterPage = () => {
         }
         else{
             let error = await response.json();
-            let msg = Object.values(error).flat().join("\n");
-            showErrorToast(msg);
+            showAPIErrorToast(error);
         }
     }
 

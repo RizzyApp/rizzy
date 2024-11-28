@@ -25,6 +25,22 @@ const useCustomToast = () => {
     const showErrorToast = (errorMessage) => {
         toast.error(errorMessage);
     }
+    const showAPIErrorToast = (errorResponse) => {
+        // Handle the various error objects the API server can throw
+
+        let errorMessage = "";
+        if (errorResponse.errors) {
+            // {errors: [{ValamiError:["a", "b"]}]}
+            errorMessage = <>{Object.values(errorResponse.errors).flat().map(x => <div>{x}</div>)}</>
+        } else if (errorResponse.title) {
+            // {"title":"An unexpected error occured.","status":500,"instance":"/api/v1/Auth/Register"}
+            errorMessage = errorResponse.title;
+        } else {
+            // {ValamiError:["a", "b"], ValamiMasError:["asdf"]}
+            errorMessage = <>{Object.values(errorResponse).flat().map(x => <div>{x}</div>)}</>;
+        }
+        toast.error(errorMessage);
+    }
 
     const showMatchNotification = (notification) => {
         toast(
@@ -33,7 +49,7 @@ const useCustomToast = () => {
     }
 
 
-    return {showPromiseToast, showSuccessToast, showErrorToast, showMatchNotification};
+    return {showPromiseToast, showSuccessToast, showErrorToast, showAPIErrorToast, showMatchNotification};
 }
 
 export default useCustomToast;

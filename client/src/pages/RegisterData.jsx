@@ -20,7 +20,7 @@ const RegistrationPage = () => {
 
   const {registerUserProfile, postUserLocation} = useAuth();
   const navigate = useNavigate();
-  const {showErrorToast} = useCustomToast();
+  const {showAPIErrorToast, showErrorToast} = useCustomToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,9 +56,9 @@ const RegistrationPage = () => {
     }
     else{
       let data = await response.json();
-      if(data.errors){
-        showErrorToast(<>{Object.values(data.errors).flat().map(x => <div>{x}</div>)}</>);
-      }
+      showAPIErrorToast(data);
+      console.log(data.errors.BirthDate[0]);
+      showErrorToast(data.errors.BirthDate[0]);
     }
   };
 
