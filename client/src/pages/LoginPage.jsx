@@ -8,15 +8,16 @@ import useCustomToast from "../hooks/useCustomToast.jsx";
 const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const LoginPage = () => {
-    const {login} = useAuth();
-    const navigate = useNavigate();
-    const {showAPIErrorToast} = useCustomToast();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { showErrorToast } = useCustomToast();
+  const { showAPIErrorToast } = useCustomToast();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) =>  {
+        e.preventDefault();
 
-    const email = e.target.elements.email.value;
-    const password = e.target.elements.password.value;
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
 
         const response = await login(email, password);
         if(!response[0].hasProfile) {
@@ -30,7 +31,7 @@ const LoginPage = () => {
             }
         } else {
             const data = await response[0].json();
-            showAPIErrorToast(data);
+            showErrorToast(data.message);
         }
     }
 

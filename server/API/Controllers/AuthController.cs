@@ -3,6 +3,7 @@ using API.Contracts.Auth;
 using API.Data.Models;
 using API.Services;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +75,20 @@ public class AuthController : ControllerBase
 
         var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: true, lockoutOnFailure: false);
 
+        if (result.IsLockedOut)
+        {
+            var lockoutEndDate = await _userManager.GetLockoutEndDateAsync(user);
+            var formattedDate = lockoutEndDate?.UtcDateTime.ToString("yyyy.MM.dd HH:mm:ss");
+            return StatusCode(StatusCodes.Status403Forbidden, new AuthResponse(
+                user.Email,
+                0,
+                user.UserName,
+                new List<string>(),
+                $"Your account is banned until {formattedDate}."));
+
+
+        }
+        
         if (!result.Succeeded)
         {
             _logger.LogWarning("Login failed for {Email}: Invalid credentials.", request.Email);
@@ -84,13 +99,25 @@ public class AuthController : ControllerBase
         _logger.LogInformation("User logged in successfully: {Email}", user.Email);
 
         var roles = await _userManager.GetRolesAsync(user);
+        if (user.UserName == "admin")
+        {
+            return Ok(new AuthResponse(
+                user.Email,
+                0,
+                user.UserName,
+                roles,
+                ""));
+        }
+        
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
 
         return Ok(new AuthResponse(
             user.Email,
             loggedInUser?.Id ?? 0,
             loggedInUser?.Name ?? user.UserName,
-            roles));
+            roles,
+            "")
+        );
     }
 
     [Authorize]
@@ -126,7 +153,9 @@ public class AuthController : ControllerBase
             Email: User.FindFirst(ClaimTypes.Email)?.Value,
             UserId: loggedInUser?.Id ?? 0,
             Name: loggedInUser?.Name ?? identityUser.UserName,
-            Roles: roles));
+            Roles: roles,
+            Message: ""
+        ));
     }
 
     [Authorize]

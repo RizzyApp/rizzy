@@ -1,5 +1,5 @@
 import { useState } from "react";
-import deleteIcon from "../../assets/delete-icon.png";
+import banHammer from "../../assets/ban-hammer.png";
 import BanModal from "./BanModel";
 
 const AdminDashboard = ({
@@ -64,38 +64,72 @@ const AdminDashboard = ({
   };
 
   //!TODO Search
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filterUsers = searchQuery
+    ? users.filter((user) => {
+        return (
+          user.email.toLowerCase().includes(searchQuery) ||
+          user.userName.toLowerCase().includes(searchQuery) ||
+          user.roles?.some((role) => role.toLowerCase().includes(searchQuery))
+        );
+      })
+    : users;
 
   return (
-    <div className="w-full bg-custom-gradient mt-20 shadow-md rounded-lg p-8">
+    <div className="min-h-screen bg-custom-gradient mt-20 shadow-md rounded-lg p-8 ">
       <h1 className="text-2xl font-bold mb-6 text-white">Admin Dashboard</h1>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search by email, username, or role.."
+          className="w-full bg-chat-backgroundPrimary text-text-primary p-2 rounded border border-gray-300"
+        />
+      </div>
+
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse">
+        <table className="min-w-full table-fixed border-collapse">
           <thead>
             <tr className="bg-gray-800 text-white">
-              <th className="border px-4 py-2">#</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Username</th>
-              <th className="border px-4 py-2">Role</th>
-              <th className="border px-4 py-2 w-[300px] max-w-[300px]">
-                Status
+              <th className="w-1/12 h-12 border px-4 py-2">#</th>
+              <th className="w-2/12 min-w-[260.4px] h-12 border px-4 py-2">
+                Email
               </th>
-              <th className="border px-4 py-2">Actions</th>
+              <th className="w-1/12 h-12 border px-4 py-2">Username</th>
+              <th className="w-1/12 h-12 border px-4 py-2">Role</th>
+              <th className="w-1/12 h-12 border px-4 py-2">Status</th>
+              <th className="w-3/12 h-12 border px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {filterUsers.map((user, index) => (
               <tr
                 key={user.id}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                className={
+                  index % 2 === 0
+                    ? "bg-chat-backgroundSecondary text-text-primary border-accent-primary"
+                    : "bg-chat-backgroundPrimary text-text-secondary border-accent-secondary"
+                }
               >
-                <td className="border px-4 py-2">{index + 1}</td>
-                <td className="border px-4 py-2">{user.email}</td>
-                <td className="border px-4 py-2">{user.userName}</td>
-                <td className="border px-4 py-2">{getRoleBadge(user.roles)}</td>
-                <td className="border px-4 py-2 w-[2200px] max-w-[220px]">
+                <td className="border px-4 py-2 text-center">{index + 1}</td>
+                <td className="border px-4 py-2 text-center">{user.email}</td>
+                <td className="border px-4 py-2 text-center min-w-[260.4px]">
+                  {user.userName}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {getRoleBadge(user.roles)}
+                </td>
+                <td className="border px-4 py-2 text-center">
                   {getBanStatus(user.isBanned, user.userBanInfo)}
                 </td>
-                <td className="border px-4 py-2 flex items-center gap-2">
+                <td className="border px-4 py-2 flex min-h-24 max-h-24 items-center gap-3">
                   <button
                     onClick={() => handleResetPassword(user.id)}
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -124,9 +158,9 @@ const AdminDashboard = ({
                         className="bg-transparent"
                       >
                         <img
-                          src={deleteIcon}
-                          alt="🗑️"
-                          className="w-5 h-5 inline-block cursor-pointer"
+                          src={banHammer}
+                          alt="🔨"
+                          className="w-[69px] h-[69px] inline-block cursor-pointer"
                         />
                       </button>
                     </>

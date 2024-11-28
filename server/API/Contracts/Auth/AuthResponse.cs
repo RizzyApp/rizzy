@@ -4,4 +4,5 @@ public record AuthResponse(
     string Email,
     int UserId,
     string Name,
-    IEnumerable<string> Roles);
+    IEnumerable<string> Roles,
+    string? Message);
