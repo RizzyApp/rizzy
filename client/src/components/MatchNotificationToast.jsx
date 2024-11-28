@@ -1,6 +1,9 @@
 import {REACT_ROUTES} from "../constants.js";
 import {useNavigate} from "react-router-dom";
 
+
+const placeholderPic = "./image/blank-profile-picture.webp";
+
 const MatchNotificationToast = ({notification}) => {
 
     const navigate = useNavigate()
@@ -9,7 +12,7 @@ const MatchNotificationToast = ({notification}) => {
         <div className="flex items-center cursor-pointer"
         onClick={() => navigate(REACT_ROUTES.CHAT_BY_USER(notification.userId))}>
             <img
-                src={notification.profilePic.url}
+                src={notification.profilePic?.url ?? placeholderPic}
                 alt={notification.name}
                 style={{
                     width: "40px",
