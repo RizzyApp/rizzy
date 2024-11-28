@@ -6,6 +6,8 @@ export const UPLOAD_MAX_FILE_SIZE = 5 * 1024 * 1024; //5MB
 export const UPLOAD_MAX_WIDTH = 1920;
 export const UPLOAD_MAX_HEIGHT = 1080;
 
+export const LOCATION_CACHE_TIME = 24 * 60 * 60 * 1000; //one day
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const API_ENDPOINTS = {
