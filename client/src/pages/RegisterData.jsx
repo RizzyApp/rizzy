@@ -211,8 +211,8 @@ const RegistrationPage = () => {
           <input 
             type="range" 
             min={1} 
-            max={144} 
-            step={1} 
+            max={2000} 
+            step={10} 
             value={preferredLocationRange}
             onInput={(e) => setLocationRadius(Number(e.target.value))}
             className="border rounded w-full p-2 text-black"

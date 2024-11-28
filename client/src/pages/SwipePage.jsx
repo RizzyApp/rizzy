@@ -17,9 +17,11 @@ const App = () => {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     }
+    console.log("coords: " + coord);
     const response = await updateUserLocation(coord);
     if(response.ok){
-      setGeoLocationAccepted(true); // Set accepted to true
+      setGeoLocationAccepted(true); 
+      coneole.log("accepted response")// Set accepted to true
     }
   };
 
