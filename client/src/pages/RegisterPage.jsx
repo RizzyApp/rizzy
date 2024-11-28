@@ -15,7 +15,6 @@ const RegisterPage = () => {
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
 
-        console.log("email:", email);
         const response = await register(email, password);
         if(response.ok){
             navigate(REACT_ROUTES.REGISTER_DATA);

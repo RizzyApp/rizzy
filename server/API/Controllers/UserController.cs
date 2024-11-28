@@ -22,7 +22,6 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly ILogger<UserController> _logger;
 
-
     public UserController(IRepository<User> userRepository, IRepository<UserLocation> userLocationRepository,
         UserManager<IdentityUser> userManager, IUserService userService,
         ILogger<UserController> logger)
@@ -40,6 +39,8 @@ public class UserController : ControllerBase
     {
         if (requestDto.PreferredMinAge > requestDto.PreferredMaxAge)
         {
+            _logger.LogWarning("Preferred min age can't be bigger than preferred max age. Min: {Min}, Max: {Max}",
+                requestDto.PreferredMinAge, requestDto.PreferredMaxAge);
             return BadRequest("Preferred min age can't be bigger than preferred max age");
         }
 
@@ -47,6 +48,7 @@ public class UserController : ControllerBase
 
         if (userId == null)
         {
+            _logger.LogWarning("Unauthorized access attempt: User ID is null.");
             return Unauthorized();
         }
 
@@ -63,6 +65,9 @@ public class UserController : ControllerBase
 
         await _userRepository.AddAsync(result);
 
+        _logger.LogInformation("User profile created for {UserId}: {Name}, {Gender}, {Age} years old",
+            userId, result.Name, result.Gender, GetAge(result.BirthDate));
+
         return CreatedAtAction(nameof(PostUser),
             new CreateProfileResponse(result.Name, result.Gender, result.BirthDate, result.Bio));
     }
@@ -72,11 +77,11 @@ public class UserController : ControllerBase
     public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        _logger.LogInformation("Fetched user profile for {UserId}.", loggedInUser.Id);
 
         loggedInUser = _userRepository.Query()
             .Include(u => u.Photos)
             .FirstOrDefault(u => u.Id == loggedInUser.Id);
-
 
         var photos = loggedInUser.Photos
             .Select(p => new PhotoDto(p.Id, p.Url))
@@ -107,9 +112,15 @@ public class UserController : ControllerBase
     {
         if (requestDto.PreferredMinAge > requestDto.PreferredMaxAge)
         {
-            return BadRequest("Preferred min age can't be bigger than preferred max age");
+            _logger.LogWarning(
+                "Update failed: Preferred min age can't be bigger than preferred max age. Min: {Min}, Max: {Max}",
+                requestDto.PreferredMinAge, requestDto.PreferredMaxAge);
+            return BadRequest(new
+            {
+                Message =
+                    "Preferred min age can't be bigger than preferred max age"
+            });
         }
-
 
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
 
@@ -122,32 +133,28 @@ public class UserController : ControllerBase
         loggedInUser.PreferredGender = requestDto.PreferredGender;
 
 
-        try
-        {
-            await _userRepository.UpdateAsync(loggedInUser);
-            //await _userRepository.SaveChangesAsync();
+        await _userRepository.UpdateAsync(loggedInUser);
+        _logger.LogInformation("Profile updated for UserId {UserId}: {Name}, {Gender}, {Age} years old.",
+            loggedInUser.Id, loggedInUser.Name, loggedInUser.Gender, GetAge(loggedInUser.BirthDate));
 
-            return Ok(new { Message = "Update successful" });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500,
-                new { Message = "An error occurred while updating the profile", Details = ex.Message });
-        }
+        return Ok(new { Message = "Update successful" });
     }
-
 
     [Authorize]
     [HttpPost("Location")]
     public async Task<ActionResult> PostLocation([FromBody] LocationUpdateDto locationRequest)
     {
         var loggedInUser = await _userService.GetUserByIdentityIdAsync(User);
+        _logger.LogInformation("Updating location for UserId {UserId} to Latitude: {Latitude}, Longitude: {Longitude}.",
+            loggedInUser.Id, locationRequest.Latitude, locationRequest.Longitude);
+
         await _userLocationRepository.AddAsync(new UserLocation
         {
             UserId = loggedInUser.Id,
             Latitude = locationRequest.Latitude,
             Longitude = locationRequest.Longitude,
         });
+
         return Created();
     }
 
@@ -160,6 +167,7 @@ public class UserController : ControllerBase
 
         if (userUpdate == null)
         {
+            _logger.LogWarning("User location not found for UserId {UserId}.", loggedInUser.Id);
             return NotFound("User not found");
         }
 
@@ -167,6 +175,10 @@ public class UserController : ControllerBase
         userUpdate.Longitude = update.Longitude;
 
         await _userLocationRepository.UpdateAsync(userUpdate);
+
+        _logger.LogInformation("Updated location for UserId {UserId} to Latitude: {Latitude}, Longitude: {Longitude}.",
+            loggedInUser.Id, userUpdate.Latitude, userUpdate.Longitude);
+
         return Ok();
     }
 
@@ -179,9 +191,12 @@ public class UserController : ControllerBase
 
         if (userLocation == null)
         {
+            _logger.LogWarning("Location not found for UserId {UserId}.", loggedInUser.Id);
             return NotFound("Location not found");
         }
 
+        _logger.LogInformation("Fetched location for UserId {UserId}: Latitude: {Latitude}, Longitude: {Longitude}.",
+            loggedInUser.Id, userLocation.Latitude, userLocation.Longitude);
 
         return Ok(new
         {
@@ -191,7 +206,6 @@ public class UserController : ControllerBase
             userLocation.Longitude
         });
     }
-
 
     private static int GetAge(DateTime birthDate)
     {

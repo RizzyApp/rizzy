@@ -1,8 +1,8 @@
 import Header from "../components/Header.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import DevelopmentMessage from "../components/DevelopmentMessage.jsx";
-import { useAuth } from "../components/contexts/Authcontext.jsx";
-import { REACT_ROUTES } from "../constants.js";
+import {useAuth} from "../components/contexts/Authcontext.jsx";
+import {REACT_ROUTES} from "../constants.js";
 import useCustomToast from "../hooks/useCustomToast.jsx";
 
 const IS_DEVELOPMENT = import.meta.env.DEV;
@@ -13,25 +13,27 @@ const LoginPage = () => {
   const { showErrorToast } = useCustomToast();
   const { showAPIErrorToast } = useCustomToast();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) =>  {
+        e.preventDefault();
 
-    const email = e.target.elements.email.value;
-    const password = e.target.elements.password.value;
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
 
-    const response = await login(email, password);
-    if (response[0].ok) {
-      console.log("roles", response[1].roles);
-      if (response[1].roles.includes("Admin")) {
-        navigate(REACT_ROUTES.ADMIN_PAGE);
-      } else {
-        navigate(REACT_ROUTES.SWIPE_PAGE);
-      }
-    } else {
-      const data = await response[0].json();
-      showErrorToast(data.message);
+        const response = await login(email, password);
+        if(!response[0].hasProfile) {
+            navigate(REACT_ROUTES.REGISTER_DATA);
+        }
+        if (response[0].ok) {
+            if (response[1].roles.includes("Admin")) {
+                navigate(REACT_ROUTES.ADMIN_PAGE);
+            } else {
+                navigate(REACT_ROUTES.SWIPE_PAGE);
+            }
+        } else {
+            const data = await response[0].json();
+            showErrorToast(data.message);
+        }
     }
-  };
 
   return (
     <div className=" h-screen overflow-hidden">

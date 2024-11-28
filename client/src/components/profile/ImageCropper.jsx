@@ -2,7 +2,7 @@ import {useState} from 'react'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from "./utils/getCroppedImg.js";
 import {SWIPE_CARD_ASPECT_RATIO} from "../../constants.js";
-import SwipeCardContent from "../swipe/swipeCard/SwipeCardContent.jsx";
+import SwipeCardContent from "../swipe/swipeCard/SwipeCardContent";
 
 
 
