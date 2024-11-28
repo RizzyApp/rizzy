@@ -172,13 +172,22 @@ const ProfileSection = ({
           <div>
             <h3 className="text-lg font-semibold">Preferred Location Range</h3>
             {edit ? (
-              <input
-                type="number"
-                name="preferredLocationRange"
-                value={data.profile.preferredLocationRange}
-                onChange={handleChange}
-                className={commonInputStyles}
-              />
+              <>
+                <input 
+                  type="range" 
+                  name="preferredLocationRange"
+                  min={1} 
+                  max={2000} 
+                  step={10} 
+                  value={data.profile.preferredLocationRange}
+                  onInput={handleChange}
+                  className="border rounded w-full p-2 text-black"
+                  required
+                />
+                <div className="mb-4">
+                  Selected Radius: {data.profile.preferredLocationRange} km
+                </div>
+              </>
             ) : (
               <p>{data.profile.preferredLocationRange + " km"}</p>
             )}
