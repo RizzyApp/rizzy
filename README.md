@@ -2,6 +2,11 @@
 
 **Rizzy** is a modern dating application designed to connect people meaningfully. Built with cutting-edge technologies, it provides a seamless experience for users to find matches, chat, and build connections. The app features a C# ASP.NET backend, an Entity Framework-powered database, and a React-based frontend.
 
+# Demo Video
+
+[Insert here]
+
+
 ## Features
 
 - **User Profiles**: Create and customize your profile with photos and personal information.
