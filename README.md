@@ -4,7 +4,7 @@
 
 # Demo Video
 
-[![Watch the video](https://img.youtube.com/vi/0GhU10_V4wo/maxresdefault.jpg)](https://www.youtube.com/watch?v=0GhU10_V4wo)
+https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 
 ## Features
 
