@@ -61,7 +61,7 @@ const ChatSideBar = ({setSelectedUser, users}) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
-            <div className="overflow-scroll">
+            <div className="overflow-hidden">
                 {filteredUsers.length > 0 ? (
                     <ul>
                         {filteredUsers.map((user, index) => (

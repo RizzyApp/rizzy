@@ -48,7 +48,21 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 - SQL Server or your chosen database system
 - IDEs: Visual Studio, Rider
 
-### Setup Instructions
+### Application Setup with Docker
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/RizzyApp/rizzy.git
+   cd rizzy
+   ```
+2. **Docker setup**:
+- Run the docker-compose.yml file in the terminal with the `docker compose up` command to create the application in Docker.
+- Docker compose runs the entire server, frontend and database.
+
+3. **Access the app**:
+   Open your browser and navigate to `http://localhost:3000`.
+
+### Native Application Setup
 
 1. **Clone the repository**:
    ```bash
@@ -75,11 +89,7 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
    dotnet run
    ```
 
-3. **Docker setup**:
-  - Add docker to your services
-  - Run the docker-compose.yml file to create the database in Docker.
-
-4. **Frontend setup**:
+3. **Frontend setup**:
  - Navigate to the frontend folder:
    ```bash
     cd .\client\
@@ -93,7 +103,7 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
    npm run dev
    ```
 
-5. **Access the app**:
+4. **Access the app**:
    Open your browser and navigate to `http://localhost:5276`.
 
 ---
