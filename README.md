@@ -52,8 +52,11 @@
    cd rizzy
    ```
 2. **Docker setup**:
-- Add docker to your services
-- Run the docker-compose.yml file to create the database in Docker.
+- Run the docker-compose.yml file in the terminal with the `docker compose up` command to create the application in Docker.
+- Docker compose runs the entire server, frontend and database.
+
+3. **Access the app**:
+   Open your browser and navigate to `http://localhost:3000`.
 
 ### Native Application Setup
 
