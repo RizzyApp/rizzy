@@ -35,7 +35,7 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 
 ### Backend
 
-- ** ASP.NET CoreASP.NET Core **
+- ** ASP.NET Core **
   - API development
   - Business logic implementation
 - ** Entity Framework **
@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 ### Additional Technologies
 - **Authentication**: Identity Framework
 - **Real-Time Communication**: SignalR  for chat
-- ** Node.js and npm  and  **
+- ** Node.js and npm **
 
 ---
 
