@@ -19,8 +19,23 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 
 ## Tech Stack
 
+- [![C# ASP.NET Core](https://img.shields.io/badge/C%23%20ASP.NET%20Core-512BD4?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/)
+- [![Entity Framework](https://img.shields.io/badge/Entity%20Framework-6DB33F?style=for-the-badge&logo=ef&logoColor=white)](https://learn.microsoft.com/en-us/ef/)
+- [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+- [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+- [![Identity Framework](https://img.shields.io/badge/Identity%20Framework-35495E?style=for-the-badge&logo=auth0&logoColor=white)](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/)
+- [![SignalR](https://img.shields.io/badge/SignalR-5C2D91?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction)
+- [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+- [![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/)
+- [![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
+- [![.NET SDK](https://img.shields.io/badge/.NET%20SDK-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/en-us/download)
+- [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) 
+
+
 ### Backend
-- **C# ASP.NET Core**
+
+- **ASP.NET Core**
   - API development
   - Business logic implementation
 - **Entity Framework**
@@ -32,11 +47,12 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 - **JavaScript/React**
   - Dynamic, responsive user interface
   - Component-based design for maintainability
-  - Styled with Tailwind CSS
+  - Styled with Tailwind CSS 
 
 ### Additional Technologies
 - **Authentication**: Identity Framework
-- **Real-Time Communication**: SignalR for chat
+- **Real-Time Communication**: SignalR  for chat
+- **Node.js** and **npm**
 
 ---
 
@@ -44,10 +60,10 @@ https://github.com/user-attachments/assets/2fea6296-c3e3-4946-a031-59be6678908b
 
 ### Prerequisites
 - .NET SDK installed
-- Node.js and npm installed
+- Node.js installed
 - SQL Server or your chosen database system
-- IDEs: Visual Studio, Rider
-
+- IDEs: Visual Studio, JetBrains Rider
+  
 ### Application Setup with Docker
 
 1. **Clone the repository**:
@@ -125,6 +141,9 @@ We welcome contributions! To contribute:
 
 Rizzy was made possible by the contributions of the following developers:
 
+- **[pixhy](https://github.com/pixhy)**  
+  **[LinkedIn Profile](https://www.linkedin.com/in/tunde-bak/)**
+
 - **[hegedus-mark](https://github.com/hegedus-mark)**  
   **[LinkedIn Profile](https://www.linkedin.com/in/m%C3%A1rk-heged%C5%B1s-2a88332ba/)**
 
@@ -133,9 +152,6 @@ Rizzy was made possible by the contributions of the following developers:
 
 - **[prvics](https://github.com/prvics)**  
   **[LinkedIn Profile](https://www.linkedin.com/in/pr%C3%A1vics-p%C3%A9ter-760265330/)**
-
-- **[pixhy](https://github.com/pixhy)**  
-  **[LinkedIn Profile](https://www.linkedin.com/in/tunde-bak/)**
 
 We sincerely thank them for their hard work and dedication to this project. 🎉
 
